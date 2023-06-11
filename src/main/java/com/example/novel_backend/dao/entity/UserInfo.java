@@ -6,14 +6,8 @@ import com.baomidou.mybatisplus.annotation.TableName;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-
 /**
- * <p>
- * 用户信息
- * </p>
- *
- * @author xiongxiaoyang
- * @date 2022/05/11
+ * @author Mingjie
  */
 @TableName("user_info")
 public class UserInfo implements Serializable {
@@ -24,52 +18,47 @@ public class UserInfo implements Serializable {
     private Long id;
 
     /**
-     * 登录名
+     * Username
      */
     private String username;
 
     /**
-     * 登录密码-加密
+     * Login Password - Encryption
      */
     private String password;
 
     /**
-     * 加密盐值
+     * Encrypted salt values
      */
     private String salt;
 
     /**
-     * 昵称
+     * Nickname
      */
     private String nickName;
 
     /**
-     * 用户头像
+     * User avatar
      */
     private String userPhoto;
 
     /**
-     * 用户性别;0-男 1-女
+     * User gender;0 - male 1 - female
      */
     private Integer userSex;
 
     /**
-     * 账户余额
-     */
-    private Long accountBalance;
-
-    /**
-     * 用户状态;0-正常
+     * User status;0-normal
      */
     private Integer status;
 
     /**
-     * 创建时间
+     * Create time
      */
     private LocalDateTime createTime;
 
     /**
-     * 更新时间
+     * Update time
      */
     private LocalDateTime updateTime;
 
@@ -130,14 +119,6 @@ public class UserInfo implements Serializable {
         this.userSex = userSex;
     }
 
-    public Long getAccountBalance() {
-        return accountBalance;
-    }
-
-    public void setAccountBalance(Long accountBalance) {
-        this.accountBalance = accountBalance;
-    }
-
     public Integer getStatus() {
         return status;
     }
@@ -172,7 +153,6 @@ public class UserInfo implements Serializable {
         ", nickName=" + nickName +
         ", userPhoto=" + userPhoto +
         ", userSex=" + userSex +
-        ", accountBalance=" + accountBalance +
         ", status=" + status +
         ", createTime=" + createTime +
         ", updateTime=" + updateTime +

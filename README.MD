@@ -1,6 +1,6 @@
 ## Project Information
 
-novel is a set of **front and back-end separation** based on the latest **Java technology stack Spring Boot 3 + Vue 3.
+novel is a set of **front and back-end separation** based on the latest **Java** technology stack Spring Boot 3 + Vue 3.
 novel project, including novel recommendation, work search, novel ranking, novel reading, novel review, author area, news release and other functions.
 
 ## Development Environment
@@ -57,12 +57,24 @@ com
         +- NovelApplication.java -- Project Launch Category
         |
         +- core -- Project core modules, including various tools, configurations, constants, etc.
+        |   +- common -- Business-agnostic generic modules
+        |   |   +- constant -- General constants 
+        |   |   +- req -- Generic request data format encapsulation, e.g. paging request data
+        |   |   +- resp -- Interface response tools and response data format encapsulation
+        |   |     
         +- controller -- The main purpose is to handle various Http requests, various basic parameter checks, or simple processing of non-reusable business, returning JSON data, etc.
         +- dto -- Data transfer objects, including encapsulation of various Http request and response data
         |   +- req -- Http Request data encapsulation
         |   +- resp -- Http Response data encapsulation
+        |
         +- dao -- Data access layer, interacting with the underlying MySQL
+        |   +- entity -- Database entity classes
+        |   +- mapper -- sqlImplementation Classes
+        |
         +- manager -- Generic business processing layer, encapsulation of third party platforms, sinking of generic capabilities to the Service layer and combined reuse of multiple DAOs
         +- service -- Relatively specific business logic service layers
+        +- controller -- The main purpose is to handle various Http requests, various basic parameter checks, or simple processing of non-reusable business, returning JSON data, etc.
+        |   +- front -- Fiction related interfaces
+
 
 ```
