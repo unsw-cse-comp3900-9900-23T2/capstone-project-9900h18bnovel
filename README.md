@@ -1,4 +1,4 @@
-# novel_web
+# novel_Web_Front_end
 
 ## Project setup
 ```
