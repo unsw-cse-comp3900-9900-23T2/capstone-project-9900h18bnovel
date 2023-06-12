@@ -43,9 +43,9 @@ public enum ErrorCodeEnum {
     USER_VERIFY_CODE_ERROR("A0240", "User authentication code error"),
 
     /**
-     * Username already exists
+     * Email already exists
      */
-    USER_NAME_EXIST("A0111", "Username already exists"),
+    EMAIL_EXIST("A0111", "Email already exists"),
 
     /**
      * User account does not exist

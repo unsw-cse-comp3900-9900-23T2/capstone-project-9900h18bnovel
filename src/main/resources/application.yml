@@ -20,7 +20,7 @@ server:
 --- #---------------------Database---------------------------
 spring:
   datasource:
-    url: jdbc:mysql://192.168.1.113:3306/novel?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
+    url: jdbc:mysql://192.168.1.113:3306/novel_dev?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
     username: root
     password: 123456
 
@@ -37,6 +37,36 @@ spring:
 springdoc:
   api-docs:
     enabled: true
+
+--- #----------------------Email configuration-----------------------------
+#邮箱服务器
+spring:
+  mail:
+    host: smtp.163.com
+    #邮箱账户
+    username: novelhub9900@163.com
+    #邮箱第三方授权码
+    password: YIZAOOCHLHOYXFEP
+    #编码类型
+    default-encoding: UTF-8
+    port: 465
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: rue
+          socketFactory:
+            port: 465
+            class: javax.net.ssl.SSLSocketFactory
+            fallback: false
+
+--- #---------------------Custom configuration----------------------------
+novel:
+  # JWT Secret
+  jwt:
+    secret: E66559580A1ADF48CDD928516062F12E
 
 ## 项目配置
 #novel:

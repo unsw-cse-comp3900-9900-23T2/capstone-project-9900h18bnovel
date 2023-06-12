@@ -30,7 +30,7 @@ public class UserRegisterReqDto {
 
     @Schema(description = "Verification Code", required = true)
     @NotBlank(message="Verification Code cannot be empty！")
-    @Pattern(regexp="^\\d{4}$",message="Invalid email format")
+    @Pattern(regexp="^\\d{6}$",message="Invalid email format")
     private String velCode;
 
 }

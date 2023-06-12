@@ -105,22 +105,22 @@
             <artifactId>hibernate-validator</artifactId>
         </dependency>
 
-        <!-- elasticsearch 相关 -->
-        <dependency>
-            <groupId>co.elastic.clients</groupId>
-            <artifactId>elasticsearch-java</artifactId>
-            <version>${elasticsearch.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-        </dependency>
+<!--        &lt;!&ndash; elasticsearch 相关 &ndash;&gt;-->
+<!--        <dependency>-->
+<!--            <groupId>co.elastic.clients</groupId>-->
+<!--            <artifactId>elasticsearch-java</artifactId>-->
+<!--            <version>${elasticsearch.version}</version>-->
+<!--        </dependency>-->
+<!--        <dependency>-->
+<!--            <groupId>com.fasterxml.jackson.core</groupId>-->
+<!--            <artifactId>jackson-databind</artifactId>-->
+<!--        </dependency>-->
 
-        <!-- MQ 相关 -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-amqp</artifactId>
-        </dependency>
+<!--        &lt;!&ndash; MQ 相关 &ndash;&gt;-->
+<!--        <dependency>-->
+<!--            <groupId>org.springframework.boot</groupId>-->
+<!--            <artifactId>spring-boot-starter-amqp</artifactId>-->
+<!--        </dependency>-->
 
         <!-- XXL-JOB 相关 -->
         <dependency>
@@ -141,27 +141,6 @@
             <version>${sentinel.version}</version>
         </dependency>
 
-        <!-- ShardingSphere-JDBC -->
-        <dependency>
-            <groupId>org.apache.shardingsphere</groupId>
-            <artifactId>shardingsphere-jdbc-core-spring-boot-starter</artifactId>
-            <version>${shardingsphere-jdbc.version}</version>
-        </dependency>
-
-        <!-- Spring Boot 管理和监控 -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-actuator</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>de.codecentric</groupId>
-            <artifactId>spring-boot-admin-starter-client</artifactId>
-            <version>${spring-boot-admin.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-security</artifactId>
-        </dependency>
 
         <!-- Redisson 相关 -->
         <dependency>

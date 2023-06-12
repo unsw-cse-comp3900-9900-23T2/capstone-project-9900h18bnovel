@@ -23,4 +23,9 @@ public class SystemConfigConsts {
      * Http Request Authentication Header
      */
     public static final String HTTP_AUTH_HEADER_NAME = "Authorization";
+
+    /**
+     * Front desk portal system Signage
+     */
+    public static final String NOVEL_FRONT_KEY = "front";
 }
