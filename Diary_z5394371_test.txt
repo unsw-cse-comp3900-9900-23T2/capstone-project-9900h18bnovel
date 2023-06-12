@@ -1,9 +1,0 @@
-Week2：
-  -Created and set Jira configuration
-  -Helped figure front-end and back-end tools and environment
-Week3:
-  -Helped create user stories
-  -Set Epic and task for front-end in Jira
-  -Designed UI/UX of Web front-end
-
-
