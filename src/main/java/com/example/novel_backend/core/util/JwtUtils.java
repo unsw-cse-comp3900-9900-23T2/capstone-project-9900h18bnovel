@@ -63,12 +63,12 @@ public class JwtUtils {
                     .build()
                     .parseClaimsJws(token);
             // OK, we can trust this JWT
-            // 判断该 JWT 是否属于指定系统
+            // Determining if the JWT belongs to the specified system
             if (Objects.equals(claimsJws.getHeader().get(HEADER_SYSTEM_KEY), systemKey)) {
                 return Long.parseLong(claimsJws.getBody().getSubject());
             }
         } catch (JwtException e) {
-            log.warn("JWT解析失败:{}", token);
+            log.warn("JWT Failed to parse:{}", token);
             // don't trust the JWT!
         }
         return null;

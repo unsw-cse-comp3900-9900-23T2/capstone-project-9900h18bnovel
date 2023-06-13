@@ -60,7 +60,12 @@ public enum ErrorCodeEnum {
     /**
      * Level 1 macro error code, system execution error
      */
-    SYSTEM_ERROR("B0001", "system execution error");
+    SYSTEM_ERROR("B0001", "System execution error"),
+
+    /**
+     * Level 2 macro error code, user request parameter error
+     */
+    USER_REQUEST_PARAM_ERROR("A0400", "User request parameter error");
 
     /**
      * Error Code

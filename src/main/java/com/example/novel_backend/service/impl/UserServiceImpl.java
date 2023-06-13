@@ -1,6 +1,7 @@
 package com.example.novel_backend.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.IdWorker;
 import com.example.novel_backend.core.common.constant.ErrorCodeEnum;
 import com.example.novel_backend.core.common.constant.SystemConfigConsts;
 import com.example.novel_backend.core.common.exception.BusinessException;
@@ -9,7 +10,10 @@ import com.example.novel_backend.core.util.JwtUtils;
 import com.example.novel_backend.dao.entity.UserInfo;
 import com.example.novel_backend.dao.mapper.UserInfoMapper;
 import com.example.novel_backend.dto.req.EmailReqDto;
+import com.example.novel_backend.dto.req.UserLoginReqDto;
 import com.example.novel_backend.dto.req.UserRegisterReqDto;
+import com.example.novel_backend.dto.resp.ImgVerifyCodeRespDto;
+import com.example.novel_backend.dto.resp.UserLoginRespDto;
 import com.example.novel_backend.dto.resp.UserRegisterRespDto;
 import com.example.novel_backend.manager.redis.VerifyCodeManager;
 import com.example.novel_backend.service.UserService;
@@ -82,5 +86,50 @@ public class UserServiceImpl implements UserService {
                         .uid(userInfo.getId())
                         .build()
         );
+    }
+
+    @Override
+    public RestResp<ImgVerifyCodeRespDto> getImgVerifyCode() throws IOException {
+        String sessionId = IdWorker.get32UUID();
+        return RestResp.ok(
+                ImgVerifyCodeRespDto.builder()
+                        .sessionId(sessionId)
+                        .img(verifyCodeManager.genImgVerifyCode(sessionId))
+                        .build()
+        );
+    }
+
+    @Override
+    public RestResp<UserLoginRespDto> login(UserLoginReqDto dto) {
+        // Verify that the graphic verification code is correct
+        if (!verifyCodeManager.imgVerifyCodeOk(dto.getSessionId(), dto.getVelCode())) {
+            // Graphic CAPTCHA verification failure
+            throw new BusinessException(ErrorCodeEnum.USER_VERIFY_CODE_ERROR);
+        }
+        QueryWrapper<UserInfo> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("email", dto.getEmail()).last("LIMIT 1");
+        if (userInfoMapper.selectCount(queryWrapper) == 0){
+            // Email is registered
+            throw new BusinessException(ErrorCodeEnum.USER_ACCOUNT_NOT_EXIST);
+        }
+        UserInfo userInfo = userInfoMapper.selectOne(queryWrapper);
+        // Determine if the password is correct
+        if(!userInfo.getPassword().
+                equals(DigestUtils.md5DigestAsHex(dto.getPassword().getBytes(StandardCharsets.UTF_8)))){
+            // Wrong password
+            throw new BusinessException(ErrorCodeEnum.USER_PASSWORD_ERROR);
+        }
+
+        // Login successful, JWT generated and returned
+        return RestResp.ok(
+                UserLoginRespDto.builder()
+                        .token(jwtUtils.generateToken(userInfo.getId(), SystemConfigConsts.NOVEL_FRONT_KEY))
+                        .uid(userInfo.getId())
+                        .userName(userInfo.getUsername())
+                        .build()
+        );
+
+
+
     }
 }

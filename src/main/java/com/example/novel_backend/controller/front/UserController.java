@@ -4,7 +4,10 @@ import com.example.novel_backend.core.common.constant.ApiRouterConsts;
 import com.example.novel_backend.core.common.constant.SystemConfigConsts;
 import com.example.novel_backend.core.common.resp.RestResp;
 import com.example.novel_backend.dto.req.EmailReqDto;
+import com.example.novel_backend.dto.req.UserLoginReqDto;
 import com.example.novel_backend.dto.req.UserRegisterReqDto;
+import com.example.novel_backend.dto.resp.ImgVerifyCodeRespDto;
+import com.example.novel_backend.dto.resp.UserLoginRespDto;
 import com.example.novel_backend.dto.resp.UserRegisterRespDto;
 import com.example.novel_backend.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -43,5 +46,23 @@ public class UserController {
     @PostMapping("register")
     public RestResp<UserRegisterRespDto> register(@Valid @RequestBody UserRegisterReqDto dto) {
         return userService.register(dto);
+    }
+
+    /**
+     * Get Image Captcha Interface
+     */
+    @Operation(summary = "Get Image Captcha Interface")
+    @GetMapping("img_verify_code")
+    public RestResp<ImgVerifyCodeRespDto> getImgVerifyCode() throws IOException {
+        return userService.getImgVerifyCode();
+    }
+
+    /**
+     * User login interface
+     */
+    @Operation(summary = "User login interface")
+    @PostMapping("login")
+    public RestResp<UserLoginRespDto> login(@Valid @RequestBody UserLoginReqDto dto){
+        return userService.login(dto);
     }
 }

@@ -23,6 +23,13 @@ public class CacheConsts {
             REDIS_CACHE_PREFIX + "emailVerifyCodeCache::";
 
     /**
+     * Image captcha cache KEY
+     */
+    public static final String IMG_VERIFY_CODE_CACHE_KEY =
+            REDIS_CACHE_PREFIX + "imgVerifyCodeCache::";
+
+
+    /**
      * Cache configuration constants
      */
     @Getter
