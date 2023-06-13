@@ -5,5 +5,6 @@ Week3:
   -Helped create user stories
   -Set Epic and task for front-end in Jira
   -Designed UI/UX of Web front-end
+  -Implemented Header, Nav bar, Home page
 
 
