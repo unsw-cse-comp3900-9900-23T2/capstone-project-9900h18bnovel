@@ -8,7 +8,6 @@ import {
 export default {
   data() {
     return {
-      logo: 'NovelHub Logo',
       header_container: 'header_container',
       header_left: 'header_left',
       header_right: 'header_right',
@@ -28,6 +27,7 @@ export default {
       this.isSearchActive = true;
     },
     handleSearch() {
+      // Waiting for API
       console.log(this.searchInput);
     },
     searchGlobalClick(){
@@ -43,20 +43,18 @@ export default {
   <div :class="header_container">
     <div :class="header_left">
       <!-- Click here will return to Home page in any circumstances -->
-      <h3>{{ logo }}</h3>
+      <img src="..\JustForFunLogo.png" class="logo">
       <div class="search_container">
         <div v-if="!isSearchActive">
           <el-button ref="searchContainer" @click.stop="toggleSearch" :icon="Search" round>Search</el-button>
         </div>
-        <div v-else>
-          <el-input v-model="searchInput" placeholder="Please Enter Keyword" @click.stop>
+        <div v-else @click.stop>
+          <el-input v-model="searchInput" placeholder="Please Enter Keyword">
             <template #prepend>
-              <el-button @click.stop :icon="Search" />
+              <el-button @click.stop="handleSearch" :icon="Search" />
             </template>
           </el-input>
         </div>
-        <!-- <input v-model="userIn_Search">
-                              <el-button :icon="Search" circle /> -->
       </div>
     </div>
     <!-- This right side of class will represent user thumbnail, name and log out button once token exists -->
@@ -68,6 +66,9 @@ export default {
 </template>
 
 <style >
+.logo{
+  height: 80%;
+}
 .header_container {
   display: flex;
   background-color: antiquewhite;
@@ -91,4 +92,5 @@ export default {
   /* border: 1px orange solid; */
   width: 20%;
 }
+
 </style>
