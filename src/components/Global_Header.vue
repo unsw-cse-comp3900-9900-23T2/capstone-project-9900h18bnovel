@@ -34,6 +34,12 @@ export default {
       if(this.isSearchActive == true){
         this.isSearchActive = false;
       }
+    },
+    goHome(){
+      this.$router.push('/home');
+    },
+    goLogin(){
+      this.$router.push('/login');
     }
   }
 }
@@ -43,10 +49,10 @@ export default {
   <div :class="header_container">
     <div :class="header_left">
       <!-- Click here will return to Home page in any circumstances -->
-      <img src="..\JustForFunLogo.png" class="logo">
+      <img src="..\logo.png" class="logo" @click="goHome">
       <div class="search_container">
         <div v-if="!isSearchActive">
-          <el-button ref="searchContainer" @click.stop="toggleSearch" :icon="Search" round>Search</el-button>
+          <el-button class="searchButton" ref="searchContainer" @click.stop="toggleSearch" :icon="Search" round>Search</el-button>
         </div>
         <div v-else @click.stop>
           <el-input v-model="searchInput" placeholder="Please Enter Keyword">
@@ -60,14 +66,18 @@ export default {
     <!-- This right side of class will represent user thumbnail, name and log out button once token exists -->
     <div :class="header_right">
       <!-- Click here will link to login page -->
-      <el-button type="primary">{{ login_button }}</el-button>
+      <el-button type="primary" @click="goLogin">{{ login_button }}</el-button>
     </div>
   </div>
 </template>
 
 <style >
 .logo{
-  height: 80%;
+  height: 60px;
+  width: 120px
+}
+.searchButton {
+  width: 200px;
 }
 .header_container {
   display: flex;
@@ -87,7 +97,7 @@ export default {
 
 .header_right {
   display: flex;
-  justify-content: center;
+  justify-content: right;
   align-items: center;
   /* border: 1px orange solid; */
   width: 20%;
