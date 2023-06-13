@@ -23,6 +23,8 @@ export default {
 <style >
 body{
   margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
 }
 /* .header_Nav_Container{
 

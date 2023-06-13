@@ -13,6 +13,27 @@ export default {
       header_left: 'header_left',
       header_right: 'header_right',
       login_button: 'Sign In',
+      isSearchActive: false,
+      searchInput: ''
+    }
+  },
+  mounted() {
+    document.addEventListener('click', this.searchGlobalClick);
+  },
+  beforeUnmount() {
+    document.removeEventListener('click', this.searchGlobalClick);
+  },
+  methods: {
+    toggleSearch() {
+      this.isSearchActive = true;
+    },
+    handleSearch() {
+      console.log(this.searchInput);
+    },
+    searchGlobalClick(){
+      if(this.isSearchActive == true){
+        this.isSearchActive = false;
+      }
     }
   }
 }
@@ -23,9 +44,19 @@ export default {
     <div :class="header_left">
       <!-- Click here will return to Home page in any circumstances -->
       <h3>{{ logo }}</h3>
-      <div>
-        <input v-model="userIn_Search">
-        <el-button :icon="Search" circle />
+      <div class="search_container">
+        <div v-if="!isSearchActive">
+          <el-button ref="searchContainer" @click.stop="toggleSearch" :icon="Search" round>Search</el-button>
+        </div>
+        <div v-else>
+          <el-input v-model="searchInput" placeholder="Please Enter Keyword" @click.stop>
+            <template #prepend>
+              <el-button @click.stop :icon="Search" />
+            </template>
+          </el-input>
+        </div>
+        <!-- <input v-model="userIn_Search">
+                              <el-button :icon="Search" circle /> -->
       </div>
     </div>
     <!-- This right side of class will represent user thumbnail, name and log out button once token exists -->
