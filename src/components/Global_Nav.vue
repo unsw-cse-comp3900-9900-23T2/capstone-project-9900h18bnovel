@@ -21,7 +21,7 @@ export default {
         <button>{{ latest_upda }}</button>
     </div>
 </template>
-<style >
+<style>
 .nav_container{
     display: flex;
     justify-content: space-between;
