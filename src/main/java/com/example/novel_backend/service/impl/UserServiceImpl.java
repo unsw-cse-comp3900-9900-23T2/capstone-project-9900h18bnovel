@@ -9,15 +9,15 @@ import com.example.novel_backend.core.common.resp.RestResp;
 import com.example.novel_backend.core.util.JwtUtils;
 import com.example.novel_backend.dao.entity.UserInfo;
 import com.example.novel_backend.dao.mapper.UserInfoMapper;
-import com.example.novel_backend.dto.req.EmailReqDto;
-import com.example.novel_backend.dto.req.UserLoginReqDto;
-import com.example.novel_backend.dto.req.UserRegisterReqDto;
+import com.example.novel_backend.dto.req.*;
 import com.example.novel_backend.dto.resp.ImgVerifyCodeRespDto;
+import com.example.novel_backend.dto.resp.UserInfoRespDto;
 import com.example.novel_backend.dto.resp.UserLoginRespDto;
 import com.example.novel_backend.dto.resp.UserRegisterRespDto;
 import com.example.novel_backend.manager.redis.VerifyCodeManager;
 import com.example.novel_backend.service.UserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 
@@ -33,6 +33,7 @@ import java.time.LocalDateTime;
  */
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class UserServiceImpl implements UserService {
 
     private final VerifyCodeManager verifyCodeManager;
@@ -42,11 +43,9 @@ public class UserServiceImpl implements UserService {
     private final JwtUtils jwtUtils;
 
     @Override
-    public RestResp<UserRegisterRespDto> getEmailVerifyCode(EmailReqDto dto) throws IOException {
+    public RestResp<Void> getEmailVerifyCode(EmailReqDto dto) throws IOException {
         verifyCodeManager.sendVerificationCode(dto.getEmail());
-        return RestResp.ok(
-                UserRegisterRespDto.builder().build()
-        );
+        return RestResp.ok();
     }
 
     @Override
@@ -79,6 +78,7 @@ public class UserServiceImpl implements UserService {
         // Delete Captcha
         verifyCodeManager.removeVerifyCode(dto.getEmail());
 
+        log.info("Register successful, username: {}", userInfo.getUsername());
         // Generate JWT and return
         return RestResp.ok(
                 UserRegisterRespDto.builder()
@@ -121,6 +121,7 @@ public class UserServiceImpl implements UserService {
         }
 
         // Login successful, JWT generated and returned
+        log.info("Login successful, username: {}", userInfo.getUsername());
         return RestResp.ok(
                 UserLoginRespDto.builder()
                         .token(jwtUtils.generateToken(userInfo.getId(), SystemConfigConsts.NOVEL_FRONT_KEY))
@@ -128,8 +129,54 @@ public class UserServiceImpl implements UserService {
                         .userName(userInfo.getUsername())
                         .build()
         );
-
-
-
     }
+
+    @Override
+    public RestResp<Void> resetPassword(ResetPasswordReqDto dto) {
+        // Verify that the graphic verification code is correct
+        if(!verifyCodeManager.verifyCodeOk(dto.getEmail(), dto.getVelCode())){
+            // Graphic CAPTCHA verification failure
+            throw new BusinessException(ErrorCodeEnum.USER_VERIFY_CODE_ERROR);
+        }
+        // Check if mailbox is registered or not
+        QueryWrapper<UserInfo> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("email", dto.getEmail()).last("LIMIT 1");
+        if (userInfoMapper.selectCount(queryWrapper) == 0){
+            // Email is registered
+            throw new BusinessException(ErrorCodeEnum.USER_ACCOUNT_NOT_EXIST);
+        }
+        UserInfo userInfo = userInfoMapper.selectOne(queryWrapper);
+        userInfo.setPassword(DigestUtils.md5DigestAsHex(
+                dto.getNewPassword().getBytes(StandardCharsets.UTF_8)));
+
+        // update password
+        log.info("Reset password successful, username: {}", userInfo.getUsername());
+        userInfoMapper.update(userInfo, queryWrapper);
+        return RestResp.ok();
+    }
+
+    @Override
+    public RestResp<UserInfoRespDto> getUserInfo(UserInfoReqDto dto) {
+        UserInfo userInfo = userInfoMapper.selectById(dto.getUserId());
+        return RestResp.ok(
+                UserInfoRespDto.builder()
+                        .username(userInfo.getUsername())
+                        .userPhoto(userInfo.getUserPhoto())
+                        .userSex(userInfo.getUserSex())
+                        .build()
+        );
+    }
+
+    @Override
+    public RestResp<Void> updateUserInfo(UserInfoUpdateReqDto dto) {
+        UserInfo userInfo = userInfoMapper.selectById(dto.getUserId());
+        userInfo.setUsername(dto.getUsername());
+        userInfo.setUserSex(dto.getUserSex());
+        userInfo.setUserPhoto(dto.getUserPhoto());
+        userInfoMapper.updateById(userInfo);
+        log.info("Update user information successful, username: {}", userInfo.getUsername());
+        return RestResp.ok();
+    }
+
+
 }
