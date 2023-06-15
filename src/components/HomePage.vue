@@ -1,13 +1,21 @@
+<script setup>
+
+import {
+  Top
+} from '@element-plus/icons-vue'
+</script >
 <script>
 import Header from './Global_Header.vue';
 import Nav from './Global_Nav.vue';
 import Footer from './Global_Footer.vue';
-
 export default {
   data() {
     return {
       header_Nav_Container: 'Header_Nav_Container',
-      collect_flag: true
+      collect_flag: true,
+      weekly_books: ['This', 'is', 'a', 'test', 'for', 'Weekly', 'books'],
+      hottest_books: ['This', 'is', 'a', 'test', 'for', 'Hottest', 'books'],
+      newest_books: ['This', 'is', 'a', 'test', 'for', 'Newest', 'books'],
     }
   },
   components: {
@@ -16,7 +24,7 @@ export default {
     Footer
   },
   methods: {
-    testFlag(){
+    testFlag() {
       this.collect_flag = !this.collect_flag;
     }
   }
@@ -28,22 +36,39 @@ export default {
     <Nav />
   </div>
   <div class="homeBody">
+    <div>
+    </div>
     <!-- <button @click="testFlag">test collect</button> -->
     <div v-if="collect_flag" class="collected_Novel">
-      Collected novels section
+      Collected books
     </div>
     <div v-else>
     </div>
+    <h2>Weekly Books</h2>
     <div class="weekly_books">
-      Weekly book section
+      <el-carousel :interval="4000" type="card" height="200px">
+        <el-carousel-item v-for="item in weekly_books" :key="item">
+          <h3 text="2xl" justify="center">{{ item }}</h3>
+        </el-carousel-item>
+      </el-carousel>
     </div>
     <h2>Recommondation</h2>
     <div class="recomm_books_container">
       <div class="hottest_books">
-        Hottest Book Section
+        <h3>Hottest Books</h3>
+        <el-carousel height="400px" direction="vertical" type="card" :autoplay="true">
+          <el-carousel-item v-for="item in hottest_books" :key="item">
+            <h3 text="2xl" justify="center">{{ item }}</h3>
+          </el-carousel-item>
+        </el-carousel>
       </div>
       <div class="best_books">
-        Best Books Section
+        <h3>Best Books</h3>
+        <el-carousel height="400px" direction="vertical" type="card" :autoplay="true" indicator-position="left">
+          <el-carousel-item v-for="item in newest_books" :key="item">
+            <h3 text="2xl" justify="center">{{ item }}</h3>
+          </el-carousel-item>
+        </el-carousel>
       </div>
     </div>
     <h2>Ranking of Books</h2>
@@ -60,6 +85,22 @@ export default {
     </div>
   </div>
   <Footer />
+  <!-- Go to top floating buttom -->
+  <el-backtop :bottom="100">
+    <div style="
+                            height: 85%;
+                            width: 85%;
+                            background-color: var(--el-bg-color-overlay);
+                            box-shadow: var(--el-box-shadow-lighter);
+                            text-align: center;
+                            line-height: 40px;
+                            color: #1989fa;
+                          ">
+      <el-icon>
+        <Top />
+      </el-icon>
+    </div>
+  </el-backtop>
 </template>
 
 <style >
@@ -69,7 +110,7 @@ body {
   font-size: 14px;
 }
 
-.homeBody{
+.homeBody {
   height: 100vh;
   display: flex;
   flex-direction: column;
@@ -77,23 +118,24 @@ body {
   justify-content: center;
 }
 
-.rank_books_container{
+.rank_books_container {
   margin-top: -10px;
   width: 80%;
-  height: 40%;
   display: flex;
 }
 
-.click_rank{
+.click_rank {
   background-color: aliceblue;
   width: 33.33%;
 }
-.newest_rank{
+
+.newest_rank {
   background-color: antiquewhite;
   width: 33.33%;
 }
-.update_rank{
-  background-color:lavender;
+
+.update_rank {
+  background-color: lavender;
   width: 33.33%;
 }
 
@@ -102,31 +144,71 @@ body {
   margin-bottom: -5px;
   width: 80%;
   display: flex;
-  height: 40%;
-}
-.hottest_books {
-  width: 50%;
-  background-color: beige;
-}
-.best_books{
-  width: 50%;
-  background-color:blanchedalmond;
-}
-.collected_Novel {
-  background-color: gainsboro;
-  width: 80%;
-  height: 20%; /* Need change */
-  margin-bottom: 15px;
-  margin-top: 15px;
 }
 
-.weekly_books{
-  background-color: antiquewhite;
+.hottest_books {
+  text-align: center;
+  width: 50%;
+  margin-top: -20px;
+}
+
+.best_books {
+  width: 50%;
+  text-align: center;
+  margin-top: -20px;
+}
+
+.collected_Novel {
+  width: 80%;
+  border: 1px solid;
+  height: 13%;
+  background-color:#d3dce6;
+  margin-top: 10px;
+}
+
+.weekly_books {
   width: 80%;
   height: 25%;
   margin-bottom: -5px;
+  margin-top: -10px;
 }
-/* .header_Nav_Container{
 
-} */
+.el-carousel__item h3 {
+  color: #475669;
+  opacity: 0.75;
+  line-height: 200px;
+  margin: 0;
+  text-align: center;
+}
+
+.el-carousel__item:nth-child(2n) {
+  background-color: #99a9bf;
+}
+
+.el-carousel__item:nth-child(2n + 1) {
+  background-color: #d3dce6;
+}
+
+.time {
+  font-size: 12px;
+  color: #999;
+}
+
+.bottom {
+  margin-top: 13px;
+  line-height: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.button {
+  padding: 0;
+  min-height: auto;
+}
+
+.image {
+  width: 100%;
+  display: block;
+}
 </style>

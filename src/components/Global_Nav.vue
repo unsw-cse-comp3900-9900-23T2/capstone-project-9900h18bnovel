@@ -2,79 +2,52 @@
 export default {
   data() {
     return {
-      nav_container: 'nav_container',
-      browse: 'Browse',
-      ranking: 'Ranking',
-      all_Nov: 'All Novel',
-      my_creat: 'My Creation',
-      latest_upda: 'Lastest Update'
     }
   }
 }
 </script>
 <template>
-  <div :class="nav_container">
-    <el-dropdown :hide-on-click="false">
-      <el-link>{{ browse }}</el-link>
-      <template #dropdown>
-        <el-dropdown-menu>
-          <el-dropdown-item>
-            <b>Filter 1</b>
-            <el-dropdown-item divided>Action 1</el-dropdown-item>
-            <el-dropdown-item divided>Action 1</el-dropdown-item>
-            <el-dropdown-item divided>Action 1</el-dropdown-item>
-          </el-dropdown-item>
-          <el-dropdown-item>
-            <b>Filter 2</b>
-            <el-dropdown-item divided>Action 2</el-dropdown-item>
-            <el-dropdown-item divided>Action 2</el-dropdown-item>
-            <el-dropdown-item divided>Action 2</el-dropdown-item>
-          </el-dropdown-item>
-          <el-dropdown-item>
-            <b>Filter 3</b>
-            <el-dropdown-item divided>Action 3</el-dropdown-item>
-            <el-dropdown-item divided>Action 3</el-dropdown-item>
-            <el-dropdown-item divided>Action 3</el-dropdown-item>
-          </el-dropdown-item>
-          <el-dropdown-item>
-            <b>Filter 4</b>
-            <el-dropdown-item divided>Action 4</el-dropdown-item>
-            <el-dropdown-item divided>Action 4</el-dropdown-item>
-            <el-dropdown-item divided>Action 4</el-dropdown-item>
-          </el-dropdown-item>
-          <el-dropdown-item>
-            <b>Filter 5</b>
-            <el-dropdown-item divided>Action 5</el-dropdown-item>
-            <el-dropdown-item divided>Action 5</el-dropdown-item>
-            <el-dropdown-item divided>Action 5</el-dropdown-item>
-          </el-dropdown-item>
-        </el-dropdown-menu>
-      </template>
-    </el-dropdown>
-
-    <el-dropdown :hide-on-click="false">
-      <el-link>{{ ranking }}</el-link>
-      <template #dropdown>
-        <el-dropdown-menu>
-          <el-dropdown-item>Rank 1</el-dropdown-item>
-          <el-dropdown-item divided>Rank 2</el-dropdown-item>
-          <el-dropdown-item divided>Rank 3</el-dropdown-item>
-        </el-dropdown-menu>
-      </template>
-    </el-dropdown><!-- with dropbox -->
-    <el-link>{{ all_Nov }}</el-link>
-    <el-link>{{ my_creat }}</el-link>
-    <el-link>{{ latest_upda }}</el-link>
-  </div>
+  <div class="nav_container">
+    <el-menu :default-active="activeIndex2" class="el-menu-demo" mode="horizontal" background-color="#545c64"
+      text-color="#fff" active-text-color="#ffd04b" @select="handleSelect">
+      <el-menu-item index="1">All Novels</el-menu-item>
+      <el-sub-menu index="2">
+        <template #title>Browse</template>
+        <el-sub-menu index="2-1">
+          <template #title>Filter 1</template>
+          <el-menu-item index="2-1-1">1</el-menu-item>
+          <el-menu-item index="2-1-2">2</el-menu-item>
+          <el-menu-item index="2-1-3">3</el-menu-item>
+        </el-sub-menu>
+        <el-sub-menu index="2-2">
+          <template #title>Filter 2</template>
+          <el-menu-item index="2-2-1">1</el-menu-item>
+          <el-menu-item index="2-2-2">2</el-menu-item>
+          <el-menu-item index="2-2-3">3</el-menu-item>
+        </el-sub-menu>
+        <el-sub-menu index="2-3">
+          <template #title>Filter 3</template>
+          <el-menu-item index="2-3-1">1</el-menu-item>
+          <el-menu-item index="2-3-2">2</el-menu-item>
+          <el-menu-item index="2-3-3">3</el-menu-item>
+        </el-sub-menu>
+        <el-sub-menu index="2-4">
+          <template #title>Filter 4</template>
+          <el-menu-item index="2-4-1">1</el-menu-item>
+          <el-menu-item index="2-4-2">2</el-menu-item>
+          <el-menu-item index="2-4-3">3</el-menu-item>
+        </el-sub-menu>
+        </el-sub-menu>
+        <el-sub-menu index="3">
+          <template #title>Ranking</template>
+          <el-menu-item index="3-1">Rank 1</el-menu-item>
+          <el-menu-item index="3-2">Rank 2</el-menu-item>
+          <el-menu-item index="3-3">Rank 3</el-menu-item>
+      </el-sub-menu>
+    <el-menu-item index="4">My Creation</el-menu-item>
+    <el-menu-item index="5">Newest Update</el-menu-item>
+  </el-menu>
+</div>
 </template>
 <style>
-b {
-  font-size: medium;
-}
-.nav_container {
-  display: flex;
-  justify-content: space-between;
-  background-color: rgb(203, 252, 252);
-  padding: 20px;
-}
 </style>
