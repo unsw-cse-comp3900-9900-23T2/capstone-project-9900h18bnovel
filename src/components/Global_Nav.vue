@@ -67,11 +67,14 @@ export default {
     <el-link>{{ latest_upda }}</el-link>
   </div>
 </template>
-<style >
-.nav_container{
-    display: flex;
-    justify-content: space-between;
-    background-color:rgb(203, 252, 252);
-    padding: 20px;
+<style>
+b {
+  font-size: medium;
+}
+.nav_container {
+  display: flex;
+  justify-content: space-between;
+  background-color: rgb(203, 252, 252);
+  padding: 20px;
 }
 </style>
