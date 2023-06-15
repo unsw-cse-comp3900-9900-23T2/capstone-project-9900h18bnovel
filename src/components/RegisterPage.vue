@@ -1,42 +1,49 @@
+
 <template>
-	<div :class="register_container">
+	<el-form :inline="true" :model="register_container" class="register_container" v-show="show_Register_Form">
+	<!-- <div :class="register_container"> -->
 		<div class="logo_container"></div>
-
-		<div :class="email_contianer">
-			<p :class="email">Email: </p>
-			<input type="text" :class="email_input">
-			<button :class="get_captcha">Verify email</button>
+		<el-divider />
+		<div class="email_contianer">
+			<el-form-item label="Email: "></el-form-item>
+			<el-input v-model="email" placeholder="Email address" style="margin-right: 10px;"/>
+			<el-button type="primary">Verify</el-button>
 		</div>
 
-		<div :class="captcha_container">
-			<p :class="captcha">Captcha: </p>
-			<input type="text" :class="captcha_input">
-			<div :class="show_captcha"></div>
+		<div class="captcha_container">
+			<el-form-item label="Captcha: "></el-form-item>
+			<el-input v-model="captcha" placeholder="Captcha you get" style="margin-right: 10px;"/>
+			<el-image style="width: 4em; height: 80%" :src="url" :fit="fit" />
+			<!-- <div class="show_captcha"></div> -->
 		</div>
 
-		<div :class="username_container">
-			<p :class="username">Username: </p>
-			<input type="text" :class="username_input">
+		<div class="username_container">
+			<el-form-item label="Username: "></el-form-item>
+			<el-input v-model="username" placeholder="Your username" />
 		</div>
 
-		<div :class="set_password">
-			<p :class="set_pwd">Set your password: </p>
-			<input type="text" :class="set_pwd_input">
+		<div class="set_password">
+			<el-form-item label="Set your password: "></el-form-item>
+			<el-input v-model="set_pwd_input" placeholder="Set your password" />
 		</div>
 
-		<div :class="confirm_password">
-			<p :class ='confirm_pwd'>Confirm your password: </p>
-			<input type="text" :class ='confirm_pwd_input'>
+		<div class="confirm_password">
+			<el-form-item label="Confirm your password:"></el-form-item>
+			<el-input v-model="confirm_pwd_input" placeholder="Confirm your password" />
 		</div>
 
-		<div :class="other_options">
-			<button :class="turn_to_login">Already a user? Login!</button>
-			<button :class="unknown_option"></button>
+		<div class="other_options">
+			<el-button type="primary">Already a user? Login here!</el-button>
+			<el-button type="primary">Submit !</el-button>
+			<el-button @click="hide_register_form">Cancel</el-button>
 		</div>
-	</div>
+	<!-- </div> -->
+	</el-form>
+
 </template>
 
-<script>
+<script >
+
 export default {
 	data(){
 		return{
@@ -51,17 +58,20 @@ export default {
 			captcha_input_box: 'captcha_input',
 			captcha_display: 'show_captcha',
 			username_container: 'username_container',
-			username_hint: 'username',
 			username_input_box: 'username_input',
 			set_password: 'set_password',
-			set_pwd_hint: 'set_pwd',
 			set_pwd_input_box: 'set_pwd_input',
 			confirm_password: 'confirm_password',
 			confirm_pwd_hint :'confirm_pwd',
 			confirm_pwd_input_box: 'confirm_pwd_input',
 			other_options: 'other_options',
-			turn_to_login: 'turn_to_login',
-			unknown_option: 'unknown_option'
+			show_Register_Form: false
+			// 调试完了改成true
+		}
+	},
+	methods:{
+		hide_register_form(){
+			this.show_Register_Form = false;
 		}
 	}
 }
@@ -71,8 +81,8 @@ export default {
 .register_container{
     display: block;
     background-color: antiquewhite;
-    width: 16em;
-    height: 26em;
+    width: 36em;
+    height: auto;
     border-radius: 10px;
     box-shadow: 0 10px 10px rgba(0, 0, 0, 0.4);;
 	padding: 2em;
@@ -85,29 +95,29 @@ export default {
 	height: 100px;
 	border-radius: 50%;
 	background-color: #fff;
-	margin: auto;
+	margin: 1.5em auto;
 }
 .email_contianer, .captcha_container, .username_container, .other_options{
 	display: flex;
-	justify-content: space-between;
-    align-items: center;
-	height: 2em;
+    justify-content: space-evenly;
+    align-items: baseline;
+    height: 2em;
     margin: 0.5em 0 0.5em 0;
 }
 
+.show_captcha{
+	width: 5em;
+	height: 80%;
+	background-color: lightskyblue;
+}
 .set_password, .confirm_password{
-	display: block;
-	margin: 0;/*0.5em 0 0.5em 0*/
+	display: flex;
+    justify-content: space-evenly;
+    align-items: baseline;
+    height: 2em;
+    margin: 0.5em 0 0.5em 0;
 }
 
-.set_password p, .confirm_password p{
-	margin: 5px auto;
-}
-
-.get_captcha, .turn_to_login, .unknown_option{
-	display: inline-block;
-	height: 1.5em;
-}
 
 
 </style>
