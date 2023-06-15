@@ -65,7 +65,7 @@ export default {
 			confirm_pwd_hint :'confirm_pwd',
 			confirm_pwd_input_box: 'confirm_pwd_input',
 			other_options: 'other_options',
-			show_Register_Form: false
+			show_Register_Form: true
 			// 调试完了改成true
 		}
 	},

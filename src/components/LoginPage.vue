@@ -1,4 +1,5 @@
 <template>
+	<Header />
 	<RegisterPage />
 	<el-form :inline="true" :model="login_form" class = "login_form" v-show="show_login_form">
 		<div class="logo_container"></div>
@@ -22,15 +23,15 @@
 </template>
 
 <script>
-import RegisterPage from './RegisterPage.vue'
+import RegisterPage from './RegisterPage.vue';
+import Header from './Global_Header.vue';
+
 export default {
 	
   data(){
 	return {
 		login_form: "login_form",
 		show_login_form: true,
-		
-
 	}
   },
   methods:{
@@ -41,6 +42,9 @@ export default {
 		this.show_login_form = false;
 		RegisterPage.register_container.show_Register_Form = true;
 	}
+  },
+  components: {
+	Header
   }
 }
 </script>
