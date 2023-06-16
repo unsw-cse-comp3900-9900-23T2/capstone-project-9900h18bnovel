@@ -47,7 +47,7 @@ export default {
 <template>
   <div :class="header_container">
     <!-- Click here will return to Home page in any circumstances -->
-    <img src="..\logo.png" class="logo" @click="goHome">
+    <img src="..\JustForFunLogo.png" class="logo" @click="goHome">
 
     <div class="search_container">
       <div v-if="!isSearchActive">
@@ -107,7 +107,7 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: antiquewhite;
+  background-color: black;
   /* border: 1px orangered solid; */
   padding: 20px;
 }

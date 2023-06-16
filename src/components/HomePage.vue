@@ -1,7 +1,6 @@
 <script setup>
-
 import {
-  Top
+  CaretTop
 } from '@element-plus/icons-vue'
 </script >
 <script>
@@ -12,10 +11,10 @@ export default {
   data() {
     return {
       header_Nav_Container: 'Header_Nav_Container',
-      collect_flag: true,
-      weekly_books: ['This', 'is', 'a', 'test', 'for', 'Weekly', 'books'],
+      collect_flag: false,
+      weekly_books: ['This', 'is', 'test', 'for', 'Weekly', 'books'],
       hottest_books: ['This', 'is', 'a', 'test', 'for', 'Hottest', 'books'],
-      newest_books: ['This', 'is', 'a', 'test', 'for', 'Newest', 'books'],
+      newest_books: ['This', 'is', 'a', 'test', 'for', 'Best', 'books'],
     }
   },
   components: {
@@ -38,19 +37,26 @@ export default {
   <div class="homeBody">
     <div>
     </div>
-    <!-- <button @click="testFlag">test collect</button> -->
-    <div v-if="collect_flag" class="collected_Novel">
-      Collected books
-    </div>
-    <div v-else>
-    </div>
-    <h2>Weekly Books</h2>
-    <div class="weekly_books">
-      <el-carousel :interval="4000" type="card" height="200px">
-        <el-carousel-item v-for="item in weekly_books" :key="item">
-          <h3 text="2xl" justify="center">{{ item }}</h3>
-        </el-carousel-item>
-      </el-carousel>
+    <div class="weekly_collect_books_container">
+      <div class="weekly_books">
+        <h3>Weekly Books</h3>
+        <el-carousel :interval="4000" height="300px">
+          <el-carousel-item v-for="item in weekly_books" :key="item">
+            <h3 text="2xl" justify="center">{{ item }}</h3>
+          </el-carousel-item>
+        </el-carousel>
+      </div>
+      <div class="collected_novel_container">
+        <h3>Collected Books</h3>
+        <div v-if="collect_flag" class="collected_Novel">
+          U have collect books
+          <button @click="testFlag">test collect</button>
+        </div>
+        <div v-else class="collected_Novel">
+          U don't have collect books
+          <button @click="testFlag">test collect</button>
+        </div>
+      </div>
     </div>
     <h2>Recommondation</h2>
     <div class="recomm_books_container">
@@ -87,17 +93,9 @@ export default {
   <Footer />
   <!-- Go to top floating buttom -->
   <el-backtop :bottom="100">
-    <div style="
-                            height: 85%;
-                            width: 85%;
-                            background-color: var(--el-bg-color-overlay);
-                            box-shadow: var(--el-box-shadow-lighter);
-                            text-align: center;
-                            line-height: 40px;
-                            color: #1989fa;
-                          ">
+    <div class="goTopButton">
       <el-icon>
-        <Top />
+        <CaretTop />
       </el-icon>
     </div>
   </el-backtop>
@@ -111,17 +109,25 @@ body {
 }
 
 .homeBody {
-  height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
 }
 
+.weekly_collect_books_container {
+  margin-top: 15px;
+  width: 60%;
+  display: flex;
+  justify-content: space-between;
+}
+
 .rank_books_container {
   margin-top: -10px;
-  width: 80%;
+  margin-bottom: 15px;
+  width: 60%;
   display: flex;
+  height: 400px;
 }
 
 .click_rank {
@@ -142,7 +148,7 @@ body {
 .recomm_books_container {
   margin-top: -10px;
   margin-bottom: -5px;
-  width: 80%;
+  width: 60%;
   display: flex;
 }
 
@@ -158,19 +164,33 @@ body {
   margin-top: -20px;
 }
 
-.collected_Novel {
-  width: 80%;
+.collected_novel_container{
+  width: 50%;
+  margin-left: 5px;
+  display: flex;
+  flex-direction: column;
+}
+
+.collected_Novel{
   border: 1px solid;
-  height: 13%;
-  background-color:#d3dce6;
-  margin-top: 10px;
+  height: 100%;
 }
 
 .weekly_books {
-  width: 80%;
-  height: 25%;
-  margin-bottom: -5px;
-  margin-top: -10px;
+  width: 50%;
+  margin-right: 5px;
+}
+
+.goTopButton {
+  height: 100%;
+  width: 100%;
+  background-color: var(--el-bg-color-overlay);
+  box-shadow: var(--el-box-shadow-lighter);
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  line-height: 40px;
+  color: #1989fa;
 }
 
 .el-carousel__item h3 {
