@@ -3,9 +3,12 @@ Week2：
   -Helped figure front-end and back-end tools and environment
 Week3:
   -Helped create user stories
-  -Set Epic and task for front-end in Jira
   -Designed UI/UX of Web front-end
+  -Set Epic and task for front-end in Jira
+  -Trans proposal from .doc to latex
   -Implemented vue.js enviorments
-  -Implemented Header, Nav bar, Home page
+  -Applied global router
+  -Implemented Header, footer, Nav bar, Home page
+  
 
 
