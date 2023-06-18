@@ -9,6 +9,8 @@ Week3:
   -Implemented vue.js enviorments
   -Applied global router
   -Implemented Header, footer, Nav bar, Home page
-  
+Week4:
+  -Fixed resolution problem
+  -Built more dynamic effect on home page, header, nav bar, footer
 
 
