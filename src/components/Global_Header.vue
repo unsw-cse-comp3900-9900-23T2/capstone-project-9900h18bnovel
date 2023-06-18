@@ -108,7 +108,6 @@ export default {
   justify-content: space-between;
   align-items: center;
   background-color: black;
-  /* border: 1px orangered solid; */
   padding: 20px;
 }
 
@@ -116,16 +115,14 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  /* border: 1px red solid; */
-  width: 80%;
+  width: 70%;
 }
 
 .header_right {
   display: flex;
   justify-content: right;
   align-items: center;
-  /* border: 1px orange solid; */
-  width: 20%;
+  width: 30%;
 }
 
 @media (max-width: 500px) {
