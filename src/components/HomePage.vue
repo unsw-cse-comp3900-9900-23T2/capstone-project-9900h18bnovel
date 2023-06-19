@@ -1,7 +1,8 @@
 <script setup>
 import {
   CaretTop,
-  UserFilled
+  UserFilled,
+  User
 } from '@element-plus/icons-vue';
 import { ref } from 'vue'
 const value = ref(4.8)
@@ -22,23 +23,32 @@ export default {
       { title: 'Shadow of Evil', image: 'https://i.etsystatic.com/19280387/r/il/63ad6f/2350960458/il_fullxfull.2350960458_sj9e.jpg', author: "Tommas Tu", des: 'Through this wide and troubled world I roam, alone and without a home, seeking solace in the depths of my soul' },
       { title: 'The Hypocrite World', image: 'https://marketplace.canva.com/EAD7WuSVrt0/1/0/1003w/canva-colorful-illustration-young-adult-book-cover-LVthABb24ik.jpg', author: "Siant Diygo", des: 'Amidst the chaos and confusion, she remained calm and composed, a beacon of hope in the midst of darkness' }
     ]
-    const comments_black_universe=[
-      { comment: 'This novel is a captivating masterpiece that kept me hooked from beginning to end. The characters are so well-developed, and the plot twists had me on the edge of my seat!', commenter:'Reviewer1'},
-      { comment: "I couldn't put this book down! The author's writing style is incredibly engaging, and the story had me completely immersed in its world. Highly recommended for any avid reader!", commenter: 'Reviewer2'},
-      { comment: "An absolute page-turner! The author has a gift for creating vivid imagery and evoking strong emotions. I laughed, I cried, and I couldn't get enough of this compelling story", commenter: 'Reviewer3'},
-      { comment: "This novel is a true gem. The narrative is beautifully crafted, and the themes explored are thought-provoking. It's a literary work that will stay with me long after I've turned the last page", commenter: 'Reviewer4'},
-      { comment: "I'm completely blown away by the depth and complexity of the characters in this novel. The author has created a rich and believable world that I didn't want to leave. A must-read for anyone seeking an immersive literary experience", commenter: 'Reviewer5'},
-      { comment: "If you're looking for a novel that will take you on an unforgettable journey, look no further. The writing is exquisite, and the plot twists are cleverly executed. I was captivated by every word and eagerly await the author's next masterpiece", commenter: 'Reviewer6'},
+    const comments_black_universe = [
+      { comment: 'This novel is a captivating masterpiece that kept me hooked from beginning to end. The characters are so well-developed, and the plot twists had me on the edge of my seat!', commenter: 'Reviewer1' },
+      { comment: "I couldn't put this book down! The author's writing style is incredibly engaging, and the story had me completely immersed in its world. Highly recommended for any avid reader!", commenter: 'Reviewer2' },
+      { comment: "An absolute page-turner! The author has a gift for creating vivid imagery and evoking strong emotions. I laughed, I cried, and I couldn't get enough of this compelling story", commenter: 'Reviewer3' },
+      { comment: "This novel is a true gem. The narrative is beautifully crafted, and the themes explored are thought-provoking. It's a literary work that will stay with me long after I've turned the last page", commenter: 'Reviewer4' },
+      { comment: "I'm completely blown away by the depth and complexity of the characters in this novel. The author has created a rich and believable world that I didn't want to leave. A must-read for anyone seeking an immersive literary experience", commenter: 'Reviewer5' },
+      { comment: "If you're looking for a novel that will take you on an unforgettable journey, look no further. The writing is exquisite, and the plot twists are cleverly executed. I was captivated by every word and eagerly await the author's next masterpiece", commenter: 'Reviewer6' },
 
     ]
     const newest_books_images = ['https://miblart.com/wp-content/uploads/2020/01/crime-and-mystery-cover-scaled-1.jpeg', 'https://s26162.pcdn.co/wp-content/uploads/2020/01/Sin-Eater-by-Megan-Campisi.jpg', 'https://s26162.pcdn.co/wp-content/uploads/2019/12/46301955-668x1024.jpg']
+
+    const click_rank_info = [
+      { value: 5, title: "Crack The Code", image: "https://www.adobe.com/express/create/cover/media_181e3d2c78f153ae7bf0e19a2faeb9a76e234da30.jpeg?width=400&format=jpeg&optimize=medium", author: "Patrick C.Harless", des: "In a small coastal town, a mysterious stranger arrives, bringing with him an air of intrigue and secrets. As the townspeople become entranced by his enigmatic presence, they soon discover that he holds the key to their deepest desires and darkest fears." },
+      { value: 4.7, title: "Pattingson's Curse", image: "https://www.designbookcover.pt/uploads/media/photos/cache/pattinsons_curse_72_media_huge_thumbnail.jpg", author: "Graeme Arnold", des: "Set in a dystopian future, where technology rules every aspect of life, a group of rebels embarks on a perilous journey to dismantle the oppressive regime. Along the way, they uncover shocking truths about the world they thought they knew, testing their resolve and challenging their beliefs." },
+      { value: 4.5, title: "Only Words", image: "https://www.designbookcover.pt/uploads/media/photos/cache/b1_only_words_72_media_huge_thumbnail.jpg", author: "Shane Ashby Trilogy", des: "In the heart of a bustling metropolis, two star-crossed lovers find themselves caught in a web of forbidden love. As they navigate the complexities of their social divide and societal expectations, they must confront the consequences of their actions and make choices that could change their lives forever." },
+      { value: 4.0, title: "Invisible Man", image: "https://news.harvard.edu/wp-content/uploads/2022/07/20220727_books_invisibleman_2500-655x1024.jpg", author: "Ralph Ellison", des: "In a realm of magic and mythical creatures, a young hero emerges from humble beginnings. With an ancient prophecy guiding their path, they embark on a quest to save their kingdom from an impending darkness. Along the way, they face formidable challenges, forge unlikely alliances, and discover the true power within themselves" },
+      { value: 3.6, title: "When Blood Meets Earth", image: "https://www.nairaland.com/attachments/16975928_octoberillustration6768x1152_jpeg7ab7fc0d22a2a942cf8632fae8e2295b", author: "E.A.NOBLE", des: "Against the backdrop of war-torn lands, a group of unlikely companions bands together to reclaim their homeland from the clutches of evil. As they navigate treacherous landscapes and face unimaginable dangers, they learn the true meaning of sacrifice, loyalty, and the enduring strength of friendship." }
+    ]
     return {
       collect_flag: false,
-      hottest_books_info: hottest_books_info,
-      comments_black_universe:comments_black_universe,
       weekly_books_info: weekly_books_info,
+      hottest_books_info: hottest_books_info,
+      comments_black_universe: comments_black_universe,
       newest_books_images: newest_books_images,
-      newest_books: ['This', 'is', 'a', 'test', 'for', 'Best', 'books'],
+      login_button: 'Sign in',
+      click_rank_info: click_rank_info,
     }
   },
   components: {
@@ -54,6 +64,9 @@ export default {
       return {
         'background-image': `url(${imageUrl})`
       };
+    },
+    goLogin() {
+      this.$router.push('/login');
     }
   },
   computed: {
@@ -94,13 +107,14 @@ export default {
       </div>
       <div class="collected_novel_container">
         <h3>Collected Books</h3>
-        <div v-if="collect_flag" class="collected_Novel">
-          U have collect books
-          <button @click="testFlag">test collect</button>
+        <div v-if="!collect_flag" class="collected_novel_na_user">
+          <h2>Please Login in to see the contents</h2>
+          <el-button class="login_button" type="primary" @click="goLogin"><el-icon>
+              <User />
+            </el-icon>{{ login_button }}</el-button>
         </div>
-        <div v-else class="collected_Novel">
+        <div v-else class="collected_novel_user">
           U don't have collect books
-          <button @click="testFlag">test collect</button>
         </div>
       </div>
     </div>
@@ -126,13 +140,14 @@ export default {
               </div>
               <div class="carousel_hot_right_container">
                 <div class="carousel_hot_right_comments_container">
-                  <el-text class="carousel_hot_right_comments" v-for="com in filteredComments" :key="com">{{ com.comment }}</el-text>
+                  <el-text class="carousel_hot_right_comments" v-for="com in filteredComments" :key="com">{{ com.comment
+                  }}</el-text>
                 </div>
                 <div class="carousel_hot_right_rates_container">
                   <el-rate v-model="value" disabled show-score text-color="#ff9900" size="small"
-                  score-template="{value} points" />
+                    score-template="{value} points" />
                 </div>
-              </div>     
+              </div>
             </el-row>
           </el-carousel-item>
         </el-carousel>
@@ -169,18 +184,67 @@ export default {
     </div>
     <h2>Ranking of Books</h2>
     <div class="rank_books_container">
-      <div class="click_rank">
-        click rank
+      <div class="rank_container">
+        <div style="font-size: 18pt; text-align: center;">Click Rank</div>
+        <div class="rank_items" v-for="(item, index) in click_rank_info" :key="item">
+          <div class="rank_image">
+            <img style="height: 80px;" :src="item.image" />
+          </div>
+          <div class="rank_rank" :class="{ 'red': index === 0, 'orange': index === 1, 'green': index === 2 }">
+            0{{ index + 1 }}
+          </div>
+          <div class="rank_info">
+            <el-text truncated style="font-size: 14pt; color: black;">{{ item.title }}</el-text>
+            <br />
+            <el-text truncated style="font-size: 10pt;">{{ item.author }}</el-text>
+            <br />
+            <el-text truncated style="font-size: 10pt; width: 250px;"><el-rate v-model="item.value" disabled show-score
+                text-color="#ff9900" size="small" score-template="{value} points" /></el-text>
+          </div>
+        </div>
       </div>
-      <div class="newest_rank">
-        newest rank
+      <div class="rank_container">
+        <div style="font-size: 18pt; text-align: center;">Newest Rank</div>
+        <div class="rank_items" v-for="(item, index) in 5" :key="item">
+          <div class="rank_image">
+            <img style="height: 80px;"
+              src="https://www.adobe.com/express/create/cover/media_181e3d2c78f153ae7bf0e19a2faeb9a76e234da30.jpeg?width=400&format=jpeg&optimize=medium" />
+          </div>
+          <div class="rank_rank" :class="{ 'red': index === 0, 'orange': index === 1, 'green': index === 2 }">
+            0{{ index + 1 }}
+          </div>
+          <div class="rank_info">
+            <el-text truncated style="font-size: 14pt; color: black;">Title</el-text>
+            <br />
+            <el-text truncated style="font-size: 10pt;">Author</el-text>
+            <br />
+            <el-text truncated style="font-size: 10pt; width: 250px;"><el-rate disabled show-score text-color="#ff9900"
+                size="small" /></el-text>
+          </div>
+        </div>
       </div>
-      <div class="update_rank">
-        update rank
+      <div class="rank_container">
+        <div style="font-size: 18pt; text-align: center;">Update Rank</div>
+        <div class="rank_items" v-for="(item, index) in 5" :key="item">
+          <div class="rank_image">
+            <img style="height: 80px;"
+              src="https://www.adobe.com/express/create/cover/media_181e3d2c78f153ae7bf0e19a2faeb9a76e234da30.jpeg?width=400&format=jpeg&optimize=medium" />
+          </div>
+          <div class="rank_rank" :class="{ 'red': index === 0, 'orange': index === 1, 'green': index === 2 }">
+            0{{ index + 1 }}
+          </div>
+          <div class="rank_info">
+            <el-text truncated style="font-size: 14pt; color: black;">title</el-text>
+            <br />
+            <el-text truncated style="font-size: 10pt;">author</el-text>
+            <br />
+            <el-text truncated style="font-size: 10pt; width: 250px;"><el-rate disabled show-score text-color="#ff9900"
+                size="small" /></el-text>
+          </div>
+        </div>
       </div>
     </div>
   </div>
-  <Footer />
   <!-- Go to top floating buttom -->
   <el-backtop :bottom="100">
     <div class="goTopButton">
@@ -189,6 +253,7 @@ export default {
       </el-icon>
     </div>
   </el-backtop>
+  <Footer />
 </template>
 
 <style >
@@ -198,6 +263,7 @@ body {
   font-size: 14px;
   width: 1920px;
   margin: 0 auto;
+  overflow-x: hidden;
 }
 
 .homeBody {
@@ -212,120 +278,11 @@ body {
   width: 60%;
   display: flex;
   justify-content: space-between;
-
-}
-
-.rank_books_container {
-  margin-top: -10px;
-  margin-bottom: 15px;
-  width: 60%;
-  display: flex;
-  height: 400px;
-}
-
-.click_rank {
-  background-color: aliceblue;
-  width: 33.33%;
-}
-
-.newest_rank {
-  background-color: antiquewhite;
-  width: 33.33%;
-}
-
-.update_rank {
-  background-color: lavender;
-  width: 33.33%;
-}
-
-.recomm_books_container {
-  margin-top: -10px;
-  margin-bottom: -5px;
-  width: 60%;
-  display: flex;
-  justify-content: space-between;
-}
-
-.hottest_books {
-  width: 45%;
-  margin-top: -20px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
-
-.best_books {
-  width: 45%;
-  margin-top: -20px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
-
-.collected_novel_container {
-  width: 50%;
-  margin-left: 5px;
-  display: flex;
-  flex-direction: column;
-}
-
-.collected_Novel {
-  border: 1px solid;
-  height: 100%;
 }
 
 .weekly_books {
   width: 50%;
   margin-right: 5px;
-}
-
-.goTopButton {
-  height: 100%;
-  width: 100%;
-  background-color: var(--el-bg-color-overlay);
-  box-shadow: var(--el-box-shadow-lighter);
-  align-items: center;
-  display: flex;
-  justify-content: center;
-  line-height: 40px;
-  color: #1989fa;
-}
-
-.el-carousel__item h3 {
-  color: #475669;
-  opacity: 1;
-  line-height: 300px;
-  margin: 0;
-  text-align: center;
-}
-
-.el-carousel__item:nth-child(n) {
-  background-color: rgb(253, 244, 244);
-}
-
-.time {
-  font-size: 12px;
-  color: #999;
-}
-
-.bottom {
-  margin-top: 13px;
-  line-height: 12px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.button {
-  padding: 0;
-  min-height: auto;
-}
-
-.image {
-  width: 100%;
-  display: block;
 }
 
 .carousel_weekly_background {
@@ -378,6 +335,61 @@ body {
   padding-right: 50px;
 }
 
+.collected_novel_container {
+  width: 50%;
+  margin-left: 5px;
+  display: flex;
+  flex-direction: column;
+}
+
+.collected_novel_na_user {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  box-shadow: var(--el-box-shadow);
+  background-color: #FAFCFF;
+}
+
+.recomm_books_container {
+  margin-top: -10px;
+  margin-bottom: -5px;
+  width: 60%;
+  display: flex;
+  justify-content: space-between;
+}
+
+.hottest_books {
+  width: 45%;
+  margin-top: -20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.best_books {
+  width: 45%;
+  margin-top: -20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.el-carousel__item h3 {
+  color: #475669;
+  opacity: 1;
+  line-height: 300px;
+  margin: 0;
+  text-align: center;
+}
+
+.el-carousel__item:nth-child(n) {
+  background-color: rgb(253, 244, 244);
+}
+
 .carousel_hot_container {
   height: 300px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06);
@@ -413,12 +425,13 @@ body {
   padding-top: 10px;
 }
 
-.carousel_hot_right_comments_container{
+.carousel_hot_right_comments_container {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   height: 85%;
 }
+
 .carousel_hot_right_comments {
   display: block;
   height: 23%;
@@ -428,10 +441,11 @@ body {
   overflow: auto;
 }
 
-.carousel_hot_right_rates_container{
+.carousel_hot_right_rates_container {
   bottom: 7px;
   position: absolute;
 }
+
 .carousel_best_container {
   height: 300px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06);
@@ -474,5 +488,68 @@ body {
   border: 1px solid #1989fa;
   border-radius: 3px;
   margin-bottom: 3px;
+}
+
+
+.rank_books_container {
+  margin-top: -10px;
+  margin-bottom: 15px;
+  width: 60%;
+  display: flex;
+  justify-content: center;
+  height: 500px;
+}
+
+.rank_container {
+  /* background-color: aliceblue; */
+  width: 30%;
+  padding-left: 10px;
+  margin-right: 10px;
+}
+
+.rank_items {
+  display: flex;
+  margin-top: 8px;
+}
+
+.rank_image img {
+  border-radius: 4px;
+  margin-right: 10px;
+}
+
+.rank_rank {
+  margin-right: 10px;
+  font-size: 14pt;
+  color: grey;
+  padding-top: 3px;
+}
+
+.red {
+  color: red;
+}
+
+.orange {
+  color: orange;
+}
+
+.green {
+  color: green;
+}
+
+.rank_info {
+  padding-top: 3px;
+  font-size: 14pt;
+}
+
+.goTopButton {
+  height: 100%;
+  width: 100%;
+  background-color: var(--el-bg-color-overlay);
+  box-shadow: var(--el-box-shadow-lighter);
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  line-height: 40px;
+  color: #1989fa;
 }
 </style>

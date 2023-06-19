@@ -11,7 +11,7 @@ export default {
       header_container: 'header_container',
       header_left: 'header_left',
       header_right: 'header_right',
-      login_button: 'Sign In',
+      login_button: 'Sign in',
       isSearchActive: false,
       searchInput: ''
     }
