@@ -185,7 +185,7 @@ export default {
     <h2>Ranking of Books</h2>
     <div class="rank_books_container">
       <div class="rank_container">
-        <div style="font-size: 18pt; text-align: center;">Click Rank</div>
+        <div class="rank_name">Click Rank</div>
         <div class="rank_items" v-for="(item, index) in click_rank_info" :key="item">
           <div class="rank_image">
             <img style="height: 80px;" :src="item.image" />
@@ -204,7 +204,7 @@ export default {
         </div>
       </div>
       <div class="rank_container">
-        <div style="font-size: 18pt; text-align: center;">Newest Rank</div>
+        <div class="rank_name">Newest Rank</div>
         <div class="rank_items" v-for="(item, index) in 5" :key="item">
           <div class="rank_image">
             <img style="height: 80px;"
@@ -224,7 +224,7 @@ export default {
         </div>
       </div>
       <div class="rank_container">
-        <div style="font-size: 18pt; text-align: center;">Update Rank</div>
+        <div class="rank_name">Update Rank</div>
         <div class="rank_items" v-for="(item, index) in 5" :key="item">
           <div class="rank_image">
             <img style="height: 80px;"
@@ -507,6 +507,20 @@ body {
   margin-right: 10px;
 }
 
+.rank_name {
+  font-size: 18pt;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #1989fa;
+  width: 200px;
+  color: white;
+  box-shadow: 10px 8px 0 orange;
+  margin-bottom: 22px;
+  border-radius: 2px;
+  padding: 2px;
+}
+
 .rank_items {
   display: flex;
   margin-top: 8px;
@@ -525,15 +539,15 @@ body {
 }
 
 .red {
-  color: red;
+  color: rgb(255, 0, 0);
 }
 
 .orange {
-  color: orange;
+  color: rgb(255, 166, 0);
 }
 
 .green {
-  color: green;
+  color: rgb(3, 179, 3);
 }
 
 .rank_info {
