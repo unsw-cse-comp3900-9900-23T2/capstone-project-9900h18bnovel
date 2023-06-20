@@ -86,7 +86,7 @@ export default {
     </div>
     <div class="weekly_collect_books_container">
       <div class="weekly_books">
-        <h3>Weekly Books</h3>
+        <h2>Weekly Books</h2>
         <el-carousel :interval="4000" height="300px">
           <el-carousel-item v-for="item in weekly_books_info" :key="item">
             <div class="carousel_weekly_background" :style="getBackgroundStyle(item.image)"></div>
@@ -106,7 +106,7 @@ export default {
         </el-carousel>
       </div>
       <div class="collected_novel_container">
-        <h3>Collected Books</h3>
+        <h2>Collected Books</h2>
         <div v-if="!collect_flag" class="collected_novel_na_user">
           <h2>Please Login in to see the contents</h2>
           <el-button class="login_button" type="primary" @click="goLogin"><el-icon>
@@ -118,11 +118,13 @@ export default {
         </div>
       </div>
     </div>
-    <h2>Recommondation</h2>
+    <h2></h2>
     <div class="recomm_books_container">
       <div class="hottest_books">
-        <h3>Hottest Books</h3>
-        <el-carousel height="600px" style="width: 600px;" direction="vertical" type="card" :autoplay="true">
+        <h2 style=" border-bottom: 1px solid; width: 100%; border-color: rgb(206, 204, 204); padding-bottom: 10px;">
+          Hottest Books</h2>
+        <el-carousel height="600px" style="width: 600px; margin-left: -30px;;" direction="vertical" type="card"
+          :autoplay="true">
           <el-carousel-item style="border-radius: 15px;" v-for="item in hottest_books_info" :key="item">
             <el-row class="carousel_hot_container">
               <div class="carousel_hot_left_container">
@@ -153,7 +155,9 @@ export default {
         </el-carousel>
       </div>
       <div class="best_books">
-        <h3>Best Books</h3>
+        <h2 style="border-bottom: 1px solid; width: 100%; border-color: rgb(206, 204, 204);  padding-bottom: 10px;">Best
+          Books
+        </h2>
         <el-carousel height="600px" style="width: 600px;" direction="vertical" type="card" :autoplay="true">
           <el-carousel-item style="border-radius: 15px;" v-for="item in newest_books_images" :key="item">
             <el-row class="carousel_best_container">
@@ -182,7 +186,9 @@ export default {
         </el-carousel>
       </div>
     </div>
-    <h2>Ranking of Books</h2>
+    <h2
+      style=" border-bottom: 1px solid; border-color: rgb(223, 223, 223); padding-bottom: 10px; margin-bottom: 22px; margin-top: 30px; width: 60%; text-align: center;">
+      Ranking of Books</h2>
     <div class="rank_books_container">
       <div class="rank_container">
         <div class="rank_name">Click Rank</div>
@@ -306,6 +312,11 @@ body {
   object-fit: contain;
   box-shadow: 6px 4px 6px white;
   border-radius: 8px;
+  transition: transform 0.3s ease;
+}
+
+.carousel_weekly_image:hover {
+  transform: translateY(-4px);
 }
 
 .carousel_weekly_text_container {
@@ -361,21 +372,16 @@ body {
 }
 
 .hottest_books {
-  width: 45%;
   margin-top: -20px;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
 }
 
 .best_books {
-  width: 45%;
   margin-top: -20px;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  margin-left: 10px;
 }
 
 .el-carousel__item h3 {
@@ -497,6 +503,8 @@ body {
   width: 60%;
   display: flex;
   justify-content: center;
+  align-items: center;
+  padding-left: 140px;
   height: 500px;
 }
 
