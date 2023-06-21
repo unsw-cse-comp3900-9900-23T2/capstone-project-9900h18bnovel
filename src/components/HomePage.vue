@@ -88,7 +88,7 @@ export default {
       <div class="weekly_books">
         <h2>Weekly Books</h2>
         <el-carousel :interval="4000" height="300px">
-          <el-carousel-item v-for="item in weekly_books_info" :key="item">
+          <el-carousel-item v-for="item in weekly_books_info" :key="item.title">
             <div class="carousel_weekly_background" :style="getBackgroundStyle(item.image)"></div>
             <el-row>
               <el-column class="carousel_weekly_image_container">
@@ -125,7 +125,7 @@ export default {
           Hottest Books</h2>
         <el-carousel height="600px" style="width: 600px; margin-left: -30px;;" direction="vertical" type="card"
           :autoplay="true">
-          <el-carousel-item style="border-radius: 15px;" v-for="item in hottest_books_info" :key="item">
+          <el-carousel-item style="border-radius: 15px;" v-for="item in hottest_books_info" :key="item.title">
             <el-row class="carousel_hot_container">
               <div class="carousel_hot_left_container">
                 <span style="font-size: 14pt;">{{ item.title }}</span>
@@ -142,7 +142,7 @@ export default {
               </div>
               <div class="carousel_hot_right_container">
                 <div class="carousel_hot_right_comments_container">
-                  <el-text class="carousel_hot_right_comments" v-for="com in filteredComments" :key="com">{{ com.comment
+                  <el-text class="carousel_hot_right_comments" v-for="(com, index) in filteredComments" :key="index">{{ com.comment
                   }}</el-text>
                 </div>
                 <div class="carousel_hot_right_rates_container">
@@ -159,7 +159,7 @@ export default {
           Books
         </h2>
         <el-carousel height="600px" style="width: 600px;" direction="vertical" type="card" :autoplay="true">
-          <el-carousel-item style="border-radius: 15px;" v-for="item in newest_books_images" :key="item">
+          <el-carousel-item style="border-radius: 15px;" v-for="item in newest_books_images" :key="item.title">
             <el-row class="carousel_best_container">
               <div class="carousel_best_left_container">
                 <span style="font-size: 20pt;">Title</span>
@@ -192,7 +192,7 @@ export default {
     <div class="rank_books_container">
       <div class="rank_container">
         <div class="rank_name">Click Rank</div>
-        <div class="rank_items" v-for="(item, index) in click_rank_info" :key="item">
+        <div class="rank_items" v-for="(item, index) in click_rank_info" :key="item.title">
           <div class="rank_image">
             <img style="height: 80px;" :src="item.image" />
           </div>
@@ -504,7 +504,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding-left: 140px;
+  padding-left: 100px;
   height: 500px;
 }
 

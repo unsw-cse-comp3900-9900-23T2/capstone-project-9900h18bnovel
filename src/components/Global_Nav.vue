@@ -7,6 +7,9 @@ export default {
   methods:{
     goAllNov(){
       this.$router.push('/allnovels');
+    },
+    goNewUpdate(){
+      this.$router.push('/newupdate');
     }
   }
 }
@@ -50,7 +53,7 @@ export default {
           <el-menu-item index="3-3">Rank 3</el-menu-item>
       </el-sub-menu>
     <el-menu-item index="4">My Creation</el-menu-item>
-    <el-menu-item index="5">Newest Update</el-menu-item>
+    <el-menu-item index="5"  @click="goNewUpdate">Newest Update</el-menu-item>
   </el-menu>
 </div>
 </template>
