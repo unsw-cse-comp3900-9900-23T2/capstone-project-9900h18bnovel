@@ -3,6 +3,7 @@ import {
   Search,
   User
 } from '@element-plus/icons-vue'
+import login from './LoginPage';
 </script >
 <script>
 export default {
@@ -13,6 +14,7 @@ export default {
       header_right: 'header_right',
       login_button: 'Sign in',
       isSearchActive: false,
+      isLoginVisible: false,
       searchInput: ''
     }
   },
@@ -38,8 +40,11 @@ export default {
     goHome() {
       this.$router.push('/home');
     },
-    goLogin() {
-      this.$router.push('/login');
+    showLogin() {
+      this.isLoginVisible = true;
+    },
+    closeLoginBox(){
+      this.isLoginVisible = false;
     }
   }
 }
@@ -77,11 +82,24 @@ export default {
     </div>
     <!-- This right side of class will represent user thumbnail, name and log out button once token exists -->
     <!-- Click here will link to login page -->
-    <el-button class="login_button" type="primary" @click="goLogin"><el-icon><User /></el-icon>{{ login_button }}</el-button>
+    <el-button class="login_button" type="primary" @click="showLogin"><el-icon>
+        <User />
+      </el-icon>{{ login_button }}</el-button>
+  </div>
+  <div v-if="isLoginVisible" class="loginSection">
+    <login @cancel="closeLoginBox"/>
   </div>
 </template>
 
 <style >
+.loginSection {
+  position: absolute;
+  z-index: 100;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+}
+
 .logo {
   height: 60px;
   width: 20vh
@@ -133,4 +151,5 @@ export default {
   .search_container {
     display: none;
   }
-}</style>
+}
+</style>

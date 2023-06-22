@@ -77,192 +77,199 @@ export default {
 }
 </script>
 <template>
-  <div :class="header_Nav_Container">
-    <Header />
-    <Nav />
-  </div>
-  <div class="homeBody">
+  <div :class="{ 'blur': isLoginVisible }">
     <div>
+      <Header />
+      <Nav />
     </div>
-    <div class="weekly_collect_books_container">
-      <div class="weekly_books">
-        <h2>Weekly Books</h2>
-        <el-carousel :interval="4000" height="300px">
-          <el-carousel-item v-for="item in weekly_books_info" :key="item.title">
-            <div class="carousel_weekly_background" :style="getBackgroundStyle(item.image)"></div>
-            <el-row>
-              <el-column class="carousel_weekly_image_container">
-                <img :src="item.image" class="carousel_weekly_image">
-              </el-column>
-              <el-column class="carousel_weekly_text_container">
-                <div class="carousel_weekly_text">
-                  <span class="carousel_weekly_text_title">{{ item.title }}</span>
-                  <span class="carousel_weekly_text_author">{{ item.author }}</span>
-                  <span class="carousel_weekly_text_descr">{{ item.des }}</span>
-                </div>
-              </el-column>
-            </el-row>
-          </el-carousel-item>
-        </el-carousel>
+    <div class="homeBody">
+      <div>
       </div>
-      <div class="collected_novel_container">
-        <h2>Collected Books</h2>
-        <div v-if="!collect_flag" class="collected_novel_na_user">
-          <h2>Please Login in to see the contents</h2>
-          <el-button class="login_button" type="primary" @click="goLogin"><el-icon>
-              <User />
-            </el-icon>{{ login_button }}</el-button>
+      <div class="weekly_collect_books_container">
+        <div class="weekly_books">
+          <h2>Weekly Books</h2>
+          <el-carousel :interval="4000" height="300px">
+            <el-carousel-item v-for="item in weekly_books_info" :key="item.title">
+              <div class="carousel_weekly_background" :style="getBackgroundStyle(item.image)"></div>
+              <el-row>
+                <el-column class="carousel_weekly_image_container">
+                  <img :src="item.image" class="carousel_weekly_image">
+                </el-column>
+                <el-column class="carousel_weekly_text_container">
+                  <div class="carousel_weekly_text">
+                    <span class="carousel_weekly_text_title">{{ item.title }}</span>
+                    <span class="carousel_weekly_text_author">{{ item.author }}</span>
+                    <span class="carousel_weekly_text_descr">{{ item.des }}</span>
+                  </div>
+                </el-column>
+              </el-row>
+            </el-carousel-item>
+          </el-carousel>
         </div>
-        <div v-else class="collected_novel_user">
-          U don't have collect books
+        <div class="collected_novel_container">
+          <h2>Collected Books</h2>
+          <div v-if="!collect_flag" class="collected_novel_na_user">
+            <h2>Please Login in to see the contents</h2>
+            <el-button class="login_button" type="primary" @click="goLogin"><el-icon>
+                <User />
+              </el-icon>{{ login_button }}</el-button>
+          </div>
+          <div v-else class="collected_novel_user">
+            U don't have collect books
+          </div>
         </div>
       </div>
-    </div>
-    <h2></h2>
-    <div class="recomm_books_container">
-      <div class="hottest_books">
-        <h2 style=" border-bottom: 1px solid; width: 100%; border-color: rgb(206, 204, 204); padding-bottom: 10px;">
-          Hottest Books</h2>
-        <el-carousel height="600px" style="width: 600px; margin-left: -30px;;" direction="vertical" type="card"
-          :autoplay="true">
-          <el-carousel-item style="border-radius: 15px;" v-for="item in hottest_books_info" :key="item.title">
-            <el-row class="carousel_hot_container">
-              <div class="carousel_hot_left_container">
-                <span style="font-size: 14pt;">{{ item.title }}</span>
-                <span style="font-size: 12pt;">{{ item.author }}</span>
-                <span style="font-size: 10pt; margin-top: 10px; margin-right: 10px;">{{ item.des }}</span>
-                <span style="bottom: 10px;position: absolute;">
-                  20 <el-icon>
-                    <UserFilled />
-                  </el-icon> Liked
-                </span>
-              </div>
-              <div class="carousel_hot_image_container">
-                <img :src="item.image" class="carousel_hot_image">
-              </div>
-              <div class="carousel_hot_right_container">
-                <div class="carousel_hot_right_comments_container">
-                  <el-text class="carousel_hot_right_comments" v-for="(com, index) in filteredComments" :key="index">{{ com.comment
-                  }}</el-text>
+      <h2></h2>
+      <div class="recomm_books_container">
+        <div class="hottest_books">
+          <h2 style=" border-bottom: 1px solid; width: 100%; border-color: rgb(206, 204, 204); padding-bottom: 10px;">
+            Hottest Books</h2>
+          <el-carousel height="600px" style="width: 600px; margin-left: -30px;;" direction="vertical" type="card"
+            :autoplay="true">
+            <el-carousel-item style="border-radius: 15px;" v-for="item in hottest_books_info" :key="item.title">
+              <el-row class="carousel_hot_container">
+                <div class="carousel_hot_left_container">
+                  <span style="font-size: 14pt;">{{ item.title }}</span>
+                  <span style="font-size: 12pt;">{{ item.author }}</span>
+                  <span style="font-size: 10pt; margin-top: 10px; margin-right: 10px;">{{ item.des }}</span>
+                  <span style="bottom: 10px;position: absolute;">
+                    20 <el-icon>
+                      <UserFilled />
+                    </el-icon> Liked
+                  </span>
                 </div>
-                <div class="carousel_hot_right_rates_container">
+                <div class="carousel_hot_image_container">
+                  <img :src="item.image" class="carousel_hot_image">
+                </div>
+                <div class="carousel_hot_right_container">
+                  <div class="carousel_hot_right_comments_container">
+                    <el-text class="carousel_hot_right_comments" v-for="(com, index) in filteredComments" :key="index">{{
+                      com.comment
+                    }}</el-text>
+                  </div>
+                  <div class="carousel_hot_right_rates_container">
+                    <el-rate v-model="value" disabled show-score text-color="#ff9900" size="small"
+                      score-template="{value} points" />
+                  </div>
+                </div>
+              </el-row>
+            </el-carousel-item>
+          </el-carousel>
+        </div>
+        <div class="best_books">
+          <h2 style="border-bottom: 1px solid; width: 100%; border-color: rgb(206, 204, 204);  padding-bottom: 10px;">Best
+            Books
+          </h2>
+          <el-carousel height="600px" style="width: 600px;" direction="vertical" type="card" :autoplay="true">
+            <el-carousel-item style="border-radius: 15px;" v-for="item in newest_books_images" :key="item.title">
+              <el-row class="carousel_best_container">
+                <div class="carousel_best_left_container">
+                  <span style="font-size: 20pt;">Title</span>
+                  <span style="font-size: 18pt;">Author</span>
+                  <span style="font-size: 14pt;">Des</span>
+                  <span style="font-size: 110pt;">&nbsp;</span>
+                  <span>20 <el-icon>
+                      <UserFilled />
+                    </el-icon> Liked</span>
+                </div>
+                <div class="carousel_best_image_container">
+                  <img :src="item" class="carousel_best_image">
+                </div>
+                <div class="carousel_best_right_container">
+                  <span class="carousel_best_right_comments">comments 1</span>
+                  <span class="carousel_best_right_comments">comments 2</span>
+                  <span class="carousel_best_right_comments">comments 3</span>
+                  <span class="carousel_best_right_comments">comments 4</span>
                   <el-rate v-model="value" disabled show-score text-color="#ff9900" size="small"
                     score-template="{value} points" />
                 </div>
-              </div>
-            </el-row>
-          </el-carousel-item>
-        </el-carousel>
-      </div>
-      <div class="best_books">
-        <h2 style="border-bottom: 1px solid; width: 100%; border-color: rgb(206, 204, 204);  padding-bottom: 10px;">Best
-          Books
-        </h2>
-        <el-carousel height="600px" style="width: 600px;" direction="vertical" type="card" :autoplay="true">
-          <el-carousel-item style="border-radius: 15px;" v-for="item in newest_books_images" :key="item.title">
-            <el-row class="carousel_best_container">
-              <div class="carousel_best_left_container">
-                <span style="font-size: 20pt;">Title</span>
-                <span style="font-size: 18pt;">Author</span>
-                <span style="font-size: 14pt;">Des</span>
-                <span style="font-size: 110pt;">&nbsp;</span>
-                <span>20 <el-icon>
-                    <UserFilled />
-                  </el-icon> Liked</span>
-              </div>
-              <div class="carousel_best_image_container">
-                <img :src="item" class="carousel_best_image">
-              </div>
-              <div class="carousel_best_right_container">
-                <span class="carousel_best_right_comments">comments 1</span>
-                <span class="carousel_best_right_comments">comments 2</span>
-                <span class="carousel_best_right_comments">comments 3</span>
-                <span class="carousel_best_right_comments">comments 4</span>
-                <el-rate v-model="value" disabled show-score text-color="#ff9900" size="small"
-                  score-template="{value} points" />
-              </div>
-            </el-row>
-          </el-carousel-item>
-        </el-carousel>
-      </div>
-    </div>
-    <h2
-      style=" border-bottom: 1px solid; border-color: rgb(223, 223, 223); padding-bottom: 10px; margin-bottom: 22px; margin-top: 30px; width: 60%; text-align: center;">
-      Ranking of Books</h2>
-    <div class="rank_books_container">
-      <div class="rank_container">
-        <div class="rank_name">Click Rank</div>
-        <div class="rank_items" v-for="(item, index) in click_rank_info" :key="item.title">
-          <div class="rank_image">
-            <img style="height: 80px;" :src="item.image" />
-          </div>
-          <div class="rank_rank" :class="{ 'red': index === 0, 'orange': index === 1, 'green': index === 2 }">
-            0{{ index + 1 }}
-          </div>
-          <div class="rank_info">
-            <el-text truncated style="font-size: 14pt; color: black;">{{ item.title }}</el-text>
-            <br />
-            <el-text truncated style="font-size: 10pt;">{{ item.author }}</el-text>
-            <br />
-            <el-text truncated style="font-size: 10pt; width: 250px;"><el-rate v-model="item.value" disabled show-score
-                text-color="#ff9900" size="small" score-template="{value} points" /></el-text>
-          </div>
+              </el-row>
+            </el-carousel-item>
+          </el-carousel>
         </div>
       </div>
-      <div class="rank_container">
-        <div class="rank_name">Newest Rank</div>
-        <div class="rank_items" v-for="(item, index) in 5" :key="item">
-          <div class="rank_image">
-            <img style="height: 80px;"
-              src="https://www.adobe.com/express/create/cover/media_181e3d2c78f153ae7bf0e19a2faeb9a76e234da30.jpeg?width=400&format=jpeg&optimize=medium" />
-          </div>
-          <div class="rank_rank" :class="{ 'red': index === 0, 'orange': index === 1, 'green': index === 2 }">
-            0{{ index + 1 }}
-          </div>
-          <div class="rank_info">
-            <el-text truncated style="font-size: 14pt; color: black;">Title</el-text>
-            <br />
-            <el-text truncated style="font-size: 10pt;">Author</el-text>
-            <br />
-            <el-text truncated style="font-size: 10pt; width: 250px;"><el-rate disabled show-score text-color="#ff9900"
-                size="small" /></el-text>
+      <h2
+        style=" border-bottom: 1px solid; border-color: rgb(223, 223, 223); padding-bottom: 10px; margin-bottom: 22px; margin-top: 30px; width: 60%; text-align: center;">
+        Ranking of Books</h2>
+      <div class="rank_books_container">
+        <div class="rank_container">
+          <div class="rank_name">Click Rank</div>
+          <div class="rank_items" v-for="(item, index) in click_rank_info" :key="item.title">
+            <div class="rank_image">
+              <img style="height: 80px;" :src="item.image" />
+            </div>
+            <div class="rank_rank" :class="{ 'red': index === 0, 'orange': index === 1, 'green': index === 2 }">
+              0{{ index + 1 }}
+            </div>
+            <div class="rank_info">
+              <el-text truncated style="font-size: 14pt; color: black;">{{ item.title }}</el-text>
+              <br />
+              <el-text truncated style="font-size: 10pt;">{{ item.author }}</el-text>
+              <br />
+              <el-text truncated style="font-size: 10pt; width: 250px;"><el-rate v-model="item.value" disabled show-score
+                  text-color="#ff9900" size="small" score-template="{value} points" /></el-text>
+            </div>
           </div>
         </div>
-      </div>
-      <div class="rank_container">
-        <div class="rank_name">Update Rank</div>
-        <div class="rank_items" v-for="(item, index) in 5" :key="item">
-          <div class="rank_image">
-            <img style="height: 80px;"
-              src="https://www.adobe.com/express/create/cover/media_181e3d2c78f153ae7bf0e19a2faeb9a76e234da30.jpeg?width=400&format=jpeg&optimize=medium" />
+        <div class="rank_container">
+          <div class="rank_name">Newest Rank</div>
+          <div class="rank_items" v-for="(item, index) in 5" :key="item">
+            <div class="rank_image">
+              <img style="height: 80px;"
+                src="https://www.adobe.com/express/create/cover/media_181e3d2c78f153ae7bf0e19a2faeb9a76e234da30.jpeg?width=400&format=jpeg&optimize=medium" />
+            </div>
+            <div class="rank_rank" :class="{ 'red': index === 0, 'orange': index === 1, 'green': index === 2 }">
+              0{{ index + 1 }}
+            </div>
+            <div class="rank_info">
+              <el-text truncated style="font-size: 14pt; color: black;">Title</el-text>
+              <br />
+              <el-text truncated style="font-size: 10pt;">Author</el-text>
+              <br />
+              <el-text truncated style="font-size: 10pt; width: 250px;"><el-rate disabled show-score text-color="#ff9900"
+                  size="small" /></el-text>
+            </div>
           </div>
-          <div class="rank_rank" :class="{ 'red': index === 0, 'orange': index === 1, 'green': index === 2 }">
-            0{{ index + 1 }}
-          </div>
-          <div class="rank_info">
-            <el-text truncated style="font-size: 14pt; color: black;">title</el-text>
-            <br />
-            <el-text truncated style="font-size: 10pt;">author</el-text>
-            <br />
-            <el-text truncated style="font-size: 10pt; width: 250px;"><el-rate disabled show-score text-color="#ff9900"
-                size="small" /></el-text>
+        </div>
+        <div class="rank_container">
+          <div class="rank_name">Update Rank</div>
+          <div class="rank_items" v-for="(item, index) in 5" :key="item">
+            <div class="rank_image">
+              <img style="height: 80px;"
+                src="https://www.adobe.com/express/create/cover/media_181e3d2c78f153ae7bf0e19a2faeb9a76e234da30.jpeg?width=400&format=jpeg&optimize=medium" />
+            </div>
+            <div class="rank_rank" :class="{ 'red': index === 0, 'orange': index === 1, 'green': index === 2 }">
+              0{{ index + 1 }}
+            </div>
+            <div class="rank_info">
+              <el-text truncated style="font-size: 14pt; color: black;">title</el-text>
+              <br />
+              <el-text truncated style="font-size: 10pt;">author</el-text>
+              <br />
+              <el-text truncated style="font-size: 10pt; width: 250px;"><el-rate disabled show-score text-color="#ff9900"
+                  size="small" /></el-text>
+            </div>
           </div>
         </div>
       </div>
     </div>
+    <!-- Go to top floating buttom -->
+    <el-backtop :bottom="100">
+      <div class="goTopButton">
+        <el-icon>
+          <CaretTop />
+        </el-icon>
+      </div>
+    </el-backtop>
+    <Footer />
   </div>
-  <!-- Go to top floating buttom -->
-  <el-backtop :bottom="100">
-    <div class="goTopButton">
-      <el-icon>
-        <CaretTop />
-      </el-icon>
-    </div>
-  </el-backtop>
-  <Footer />
 </template>
 
 <style >
+.blur {
+  filter: blur(3px); /* 调整模糊效果的程度 */
+}
+
 body {
   margin: 0;
   font-family: Arial, Helvetica, sans-serif;

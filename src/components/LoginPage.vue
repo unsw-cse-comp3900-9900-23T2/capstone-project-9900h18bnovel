@@ -1,81 +1,91 @@
-<template>
-	<Header />
-	<RegisterPage />
-	<el-form :inline="true" :model="login_form" class = "login_form" v-show="show_login_form">
-		<div class="logo_container"></div>
-		<el-divider />
-		<div class="username_container">
-			<el-form-item label="Username: "></el-form-item>
-			<el-input v-model="username" placeholder="Your username" />
-		</div>
+<script setup>
+import {
+  User
+} from '@element-plus/icons-vue'
 
-		<div class="password_container">
-			<el-form-item label="Input your password: "></el-form-item>
-			<el-input v-model="set_pwd_input" placeholder="Input your password" />
-		</div>
-
-		<div class="other_options">
-			<el-button @click="turn_to_register" type="primary">Not a user? Register here!</el-button>
-			<el-button type="primary">Login !</el-button>
-			<el-button @click="hide_login_form">Cancel</el-button>
-		</div>
-	</el-form>
-</template>
-
+</script >
 <script>
-import RegisterPage from './RegisterPage.vue';
-import Header from './Global_Header.vue';
-
 export default {
-	
-  data(){
-	return {
-		login_form: "login_form",
-		show_login_form: true,
-	}
+
+  data() {
+    return {
+      login_form: "login_form",
+      show_login_form: true,
+      username: '',
+      password: '',
+    }
   },
-  methods:{
-	hide_login_form(){
-		this.show_login_form = false;
-	},
-	turn_to_register(){
-		this.show_login_form = false;
-		RegisterPage.register_container.show_Register_Form = true;
-	}
+  mounted() {
+    console.log(this.username)
   },
-  components: {
-	Header
+  methods: {
+    loginin() {
+
+    },
+    closeLoginBox() {
+      this.$emit('cancel');
+    }
   }
 }
 </script>
 
+<template>
+  <div class="login_form">
+    <el-icon size="20pt" style="border: 1px solid; border-radius: 50px; padding: 10px;">
+      <User />
+    </el-icon>
+    <el-divider />
+    <div class="each_input_container">
+      <div style="width: 120px; display: flex; justify-content: center; align-items: center;">Username: </div>
+      <el-input style="width: 30%;" v-model="username" />
+    </div>
+
+    <div class="each_input_container">
+      <div style="width: 120px; display: flex; justify-content: center; align-items: center;">Password: </div>
+      <el-input style="width: 30%;" v-model="password" show-password type="password" />
+    </div>
+
+    <div class="other_options">
+      <el-link>Not a user? Register here!</el-link>
+      <div style="margin-top: 20px;">
+        <el-button type="primary" @click="loginin">Log in</el-button>
+        <el-button @click="closeLoginBox">Cancel</el-button>
+      </div>
+    </div>
+  </div>
+</template>
+
+
 <style >
+
+
 .login_form {
-	display: block;
-    background-color: antiquewhite;
-    width: 36em;
-    height: auto;
-    border-radius: 10px;
-    box-shadow: 0 10px 10px rgba(0, 0, 0, 0.4);;
-	padding: 2em;
-	margin: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: antiquewhite;
+  width: 600px;
+  height: 300px;
+  border-radius: 50px;
+  box-shadow: 0 10px 10px rgba(0, 0, 0, 0.4);
+  padding: 20px;
 }
 
-.logo_container{
-	display: block;
-	width: 100px;
-	height: 100px;
-	border-radius: 50%;
-	background-color: #fff;
-	margin: 1.5em auto;
+.each_input_container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 20px;
+  font-size: 16pt;
 }
 
-.username_container, .password_container, .other_options{
-	display: flex;
-    justify-content: space-evenly;
-    align-items: baseline;
-    height: 2em;
-    margin: 0.5em 0 0.5em 0;
+.other_options {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 </style>
 
