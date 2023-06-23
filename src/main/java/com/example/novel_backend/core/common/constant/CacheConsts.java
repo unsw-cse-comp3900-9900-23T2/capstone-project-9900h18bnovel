@@ -28,6 +28,21 @@ public class CacheConsts {
     public static final String IMG_VERIFY_CODE_CACHE_KEY =
             REDIS_CACHE_PREFIX + "imgVerifyCodeCache::";
 
+    /**
+     * Caffeine cache manager
+     */
+    public static final String CAFFEINE_CACHE_MANAGER = "caffeineCacheManager";
+
+    /**
+     * Redis cache manager
+     */
+    public static final String REDIS_CACHE_MANAGER = "redisCacheManager";
+
+    /**
+     * Home page recommendation
+     */
+    public static final String HOME_BOOK_CACHE_NAME = "homeBookCache";
+
 
     /**
      * Cache configuration constants
@@ -35,6 +50,7 @@ public class CacheConsts {
     @Getter
     @AllArgsConstructor
     public enum CacheEnum {
+        HOME_BOOK_CACHE(0, HOME_BOOK_CACHE_NAME, 60 * 60 * 24, 1),
         USER_INFO_CACHE(2, EMAIL_VERIFY_CODE_CACHE_KEY, 60 * 60 * 24, 10000);
         /**
          * Cache type 0 - local 1 - local and remote 2 - remote
@@ -52,5 +68,14 @@ public class CacheConsts {
          * Maximum capacity
          */
         private int maxSize;
+
+        public boolean isLocal() {
+            return type <= 1;
+        }
+
+        public boolean isRemote() {
+            return type >= 1;
+        }
+
     }
 }

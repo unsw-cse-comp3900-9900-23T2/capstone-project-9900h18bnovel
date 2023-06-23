@@ -27,9 +27,19 @@ public class ApiRouterConsts {
      */
     public static final String USER_URL_PREFIX = "/user";
 
+    /**
+     * Home module request path prefix
+     */
+    public static final String HOME_URL_PREFIX = "/home";
+
 
     /**
      * Front-end portal system User module request path prefix
      */
     public static final String API_FRONT_USER_URL_PREFIX = API_FRONT_URL_PREFIX + USER_URL_PREFIX;
+
+    /**
+     * Foreground portal home page API request path prefix
+     */
+    public static final String API_FRONT_HOME_URL_PREFIX = API_FRONT_URL_PREFIX + HOME_URL_PREFIX;
 }

@@ -68,21 +68,4 @@ public class UserInfo implements Serializable {
      * Update time
      */
     private LocalDateTime updateTime;
-
-    @Override
-    public String toString() {
-        return "UserInfo{" +
-        "id=" + id +
-        ", email=" + email +
-        ", username=" + username +
-        ", password=" + password +
-        ", salt=" + salt +
-        ", nickName=" + nickName +
-        ", userPhoto=" + userPhoto +
-        ", userSex=" + userSex +
-        ", status=" + status +
-        ", createTime=" + createTime +
-        ", updateTime=" + updateTime +
-        "}";
-    }
 }

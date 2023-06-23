@@ -1,0 +1,51 @@
+package com.example.novel_backend.dto.resp;
+
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Builder;
+import lombok.Data;
+
+/**
+ * Home Page Recommendations Responding to DTO
+ * @author :Contanstin
+ * @create 2023/6/23 21:25
+ */
+@Data
+public class HomeBookRespDto {
+
+    /**
+     * Type;0-Rotary 1-Top bar 2-This week's top picks 3-Popular picks 4-Best picks
+     */
+    @Schema(description = "Type;0-Rotary 1-Top bar 2-This week's top picks 3-Popular picks 4-Best picks")
+    private Integer type;
+
+    /**
+     * Recommend bookId
+     */
+    @Schema(description = "BookId")
+    private Long bookId;
+
+    /**
+     * Book cover address
+     */
+    @Schema(description = "Book cover address")
+    private String picUrl;
+
+    /**
+     * Book name
+     */
+    @Schema(description = "Book name")
+    private String bookName;
+
+    /**
+     * Author name
+     */
+    @Schema(description = "Author name")
+    private String authorName;
+
+    /**
+     * Book description
+     */
+    @Schema(description = "Book description")
+    private String bookDesc;
+
+}
