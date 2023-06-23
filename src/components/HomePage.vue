@@ -67,12 +67,25 @@ export default {
         'background-image': `url(${imageUrl})`
       };
     },
-    showLogin() {
+    async showLogin() {
       this.isLoginVisible = true;
+      try {
+        const response = await fetch("http://localhost:8888/api/front/user/register", {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+        });
+
+        const data = await response.json();
+        console.log(data);
+      } catch (error) {
+        console.error(error);
+      }
     },
-    closeLoginBox(){
+    closeLoginBox() {
       this.isLoginVisible = false;
-    }
+    },
   },
   computed: {
     filteredComments() {
@@ -84,7 +97,7 @@ export default {
 <template>
   <div :class="{ 'blur': isLoginVisible }">
     <div>
-      <Header />
+      <Header @showLogin="showLogin" @closeLoginBox="closeLoginBox" />
       <Nav />
     </div>
     <div class="homeBody">
@@ -115,12 +128,9 @@ export default {
           <h2>Collected Books</h2>
           <div v-if="!collect_flag" class="collected_novel_na_user">
             <h2>Please Login in to see the contents</h2>
-            <el-button class="login_button" type="primary" @click="showLogin"><el-icon>
+            <el-button class="login_button" type="primary" @click="showLogin" @showLogin="showLogin"><el-icon>
                 <User />
               </el-icon>{{ login_button }}</el-button>
-            <div v-if="isLoginVisible" class="loginSection">
-              <Login @cancel="closeLoginBox" />
-            </div>
           </div>
           <div v-else class="collected_novel_user">
             U don't have collect books
@@ -271,9 +281,17 @@ export default {
     </el-backtop>
     <Footer />
   </div>
+  <div v-if="isLoginVisible" class="loginSection">
+    <Login class="login" @cancel="closeLoginBox" />
+  </div>
 </template>
 
 <style >
+.blur {
+  filter: blur(5px);
+  pointer-events: none;
+}
+
 body {
   margin: 0;
   font-family: Arial, Helvetica, sans-serif;
@@ -548,6 +566,12 @@ body {
 .rank_image img {
   border-radius: 4px;
   margin-right: 10px;
+  transform: translateY(0);
+  transition: transform 0.3s ease;
+}
+
+.rank_image img:hover {
+  transform: translateY(-4px);
 }
 
 .rank_rank {

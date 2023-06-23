@@ -328,6 +328,7 @@ export default {
 
 
 <style >
+
 .login_form {
   display: flex;
   flex-direction: column;

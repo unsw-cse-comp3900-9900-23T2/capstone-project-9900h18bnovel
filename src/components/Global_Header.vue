@@ -14,7 +14,6 @@ export default {
       header_right: 'header_right',
       login_button: 'Sign in',
       isSearchActive: false,
-      isLoginVisible: false,
       searchInput: ''
     }
   },
@@ -41,23 +40,10 @@ export default {
       this.$router.push('/home');
     },
     closeLoginBox() {
-      this.isLoginVisible = false;
+      this.$emit('closeLoginBox');
     },
-    async showLogin() {
-      this.isLoginVisible = true;
-      try {
-        const response = await fetch("http://localhost:8888/api/front/user/register", {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-        });
-
-        const data = await response.json();
-        console.log(data);
-      } catch (error) {
-        console.error(error);
-      }
+    showLogin() {
+      this.$emit('showLogin');
     },
   }
 }
