@@ -3,7 +3,7 @@ import {
   Search,
   User
 } from '@element-plus/icons-vue'
-import login from './LoginPage';
+import Login from './LoginPage';
 </script >
 <script>
 export default {
@@ -40,12 +40,25 @@ export default {
     goHome() {
       this.$router.push('/home');
     },
-    showLogin() {
-      this.isLoginVisible = true;
-    },
-    closeLoginBox(){
+    closeLoginBox() {
       this.isLoginVisible = false;
-    }
+    },
+    async showLogin() {
+      this.isLoginVisible = true;
+      try {
+        const response = await fetch("http://localhost:8888/api/front/user/register", {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+        });
+
+        const data = await response.json();
+        console.log(data);
+      } catch (error) {
+        console.error(error);
+      }
+    },
   }
 }
 </script>
@@ -87,7 +100,7 @@ export default {
       </el-icon>{{ login_button }}</el-button>
   </div>
   <div v-if="isLoginVisible" class="loginSection">
-    <login @cancel="closeLoginBox"/>
+    <Login @cancel="closeLoginBox" />
   </div>
 </template>
 
@@ -97,7 +110,7 @@ export default {
   z-index: 100;
   top: 50%;
   left: 50%;
-  transform: translate(-50%,-50%);
+  transform: translate(-50%, -50%);
 }
 
 .logo {

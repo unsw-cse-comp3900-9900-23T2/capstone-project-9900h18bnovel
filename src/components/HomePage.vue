@@ -11,6 +11,7 @@ const value = ref(4.8)
 import Header from './Global_Header.vue';
 import Nav from './Global_Nav.vue';
 import Footer from './Global_Footer.vue';
+import Login from './LoginPage.vue';
 export default {
   data() {
     const weekly_books_info = [
@@ -49,6 +50,7 @@ export default {
       newest_books_images: newest_books_images,
       login_button: 'Sign in',
       click_rank_info: click_rank_info,
+      isLoginVisible: false,
     }
   },
   components: {
@@ -65,8 +67,11 @@ export default {
         'background-image': `url(${imageUrl})`
       };
     },
-    goLogin() {
-      this.$router.push('/login');
+    showLogin() {
+      this.isLoginVisible = true;
+    },
+    closeLoginBox(){
+      this.isLoginVisible = false;
     }
   },
   computed: {
@@ -110,9 +115,12 @@ export default {
           <h2>Collected Books</h2>
           <div v-if="!collect_flag" class="collected_novel_na_user">
             <h2>Please Login in to see the contents</h2>
-            <el-button class="login_button" type="primary" @click="goLogin"><el-icon>
+            <el-button class="login_button" type="primary" @click="showLogin"><el-icon>
                 <User />
               </el-icon>{{ login_button }}</el-button>
+            <div v-if="isLoginVisible" class="loginSection">
+              <Login @cancel="closeLoginBox" />
+            </div>
           </div>
           <div v-else class="collected_novel_user">
             U don't have collect books
@@ -266,15 +274,11 @@ export default {
 </template>
 
 <style >
-.blur {
-  filter: blur(3px); /* 调整模糊效果的程度 */
-}
-
 body {
   margin: 0;
   font-family: Arial, Helvetica, sans-serif;
   font-size: 14px;
-  width: 1920px;
+  width: 100vh;
   margin: 0 auto;
   overflow-x: hidden;
 }
