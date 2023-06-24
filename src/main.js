@@ -2,7 +2,6 @@ import { createApp } from 'vue';
 import { createRouter, createWebHistory } from 'vue-router';
 import App from './App.vue';
 import HomePage from './components/HomePage.vue';
-import Login from './components/LoginPage.vue';
 import All_Novels from './components/All_Novels.vue';
 import new_update from './components/new_update.vue';
 import ElementPlus from 'element-plus';
@@ -12,7 +11,6 @@ import 'element-plus/theme-chalk/index.css';
 const routes = [
   { path: '/', redirect: '/home' },
   { path: '/home', component: HomePage },
-  { path: '/login', component: Login },
   { path: '/allnovels', component: All_Novels },
   { path: '/newupdate', component: new_update },
 ]

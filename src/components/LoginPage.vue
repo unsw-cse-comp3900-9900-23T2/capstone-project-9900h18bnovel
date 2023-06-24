@@ -7,20 +7,28 @@ import { ElMessageBox } from 'element-plus'
 
 <script>
 export default {
+  props: {
+    verImage: {
+      type: String,
+      default: ''
+    },
+    sessionId: {
+      type: String,
+      default: ''
+    }
+  },
   data() {
     return {
       login_form: "login_form",
       show_login_form: true,
-      isLoginVisible: true,
-      isRegisterVisible: false,
+      isLoginVisible: false,
+      isRegisterVisible: true,
       isForgetVisible: false,
       email: '',
       username: '',
       password: '',
       confirmPass: '',
       verCode: '',
-      verImg: '',
-      sessionId: '',
       uid: '',
       token: '',
     }
@@ -34,18 +42,28 @@ export default {
       this.isRegisterVisible = true;
       this.isForgetVisible = false;
       this.isLoginVisible = false;
+      this.password = '';
+      this.confirmPass = '';
+      this.verCode = '';
+      this.username = '';
     },
 
     toLogin() {
       this.isRegisterVisible = false;
       this.isForgetVisible = false;
       this.isLoginVisible = true;
+      this.password = '';
+      this.confirmPass = '';
+      this.verCode = '';
     },
 
     toForget() {
       this.isForgetVisible = true;
       this.isLoginVisible = false;
       this.isRegisterVisible = false;
+      this.password = '';
+      this.confirmPass = '';
+      this.verCode = '';
     },
 
     async getVerCode() {
@@ -64,8 +82,7 @@ export default {
             body: JSON.stringify(requestData)
           });
 
-          const data = await response.json();
-          console.log(data);
+          await response.json();
         } catch (error) {
           console.error(error);
         }
@@ -116,7 +133,7 @@ export default {
           sessionId: this.sessionId
         };
         try {
-          const response = await fetch("http://localhost:8888/api/front/user/register", {
+          const response = await fetch("http://localhost:8888/api/front/user/login", {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json'
@@ -125,6 +142,7 @@ export default {
           });
 
           const data = await response.json();
+          console.log(this.sessionId);
           console.log(data);
         } catch (error) {
           console.error(error);
@@ -225,7 +243,7 @@ export default {
     <div class="each_input_container">
       <div class="text">Verification Code: </div>
       <el-input style="width: 30%;" v-model="verCode" />
-      <img style="height: 100%; width: 80px;" :src="verImg" />
+      <img style="height: 100%; width: 80px;" :src="verImage" />
     </div>
 
     <div class="other_options">
@@ -328,7 +346,6 @@ export default {
 
 
 <style >
-
 .login_form {
   display: flex;
   flex-direction: column;

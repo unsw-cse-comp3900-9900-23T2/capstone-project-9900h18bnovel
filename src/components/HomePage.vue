@@ -50,7 +50,9 @@ export default {
       newest_books_images: newest_books_images,
       login_button: 'Sign in',
       click_rank_info: click_rank_info,
-      isLoginVisible: false,
+      isLoginVisible: true,
+      VerImage: '',
+      sessionId: '',
     }
   },
   components: {
@@ -70,7 +72,7 @@ export default {
     async showLogin() {
       this.isLoginVisible = true;
       try {
-        const response = await fetch("http://localhost:8888/api/front/user/register", {
+        const response = await fetch("http://localhost:8888/api/front/user/img_verify_code", {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json'
@@ -78,7 +80,8 @@ export default {
         });
 
         const data = await response.json();
-        console.log(data);
+        this.verImage = "data:image/png;base64," + data.data.img;
+        this.sessionId = data.data.sessionId;
       } catch (error) {
         console.error(error);
       }
@@ -282,7 +285,7 @@ export default {
     <Footer />
   </div>
   <div v-if="isLoginVisible" class="loginSection">
-    <Login class="login" @cancel="closeLoginBox" />
+    <Login class="login" :verImage="this.verImage" :sessionId="this.sessionId" @cancel="closeLoginBox" />
   </div>
 </template>
 
