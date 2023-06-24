@@ -78,10 +78,13 @@ export default {
             'Content-Type': 'application/json'
           },
         });
-
-        const data = await response.json();
-        this.verImage = "data:image/png;base64," + data.data.img;
-        this.sessionId = data.data.sessionId;
+        if (response.status == 200) {
+          const data = await response.json();
+          this.verImage = "data:image/png;base64," + data.data.img;
+          this.sessionId = data.data.sessionId;
+        } else {
+          console.log("Test");
+        }
       } catch (error) {
         console.error(error);
       }
@@ -289,19 +292,17 @@ export default {
   </div>
 </template>
 
-<style >
-.blur {
-  filter: blur(5px);
-  pointer-events: none;
-}
-
+<style>
 body {
   margin: 0;
   font-family: Arial, Helvetica, sans-serif;
   font-size: 14px;
-  width: 100vh;
-  margin: 0 auto;
-  overflow-x: hidden;
+
+}
+
+.blur {
+  filter: blur(5px);
+  pointer-events: none;
 }
 
 .homeBody {

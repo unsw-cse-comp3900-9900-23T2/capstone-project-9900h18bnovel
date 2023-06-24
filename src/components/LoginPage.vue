@@ -1,8 +1,9 @@
 <script setup>
 import {
-  User
+  User,
+
 } from '@element-plus/icons-vue'
-import { ElMessageBox } from 'element-plus'
+import { ElMessage, ElMessageBox } from 'element-plus'
 </script >
 
 <script>
@@ -31,6 +32,8 @@ export default {
       verCode: '',
       uid: '',
       token: '',
+      countdown1: 0,
+      countdown2: 0,
     }
   },
   methods: {
@@ -66,29 +69,60 @@ export default {
       this.verCode = '';
     },
 
-    async getVerCode() {
+
+    startCountdown(buttonIndex) {
       if (this.email === '') {
         this.alertBox("emailEmpty")
       } else {
-        const requestData = {
-          email: this.email
-        };
-        try {
-          const response = await fetch("http://localhost:8888/api/front/user/email_verify_code", {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(requestData)
-          });
-
-          await response.json();
-        } catch (error) {
-          console.error(error);
+        ElMessage({
+          message: 'Verification code sent',
+          type: 'success',
+        })
+        let countdown;
+        if (buttonIndex === 1) {
+          countdown = this.countdown1;
+        } else if (buttonIndex === 2) {
+          countdown = this.countdown2;
         }
-
+        if (countdown > 0) {
+          return;
+        }
+        countdown = 60;
+        const timer = setInterval(() => {
+          countdown--;
+          if (countdown === 0) {
+            clearInterval(timer);
+          }
+          if (buttonIndex === 1) {
+            this.countdown1 = countdown;
+          } else if (buttonIndex === 2) {
+            this.countdown2 = countdown;
+          }
+        }, 1000);
+        this.getVerCode();
       }
+    },
 
+    async getVerCode() {
+      const requestData = {
+        email: this.email
+      };
+      try {
+        const response = await fetch("http://localhost:8888/api/front/user/email_verify_code", {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(requestData)
+        });
+        if (response.status == 200) {
+          await response.json();
+        } else {
+          ElMessage.error("Get verification code error");
+        }
+      } catch (error) {
+        ElMessage.error(error);
+      }
     },
 
     alertBox(situation) {
@@ -140,12 +174,14 @@ export default {
             },
             body: JSON.stringify(requestData)
           });
-
-          const data = await response.json();
-          console.log(this.sessionId);
-          console.log(data);
+          if (response.status == 200) {
+            const data = await response.json();
+            console.log(data);
+          } else {
+            console.log("Test");
+          }
         } catch (error) {
-          console.error(error);
+          ElMessage.error(error);
         }
       }
     },
@@ -177,11 +213,14 @@ export default {
             },
             body: JSON.stringify(requestData)
           });
-
-          const data = await response.json();
-          console.log(data);
+          if (response.status == 200) {
+            const data = await response.json();
+            console.log(data);
+          } else {
+            console.log("Test");
+          }
         } catch (error) {
-          console.error(error);
+          ElMessage.error(error);
         }
       }
     },
@@ -210,11 +249,14 @@ export default {
             },
             body: JSON.stringify(requestData)
           });
-
-          const data = await response.json();
-          console.log(data);
+          if (response.status == 200) {
+            const data = await response.json();
+            console.log(data);
+          } else {
+            console.log("Test");
+          }
         } catch (error) {
-          console.error(error);
+          ElMessage.error(error);
         }
       }
     }
@@ -288,7 +330,9 @@ export default {
     <div class="each_input_container">
       <div class="text">Verification Code: </div>
       <el-input style="width: 30%;" v-model="verCode" />
-      <el-button @click="getVerCode">Get code</el-button>
+      <el-button :disabled="countdown1 > 0" @click="startCountdown(1)">
+        {{ countdown1 > 0 ? countdown1 + 's' : 'Get Code' }}
+      </el-button>
     </div>
 
     <div class="other_options">
@@ -328,7 +372,9 @@ export default {
     <div class="each_input_container">
       <div class="text">Verification Code: </div>
       <el-input style="width: 30%;" v-model="verCode" />
-      <el-button @click="getVerCode">Get code</el-button>
+      <el-button :disabled="countdown2 > 0" @click="startCountdown(2)">
+        {{ countdown2 > 0 ? countdown2 + 's' : 'Get Code' }}
+      </el-button>
     </div>
 
     <div class="other_options">
@@ -351,7 +397,7 @@ export default {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background-color: antiquewhite;
+  background-color: rgb(245, 243, 243);
   width: 600px;
   border-radius: 50px;
   box-shadow: 0 10px 10px rgba(0, 0, 0, 0.4);
@@ -363,7 +409,7 @@ export default {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background-color: antiquewhite;
+  background-color: rgb(245, 243, 243);
   width: 600px;
   border-radius: 50px;
   box-shadow: 0 10px 10px rgba(0, 0, 0, 0.4);
@@ -375,7 +421,7 @@ export default {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background-color: antiquewhite;
+  background-color: rgb(245, 243, 243);
   width: 600px;
   border-radius: 50px;
   box-shadow: 0 10px 10px rgba(0, 0, 0, 0.4);

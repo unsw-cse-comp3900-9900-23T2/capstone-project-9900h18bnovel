@@ -9,7 +9,6 @@ import Login from './LoginPage';
 export default {
   data() {
     return {
-      header_container: 'header_container',
       header_left: 'header_left',
       header_right: 'header_right',
       login_button: 'Sign in',
@@ -49,7 +48,7 @@ export default {
 }
 </script>
 <template>
-  <div :class="header_container">
+  <div class="header_container">
     <!-- Click here will return to Home page in any circumstances -->
     <img src="..\JustForFunLogo.png" class="logo" @click="goHome">
 
@@ -101,7 +100,7 @@ export default {
 
 .logo {
   height: 60px;
-  width: 20vh
+  width: 200px;
 }
 
 .search_container {
@@ -113,7 +112,7 @@ export default {
 }
 
 .login_button {
-  width: 10vh;
+  width: 100px;
 }
 
 .mobile_search_container {
@@ -126,20 +125,7 @@ export default {
   align-items: center;
   background-color: black;
   padding: 20px;
-}
-
-.header_left {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 70%;
-}
-
-.header_right {
-  display: flex;
-  justify-content: right;
-  align-items: center;
-  width: 30%;
+  padding-right: 30px;
 }
 
 @media (max-width: 500px) {
