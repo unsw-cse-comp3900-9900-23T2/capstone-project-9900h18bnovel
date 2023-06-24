@@ -50,7 +50,7 @@ export default {
       newest_books_images: newest_books_images,
       login_button: 'Sign in',
       click_rank_info: click_rank_info,
-      isLoginVisible: true,
+      isLoginVisible: false,
       VerImage: '',
       sessionId: '',
     }

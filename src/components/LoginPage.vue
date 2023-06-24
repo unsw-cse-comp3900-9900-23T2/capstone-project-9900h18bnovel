@@ -21,8 +21,8 @@ export default {
     return {
       login_form: "login_form",
       show_login_form: true,
-      isLoginVisible: false,
-      isRegisterVisible: true,
+      isLoginVisible: true,
+      isRegisterVisible: false,
       isForgetVisible: false,
       email: '',
       username: '',
@@ -203,7 +203,7 @@ export default {
           velCode: this.verCode
         };
         try {
-          const response = await fetch("http://localhost:8888/api/front/user/register", {
+          const response = await fetch("http://localhost:8888/api/front/user/reset_password", {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json'
