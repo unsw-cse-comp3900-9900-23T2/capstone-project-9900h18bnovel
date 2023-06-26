@@ -22,22 +22,24 @@ export default {
       <el-sub-menu index="2">
         <template #title>Browse</template>
         <el-sub-menu index="2-1">
-          <template #title>Filter 1</template>
-          <el-menu-item index="2-1-1">1</el-menu-item>
-          <el-menu-item index="2-1-2">2</el-menu-item>
-          <el-menu-item index="2-1-3">3</el-menu-item>
+          <template #title>Novel Status</template>
+          <el-menu-item index="2-1-1">All</el-menu-item>
+          <el-menu-item index="2-1-2">Updating</el-menu-item>
+          <el-menu-item index="2-1-3">Finished</el-menu-item>
         </el-sub-menu>
         <el-sub-menu index="2-2">
-          <template #title>Filter 2</template>
-          <el-menu-item index="2-2-1">1</el-menu-item>
-          <el-menu-item index="2-2-2">2</el-menu-item>
-          <el-menu-item index="2-2-3">3</el-menu-item>
+          <template #title>Word Count</template>
+          <el-menu-item index="2-2-1">All</el-menu-item>
+          <el-menu-item index="2-2-2">&lt; 30000</el-menu-item>
+          <el-menu-item index="2-2-3">30000-50000</el-menu-item>
+          <el-menu-item index="2-2-4">&gt; 50000</el-menu-item>
         </el-sub-menu>
         <el-sub-menu index="2-3">
-          <template #title>Filter 3</template>
-          <el-menu-item index="2-3-1">1</el-menu-item>
-          <el-menu-item index="2-3-2">2</el-menu-item>
-          <el-menu-item index="2-3-3">3</el-menu-item>
+          <template #title>Update in</template>
+          <el-menu-item index="2-3-1">All</el-menu-item>
+          <el-menu-item index="2-3-2">3 Days</el-menu-item>
+          <el-menu-item index="2-3-3">A Week</el-menu-item>
+          <el-menu-item index="2-3-4">A Month</el-menu-item>
         </el-sub-menu>
         <el-sub-menu index="2-4">
           <template #title>Filter 4</template>
@@ -48,9 +50,9 @@ export default {
         </el-sub-menu>
         <el-sub-menu index="3">
           <template #title>Ranking</template>
-          <el-menu-item index="3-1">Rank 1</el-menu-item>
-          <el-menu-item index="3-2">Rank 2</el-menu-item>
-          <el-menu-item index="3-3">Rank 3</el-menu-item>
+          <el-menu-item index="3-1">Click Rank</el-menu-item>
+          <el-menu-item index="3-2">Newest Rank</el-menu-item>
+          <el-menu-item index="3-3">Update Rank</el-menu-item>
       </el-sub-menu>
     <el-menu-item index="4">My Creation</el-menu-item>
     <el-menu-item index="5"  @click="goNewUpdate">Newest Update</el-menu-item>

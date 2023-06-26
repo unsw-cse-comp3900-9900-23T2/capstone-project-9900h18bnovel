@@ -9,6 +9,7 @@ import {
 import Global_Header from './Global_Header.vue';
 import Global_Footer from './Global_Footer.vue';
 import Global_Nav from './Global_Nav.vue';
+import Login from './LoginPage.vue';
 export default {
   data() {
     const update_book_info = [
@@ -23,12 +24,36 @@ export default {
       { title: 'The Black Universe', image: 'https://marketplace.canva.com/EAFEbtlNK2Q/1/0/1003w/canva-double-exposure-artistic-background-novel-book-cover-sTAyOpO_rTI.jpg', author: 'Jesus Criss', des: "I wandered lonely as a cloud that floats on high o'er vales and hills when all at once I saw a crowd, a host, of golden daffodils." },
       { title: 'Shadow of Evil', image: 'https://i.etsystatic.com/19280387/r/il/63ad6f/2350960458/il_fullxfull.2350960458_sj9e.jpg', author: "Tommas Tu", des: 'Through this wide and troubled world I roam, alone and without a home, seeking solace in the depths of my soul' },
       { title: 'The Hypocrite World', image: 'https://marketplace.canva.com/EAD7WuSVrt0/1/0/1003w/canva-colorful-illustration-young-adult-book-cover-LVthABb24ik.jpg', author: "Siant Diygo", des: 'Amidst the chaos and confusion, she remained calm and composed, a beacon of hope in the midst of darkness' },
-
-
     ]
     return {
       update_book_info: update_book_info,
+      isLoginVisible: false,
     }
+  },
+  methods: {
+    async showLogin() {
+      this.isLoginVisible = true;
+      try {
+        const response = await fetch("http://localhost:8888/api/front/user/img_verify_code", {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+        });
+        if (response.status == 200) {
+          const data = await response.json();
+          this.verImage = "data:image/png;base64," + data.data.img;
+          this.sessionId = data.data.sessionId;
+        } else {
+          console.log("Test");
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    closeLoginBox() {
+      this.isLoginVisible = false;
+    },
   },
   computed: {
     filteredBooks() {
@@ -44,7 +69,8 @@ export default {
 </script>
 
 <template>
-  <Global_Header />
+  <div :class="{ 'blur': isLoginVisible }">
+  <Global_Header @showLogin="showLogin" @closeLoginBox="closeLoginBox" />
   <Global_Nav />
   <div class="new_update_body">
     <h1
@@ -87,6 +113,10 @@ export default {
       </el-backtop>
     </div>
     <Global_Footer />
+  </div>
+    <div v-if="isLoginVisible" class="loginSection">
+      <Login class="login" :verImage="this.verImage" :sessionId="this.sessionId" @cancel="closeLoginBox" />
+    </div>
 </template>
 
 
@@ -98,6 +128,11 @@ body {
   width: 1920px;
   margin: 0 auto;
   overflow-x: hidden;
+}
+
+.blur {
+  filter: blur(5px);
+  pointer-events: none;
 }
 
 .new_update_body {

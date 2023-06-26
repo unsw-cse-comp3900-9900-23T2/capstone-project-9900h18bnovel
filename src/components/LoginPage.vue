@@ -34,9 +34,22 @@ export default {
       token: '',
       countdown1: 0,
       countdown2: 0,
+      verCodeIsNumbers: false,
     }
   },
   methods: {
+    validateIsNumbers() {
+      const regex = /^[0-9]+$/;
+      if (!regex.test(this.verCode)) {
+        ElMessage({
+          message: 'Verification code must be numbers',
+          type: 'error',
+        })
+        this.verCodeIsNumbers = false;
+      } else {
+        this.verCodeIsNumbers = true;
+      }
+    },
     closeLoginBox() {
       this.$emit('cancel');
     },
@@ -69,10 +82,16 @@ export default {
       this.verCode = '';
     },
 
+    isValidEmail(email) {
+      const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+      return emailPattern.test(email);
+    },
 
     startCountdown(buttonIndex) {
       if (this.email === '') {
         this.alertBox("emailEmpty")
+      } else if (!this.isValidEmail(this.email)) {
+        this.alertBox("emailInvalid");
       } else {
         ElMessage({
           message: 'Verification code sent',
@@ -130,6 +149,10 @@ export default {
         ElMessageBox.alert("Email can' be empty", 'Error', {
           confirmButtonText: 'OK',
         })
+      } else if (situation === "emailInvalid") {
+        ElMessageBox.alert("Invalid email format", 'Error', {
+          confirmButtonText: 'OK',
+        })
       } else if (situation === "usernameEmpty") {
         ElMessageBox.alert("Username can' be empty", 'Error', {
           confirmButtonText: 'OK',
@@ -150,15 +173,24 @@ export default {
         ElMessageBox.alert('Two Password is not same', 'Error', {
           confirmButtonText: 'OK',
         })
+      } else if (situation === "verCodeIsNotNumbers") {
+        ElMessageBox.alert('Verification code must be numbers', 'Error', {
+          confirmButtonText: 'OK',
+        })
       }
     },
+
     async signin() {
       if (this.email === '') {
         this.alertBox("emailEmpty")
+      } else if (!this.isValidEmail(this.email)) {
+        this.alertBox("emailInvalid");
       } else if (this.password === '') {
         this.alertBox("passwordEmpty")
       } else if (this.verCode === '') {
         this.alertBox("verCodeEmpty")
+      } else if (this.verCodeIsNumbers === false) {
+        this.alertBox("verCodeIsNotNumbers")
       } else {
         const requestData = {
           email: this.email,
@@ -188,6 +220,8 @@ export default {
     async signUp() {
       if (this.email === '') {
         this.alertBox("emailEmpty")
+      } else if (!this.isValidEmail(this.email)) {
+        this.alertBox("emailInvalid");
       } else if (this.username === '') {
         this.alertBox("usernameEmpty")
       } else if (this.password === '') {
@@ -198,6 +232,8 @@ export default {
         this.alertBox("verCodeEmpty")
       } else if (this.confirmPass !== this.password) {
         this.alertBox("passDiff")
+      } else if (this.verCodeIsNumbers === false) {
+        this.alertBox("verCodeIsNotNumbers")
       } else {
         const requestData = {
           email: this.email,
@@ -227,6 +263,8 @@ export default {
     async forgetPass() {
       if (this.email === '') {
         this.alertBox("emailEmpty")
+      } else if (!this.isValidEmail(this.email)) {
+        this.alertBox("emailInvalid");
       } else if (this.password === '') {
         this.alertBox("passwordEmpty")
       } else if (this.confirmPass === '') {
@@ -235,6 +273,8 @@ export default {
         this.alertBox("verCodeEmpty")
       } else if (this.confirmPass !== this.password) {
         this.alertBox("passDiff")
+      } else if (this.verCodeIsNumbers === false) {
+        this.alertBox("verCodeIsNotNumbers")
       } else {
         const requestData = {
           email: this.email,
@@ -261,8 +301,17 @@ export default {
       }
     }
   },
-
-}
+  watch: {
+    verCode: {
+      handler() {
+        if (this.verCode !== '') {
+          this.validateIsNumbers();
+        }
+      },
+      immediate: true
+    }
+  }
+};
 </script>
 
 <template>
@@ -274,7 +323,7 @@ export default {
     <el-divider />
     <div class="each_input_container">
       <div class="text">Email: </div>
-      <el-input style="width: 30%;" v-model="email" />
+      <el-input placeholder="example@example.com" style="width: 30%;" v-model="email" />
     </div>
 
     <div class="each_input_container">
@@ -309,7 +358,7 @@ export default {
 
     <div class="each_input_container">
       <div class="text">Email: </div>
-      <el-input style="width: 30%;" v-model="email" />
+      <el-input placeholder="example@example.com" style="width: 30%;" v-model="email" />
     </div>
 
     <div class="each_input_container">
@@ -356,7 +405,7 @@ export default {
 
     <div class="each_input_container">
       <div class="text">Email: </div>
-      <el-input style="width: 30%;" v-model="email" />
+      <el-input placeholder="example@example.com" style="width: 30%;" v-model="email" />
     </div>
 
     <div class="each_input_container">
