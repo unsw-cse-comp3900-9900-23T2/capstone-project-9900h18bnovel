@@ -12,5 +12,10 @@ Week3:
 Week4:
   -Fixed resolution problem
   -Built more dynamic effect on home page, header, nav bar, footer
-
+  -Implemented of login, register, forget password sections and newest update page
+  -Completed the front-end and back-end joint debugging and obtain the back-end data
+Week5:
+  -Implemented all functions of authorization pages, such as log-in and log-out
+  -Display back-end data instead of pre-test data
+  
 
