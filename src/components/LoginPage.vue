@@ -158,6 +158,7 @@ export default {
           confirmButtonText: 'OK',
         })
       } else if (situation === "usernameContainSpace") {
+        /* 用户名不能有空格 */
         ElMessageBox.alert("Username can' contain any space", 'Error', {
           confirmButtonText: 'OK',
         })
@@ -166,6 +167,7 @@ export default {
           confirmButtonText: 'OK',
         })
       } else if (situation === "passwordContainSpace") {
+        /* 密码不能有空格 */
         ElMessageBox.alert("Password can' contain any space", 'Error', {
           confirmButtonText: 'OK',
         })
@@ -174,6 +176,7 @@ export default {
           confirmButtonText: 'OK',
         })
       }else if (situation === "conPassContainSpace") {
+        /* 确认密码不能有空格 */
         ElMessageBox.alert("Confirm Password can' contain any space", 'Error', {
           confirmButtonText: 'OK',
         })
@@ -238,6 +241,7 @@ export default {
       } else if (!this.isValidEmail(this.email)) {
         this.alertBox("emailInvalid");
       } else if (this.username === '') {
+        /* 全空格用户名或带空格用户名不接受 */
         this.alertBox("usernameEmpty")
       } else if (/\s/.test(this.username)) {
         this.alertBox("usernameContainSpace")
@@ -249,6 +253,7 @@ export default {
       } else if (this.confirmPass === '') {
         this.alertBox("conPassEmpty")
       } else if (/\s/.test(this.confirmPass)) {
+        /* 理同上一个 */
         this.alertBox("conPassContainSpace")
       } else if (this.verCode === '') {
         this.alertBox("verCodeEmpty")
