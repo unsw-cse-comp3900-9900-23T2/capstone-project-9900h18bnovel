@@ -157,12 +157,24 @@ export default {
         ElMessageBox.alert("Username can' be empty", 'Error', {
           confirmButtonText: 'OK',
         })
+      } else if (situation === "usernameContainSpace") {
+        ElMessageBox.alert("Username can' contain any space", 'Error', {
+          confirmButtonText: 'OK',
+        })
       } else if (situation === "passwordEmpty") {
         ElMessageBox.alert("Password can' be empty", 'Error', {
           confirmButtonText: 'OK',
         })
+      } else if (situation === "passwordContainSpace") {
+        ElMessageBox.alert("Password can' contain any space", 'Error', {
+          confirmButtonText: 'OK',
+        })
       } else if (situation === "conPassEmpty") {
         ElMessageBox.alert("Confirm Password can' be empty", 'Error', {
+          confirmButtonText: 'OK',
+        })
+      }else if (situation === "conPassContainSpace") {
+        ElMessageBox.alert("Confirm Password can' contain any space", 'Error', {
           confirmButtonText: 'OK',
         })
       } else if (situation === "verCodeEmpty") {
@@ -187,6 +199,9 @@ export default {
         this.alertBox("emailInvalid");
       } else if (this.password === '') {
         this.alertBox("passwordEmpty")
+      } else if(/\s/.test(this.password)){
+        /*因为发现如果输入六个空格也会向后端发请求，所以我这里就加了个这个 */
+        this.alertBox("passwordContainSpace")
       } else if (this.verCode === '') {
         this.alertBox("verCodeEmpty")
       } else if (this.verCodeIsNumbers === false) {
@@ -224,10 +239,17 @@ export default {
         this.alertBox("emailInvalid");
       } else if (this.username === '') {
         this.alertBox("usernameEmpty")
+      } else if (/\s/.test(this.username)) {
+        this.alertBox("usernameContainSpace")
       } else if (this.password === '') {
         this.alertBox("passwordEmpty")
+      } else if(/\s/.test(this.password)){
+        /*因为发现如果输入六个空格也会向后端发请求，所以我这里就加了个这个 */
+        this.alertBox("passwordContainSpace")
       } else if (this.confirmPass === '') {
         this.alertBox("conPassEmpty")
+      } else if (/\s/.test(this.confirmPass)) {
+        this.alertBox("conPassContainSpace")
       } else if (this.verCode === '') {
         this.alertBox("verCodeEmpty")
       } else if (this.confirmPass !== this.password) {
@@ -267,8 +289,13 @@ export default {
         this.alertBox("emailInvalid");
       } else if (this.password === '') {
         this.alertBox("passwordEmpty")
+      } else if(/\s/.test(this.password)){
+        /*因为发现如果输入六个空格也会向后端发请求，所以我这里就加了个这个 */
+        this.alertBox("passwordContainSpace")
       } else if (this.confirmPass === '') {
         this.alertBox("conPassEmpty")
+      } else if (/\s/.test(this.confirmPass)) {
+        this.alertBox("conPassContainSpace")
       } else if (this.verCode === '') {
         this.alertBox("verCodeEmpty")
       } else if (this.confirmPass !== this.password) {
