@@ -17,5 +17,6 @@ Week4:
 Week5:
   -Implemented all functions of authorization pages, such as log-in and log-out
   -Display back-end data instead of pre-test data
+  -Set constraints in authorization functions
   
 
