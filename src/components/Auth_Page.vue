@@ -1,7 +1,6 @@
 <script setup>
 import {
   User,
-
 } from '@element-plus/icons-vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 </script >
@@ -31,7 +30,6 @@ export default {
       confirmPass: '',
       verCode: '',
       uid: '',
-      token: '',
       countdown1: 0,
       countdown2: 0,
       verCodeIsNumbers: false,
@@ -53,7 +51,9 @@ export default {
     closeLoginBox() {
       this.$emit('cancel');
     },
-
+    showLogin() {
+      this.$emit('showLogin');
+    },
     toRegister() {
       this.isRegisterVisible = true;
       this.isForgetVisible = false;
@@ -227,6 +227,43 @@ export default {
           if (response.status == 200) {
             const data = await response.json();
             console.log(data);
+            if (data.code === "00000") {
+              ElMessage({
+                message: 'Welcome ' + data.data.userName,
+                type: 'success',
+              });
+              localStorage.setItem('token', data.data.token);
+              localStorage.setItem('uid', data.data.uid);
+              localStorage.setItem('username', data.data.userName);
+              this.$store.dispatch('login', data.data.token);
+              this.$store.dispatch('uid', data.data.uid);
+              this.$store.dispatch('username', data.data.userName);
+              this.closeLoginBox();
+            } else if (data.code === "A0201") {
+              ElMessage({
+                message: "Email: " + this.email + " is not exists, please check again",
+                type: 'error',
+              });
+              this.password = '';
+              this.verCode = '';
+              this.showLogin();
+            } else if (data.code === "A0210") {
+              ElMessage({
+                message: "Incorrect password",
+                type: 'error',
+              });
+              this.password = '';
+              this.verCode = '';
+              this.showLogin();
+            } else if (data.code === "A0240" || data.code === "A0400") {
+              ElMessage({
+                message: "Incorrect verification code",
+                type: 'error',
+              });
+              this.password = '';
+              this.verCode = '';
+              this.showLogin();
+            }
           } else {
             console.log("Test");
           }
@@ -278,7 +315,26 @@ export default {
           });
           if (response.status == 200) {
             const data = await response.json();
-            console.log(data);
+            if (data.code === "00000") {
+              ElMessage({
+                message: 'Sign up successful',
+                type: 'success',
+              });
+              this.toLogin();
+            } else if (data.code === 'A0111') {
+              ElMessage({
+                message: "Email: " + this.email + " already exists",
+                type: 'error',
+              });
+              this.password = '';
+              this.confirmPass = '';
+              this.verCode = '';
+            } else if (data.code === "A0240" || data.code === "A0400") {
+              ElMessage.error('Incorrect Verification code');
+              this.password = '';
+              this.confirmPass = '';
+              this.verCode = '';
+            }
           } else {
             console.log("Test");
           }
@@ -310,8 +366,8 @@ export default {
       } else {
         const requestData = {
           email: this.email,
-          password: this.password,
-          velCode: this.verCode
+          velCode: this.verCode,
+          newPassword: this.password,
         };
         try {
           const response = await fetch("http://localhost:8888/api/front/user/reset_password", {
@@ -324,6 +380,26 @@ export default {
           if (response.status == 200) {
             const data = await response.json();
             console.log(data);
+            if (data.code === "00000") {
+              ElMessage({
+                message: 'Password has been reset',
+                type: 'success',
+              });
+              this.password = '';
+              this.confirmPass = '';
+              this.verCode = '';
+              this.toLogin();
+            } else if (data.code === "A0240" || data.code === "A0400") {
+              ElMessage.error('Incorrect Verification code');
+              this.password = '';
+              this.confirmPass = '';
+              this.verCode = '';
+            } else if (data.code === "A0201") {
+              ElMessage.error("Email: " + this.email + " does not exists");
+              this.password = '';
+              this.confirmPass = '';
+              this.verCode = '';
+            }
           } else {
             console.log("Test");
           }
@@ -375,7 +451,7 @@ export default {
         <el-link @click="toForget">Forget Password</el-link>
       </div>
       <div style="margin-top: 20px;">
-        <el-button type="primary" @click="signin">Log in</el-button>
+        <el-button type="primary" @click="signin">Submit</el-button>
         <el-button @click="closeLoginBox">Cancel</el-button>
       </div>
     </div>
@@ -422,7 +498,7 @@ export default {
         <el-link @click="toForget">Forget Password</el-link>
       </div>
       <div style="margin-top: 20px;">
-        <el-button type="primary" @click="signUp">Sign up</el-button>
+        <el-button type="primary" @click="signUp">Submit</el-button>
         <el-button @click="closeLoginBox">Cancel</el-button>
       </div>
     </div>

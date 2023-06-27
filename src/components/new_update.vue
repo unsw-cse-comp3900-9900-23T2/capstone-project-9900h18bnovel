@@ -9,7 +9,7 @@ import {
 import Global_Header from './Global_Header.vue';
 import Global_Footer from './Global_Footer.vue';
 import Global_Nav from './Global_Nav.vue';
-import Login from './LoginPage.vue';
+import Login from './Auth_Page.vue';
 export default {
   data() {
     const update_book_info = [
