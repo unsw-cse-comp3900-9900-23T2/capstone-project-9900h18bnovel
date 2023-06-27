@@ -3,9 +3,10 @@ import {
   Search,
   User
 } from '@element-plus/icons-vue'
-import Login from './LoginPage';
+
 </script >
 <script>
+import Login from './Auth_Page.vue';
 export default {
   data() {
     return {
@@ -13,11 +14,22 @@ export default {
       header_right: 'header_right',
       login_button: 'Sign in',
       isSearchActive: false,
-      searchInput: ''
+      searchInput: '',
+      username: '',
     }
+  },
+  components: {
+    Login,
   },
   mounted() {
     document.addEventListener('click', this.searchGlobalClick);
+    if (localStorage.getItem("token")) {
+      this.token = localStorage.getItem("token");
+      this.username = localStorage.getItem('username');
+    } else {
+      this.token = null;
+      this.username = null;
+    }
   },
   beforeUnmount() {
     document.removeEventListener('click', this.searchGlobalClick);
@@ -44,6 +56,9 @@ export default {
     showLogin() {
       this.$emit('showLogin');
     },
+    logout() {
+      this.$emit('logout');
+    }
   }
 }
 </script>
@@ -80,12 +95,23 @@ export default {
     </div>
     <!-- This right side of class will represent user thumbnail, name and log out button once token exists -->
     <!-- Click here will link to login page -->
-    <el-button class="login_button" type="primary" @click="showLogin"><el-icon>
-        <User />
-      </el-icon>{{ login_button }}</el-button>
+    <div v-if="!this.$store.state.token" style="display: flex; align-items: center; justify-content: flex-end; width: 200px;">
+      <el-button class="login_button" type="primary" @click="showLogin"><el-icon>
+          <User />
+        </el-icon>{{ login_button }}</el-button>
+    </div>
+    <div v-else style="color: white; display: flex; align-items: center; justify-content: space-between; width: 200px;">
+      <div style="display: flex; flex-direction: column; align-items: center;">
+        <el-avatar :size="70" :src="img ? img : 'https://img-qn.51miz.com/Element/00/88/60/42/ea5b40df_E886042_1992a532.png!/quality/90/unsharp/true/compress/true/format/png/fw/300'" />
+        <div>{{ this.$store.state.userName ? this.$store.state.userName : username }}</div>
+      </div>
+      <el-button class="logout_button" type="primary" @click="logout"><el-icon>
+          <User />
+        </el-icon> Sign out </el-button>
+    </div>
   </div>
   <div v-if="isLoginVisible" class="loginSection">
-    <Login @cancel="closeLoginBox" />
+    <Login @showLogin="showLogin" @cancel="closeLoginBox" />
   </div>
 </template>
 
@@ -115,6 +141,10 @@ export default {
   width: 100px;
 }
 
+.logout_button {
+  width: 100px;
+}
+
 .mobile_search_container {
   display: none;
 }
@@ -126,6 +156,7 @@ export default {
   background-color: black;
   padding: 20px;
   padding-right: 30px;
+  height: 80px;
 }
 
 @media (max-width: 500px) {

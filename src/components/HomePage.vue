@@ -4,6 +4,7 @@ import {
   UserFilled,
   User
 } from '@element-plus/icons-vue';
+import { ElMessage } from 'element-plus'
 import { ref } from 'vue'
 const value = ref(4.8)
 </script >
@@ -11,7 +12,7 @@ const value = ref(4.8)
 import Header from './Global_Header.vue';
 import Nav from './Global_Nav.vue';
 import Footer from './Global_Footer.vue';
-import Login from './LoginPage.vue';
+import Login from './Auth_Page.vue';
 export default {
   data() {
     const weekly_books_info = [
@@ -43,7 +44,6 @@ export default {
       { value: 3.6, title: "When Blood Meets Earth", image: "https://www.nairaland.com/attachments/16975928_octoberillustration6768x1152_jpeg7ab7fc0d22a2a942cf8632fae8e2295b", author: "E.A.NOBLE", des: "Against the backdrop of war-torn lands, a group of unlikely companions bands together to reclaim their homeland from the clutches of evil. As they navigate treacherous landscapes and face unimaginable dangers, they learn the true meaning of sacrifice, loyalty, and the enduring strength of friendship." }
     ]
     return {
-      collect_flag: false,
       weekly_books_info: weekly_books_info,
       hottest_books_info: hottest_books_info,
       best_books_info: '',
@@ -65,6 +65,9 @@ export default {
   },
   mounted() {
     this.getHomeBooks();
+    if (localStorage.getItem("token")) {
+      this.$store.dispatch('login', localStorage.getItem("token"));
+    }
   },
   methods: {
     testFlag() {
@@ -105,7 +108,6 @@ export default {
         });
         if (response.status == 200) {
           const data = await response.json();
-          console.log(data);
           this.weekly_books_info = data.data.filter(item => item.type === '0');
           this.hottest_books_info = data.data.filter(item => item.type === '1');
           this.best_books_info = data.data.filter(item => item.type === '2');
@@ -122,6 +124,18 @@ export default {
     closeLoginBox() {
       this.isLoginVisible = false;
     },
+    logout() {
+      ElMessage({
+        message: "Log out successful",
+        type: 'success',
+      });
+      localStorage.removeItem('userName');
+      localStorage.removeItem('token');
+      localStorage.removeItem('uid');
+      this.$store.dispatch('logout');
+      this.$store.dispatch('clearusername');
+      this.$store.dispatch('clearuid');
+    }
   },
   computed: {
     filteredComments() {
@@ -133,7 +147,7 @@ export default {
 <template>
   <div :class="{ 'blur': isLoginVisible }">
     <div>
-      <Header @showLogin="showLogin" @closeLoginBox="closeLoginBox" />
+      <Header @showLogin="showLogin" @closeLoginBox="closeLoginBox" @logout="logout" />
       <Nav />
     </div>
     <div class="homeBody">
@@ -162,16 +176,16 @@ export default {
         </div>
         <div class="collected_novel_container">
           <h2>Collected Books</h2>
-          <div v-if="!collect_flag" class="collected_novel_na_user">
-            <el-empty :image-size="120">
-              <el-button class="login_button" type="primary" @click="showLogin"
-                @showLogin="showLogin"><el-icon>
+          <div v-if="!this.$store.state.token" class="collected_novel_na_user">
+            <el-empty :image-size="120" description="Please sign in to see more informations">
+              <el-button class="login_button" type="primary" @click="showLogin" @showLogin="showLogin"><el-icon>
                   <User />
                 </el-icon>{{ login_button }}</el-button>
             </el-empty>
           </div>
           <div v-else class="collected_novel_user">
-            U don't have collect books
+            <el-empty :image-size="120" description="You don't have collect books">
+            </el-empty>
           </div>
         </div>
       </div>
@@ -324,7 +338,8 @@ export default {
   </div>
   <transition name="fade">
     <div v-if="isLoginVisible" class="loginSection">
-      <Login class="login" :verImage="this.verImage" :sessionId="this.sessionId" @cancel="closeLoginBox" />
+      <Login class="login" :verImage="this.verImage" :sessionId="this.sessionId" @showLogin="showLogin"
+        @cancel="closeLoginBox" />
     </div>
   </transition>
 </template>
@@ -439,6 +454,16 @@ body {
 }
 
 .collected_novel_na_user {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  box-shadow: var(--el-box-shadow);
+  background-color: #FAFCFF;
+}
+
+.collected_novel_user {
   height: 100%;
   display: flex;
   flex-direction: column;
