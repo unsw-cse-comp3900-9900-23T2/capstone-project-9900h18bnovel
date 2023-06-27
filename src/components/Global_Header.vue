@@ -65,8 +65,9 @@ export default {
 <template>
   <div class="header_container">
     <!-- Click here will return to Home page in any circumstances -->
-    <img src="..\JustForFunLogo.png" class="logo" @click="goHome">
-
+    <div class="logo_container">
+      <img src="..\logo.png" class="logo" @click="goHome">
+    </div>
     <div class="search_container">
       <div v-if="!isSearchActive">
         <el-button class="searchButton" ref="searchContainer" @click.stop="toggleSearch" :icon="Search"
@@ -95,14 +96,16 @@ export default {
     </div>
     <!-- This right side of class will represent user thumbnail, name and log out button once token exists -->
     <!-- Click here will link to login page -->
-    <div v-if="!this.$store.state.token" style="display: flex; align-items: center; justify-content: flex-end; width: 200px;">
+    <div v-if="!this.$store.state.token"
+      style="display: flex; align-items: center; justify-content: flex-end; width: 200px;">
       <el-button class="login_button" type="primary" @click="showLogin"><el-icon>
           <User />
         </el-icon>{{ login_button }}</el-button>
     </div>
     <div v-else style="color: white; display: flex; align-items: center; justify-content: space-between; width: 200px;">
       <div style="display: flex; flex-direction: column; align-items: center;">
-        <el-avatar :size="70" :src="img ? img : 'https://img-qn.51miz.com/Element/00/88/60/42/ea5b40df_E886042_1992a532.png!/quality/90/unsharp/true/compress/true/format/png/fw/300'" />
+        <el-avatar :size="70"
+          :src="img ? img : 'https://img-qn.51miz.com/Element/00/88/60/42/ea5b40df_E886042_1992a532.png!/quality/90/unsharp/true/compress/true/format/png/fw/300'" />
         <div>{{ this.$store.state.userName ? this.$store.state.userName : username }}</div>
       </div>
       <el-button class="logout_button" type="primary" @click="logout"><el-icon>
@@ -124,9 +127,17 @@ export default {
   transform: translate(-50%, -50%);
 }
 
-.logo {
-  height: 60px;
+.logo_container{
+  height: 200px;
   width: 200px;
+  margin-top: -20px;
+  margin-left: -20px;
+}
+
+.logo {
+ height: 100%;
+ width: 100%;
+ object-fit: contain;
 }
 
 .search_container {
