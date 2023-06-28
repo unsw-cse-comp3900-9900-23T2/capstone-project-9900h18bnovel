@@ -3,6 +3,7 @@ package com.example.novel_backend.dao.entity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import java.io.Serial;
@@ -71,7 +72,7 @@ public class BookInfo implements Serializable {
     /**
      * Score; Total:10 , True score = score/10
      */
-    private Integer score;
+    private Float score;
 
     /**
      * Book Status;0-Continued 1-Completed
@@ -109,9 +110,9 @@ public class BookInfo implements Serializable {
     private LocalDateTime lastChapterUpdateTime;
 
     /**
-     * Whether to charge; 1 - charge 0 - free
+     * Collection number
      */
-    private Integer isVip;
+    private Long collectCount;
 
     /**
      * Creation date

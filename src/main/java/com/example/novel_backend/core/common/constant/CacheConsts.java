@@ -43,6 +43,21 @@ public class CacheConsts {
      */
     public static final String HOME_BOOK_CACHE_NAME = "homeBookCache";
 
+    /**
+     * Book Hit List Cache
+     */
+    public static final String BOOK_VISIT_RANK_CACHE_NAME = "bookVisitRankCache";
+
+    /**
+     * Book Newest Rank List Cache
+     */
+    public static final String BOOK_NEWEST_RANK_CACHE_NAME = "bookNewestRankCache";
+
+    /**
+     * Book Update Rank List Cache
+     */
+    public static final String BOOK_UPDATE_RANK_CACHE_NAME = "bookUpdateRankCache";
+
 
     /**
      * Cache configuration constants
@@ -51,6 +66,13 @@ public class CacheConsts {
     @AllArgsConstructor
     public enum CacheEnum {
         HOME_BOOK_CACHE(0, HOME_BOOK_CACHE_NAME, 60 * 60 * 24, 1),
+
+        BOOK_VISIT_RANK_CACHE(2, BOOK_VISIT_RANK_CACHE_NAME, 60 * 60 * 6, 1),
+
+        BOOK_NEWEST_RANK_CACHE(0, BOOK_NEWEST_RANK_CACHE_NAME, 60 * 30, 1),
+
+        BOOK_UPDATE_RANK_CACHE(0, BOOK_UPDATE_RANK_CACHE_NAME, 60, 1),
+
         USER_INFO_CACHE(2, EMAIL_VERIFY_CODE_CACHE_KEY, 60 * 60 * 24, 10000);
         /**
          * Cache type 0 - local 1 - local and remote 2 - remote

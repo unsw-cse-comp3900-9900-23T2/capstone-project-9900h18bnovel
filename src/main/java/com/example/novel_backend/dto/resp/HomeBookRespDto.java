@@ -48,4 +48,22 @@ public class HomeBookRespDto {
     @Schema(description = "Book description")
     private String bookDesc;
 
+    /**
+     * Visit count
+     */
+    @Schema(description = "Visit count")
+    private Long visitCount;
+
+    /**
+     * Collect count
+     */
+    @Schema(description = "Collect count")
+    private Long collectCount;
+
+    /**
+     * Book score
+     */
+    @Schema(description = "Book score")
+    private Float score;
+
 }

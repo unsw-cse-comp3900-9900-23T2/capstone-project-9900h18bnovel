@@ -66,11 +66,14 @@ public class HomeBookCacheManager {
                     homeBookRespDto.setAuthorName(bookInfo.getAuthorName());
                     homeBookRespDto.setPicUrl(bookInfo.getPicUrl());
                     homeBookRespDto.setBookDesc(bookInfo.getBookDesc());
+                    homeBookRespDto.setVisitCount(bookInfo.getVisitCount());
+                    homeBookRespDto.setCollectCount(bookInfo.getCollectCount());
+                    homeBookRespDto.setScore(bookInfo.getScore());
                     homeBookRespDtos.add(homeBookRespDto);
                 }
                 return homeBookRespDtos;
             }
         }
-        return new ArrayList<HomeBookRespDto>();
+        return new ArrayList<>();
     }
 }
