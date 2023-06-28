@@ -7,13 +7,14 @@ import {
 import { ElMessage } from 'element-plus'
 import { ref } from 'vue'
 const value = ref(4.8)
-</script >
+</script>
 <script>
 import Header from './Global_Header.vue';
 import Nav from './Global_Nav.vue';
 import Footer from './Global_Footer.vue';
 import Login from './Auth_Page.vue';
 export default {
+  emits: ['showLogin', 'closeLoginBox', 'logout'],
   data() {
     const weekly_books_info = [
       { title: 'Memory', image: 'https://d1csarkz8obe9u.cloudfront.net/posterpreviews/contemporary-fiction-night-time-book-cover-design-template-1be47835c3058eb42211574e0c4ed8bf_screen.jpg?ts=1637012564', author: 'Ajax Mother', des: "I wandered lonely as a cloud that floats on high o'er vales and hills when all at once I saw a crowd, a host, of golden daffodils." },
@@ -184,8 +185,7 @@ export default {
             </el-empty>
           </div>
           <div v-else class="collected_novel_user">
-            <el-empty :image-size="120" description="You don't have collect books">
-            </el-empty>
+            <el-empty :image-size="120" description="You don't have collect books"></el-empty>
           </div>
         </div>
       </div>

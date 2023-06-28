@@ -11,6 +11,7 @@ import Global_Footer from './Global_Footer.vue';
 import Global_Nav from './Global_Nav.vue';
 import Login from './Auth_Page.vue';
 export default {
+  emits: ['showLogin', 'closeLoginBox'],
   data() {
     const update_book_info = [
       { value: 5, title: "Crack The Code", image: "https://www.adobe.com/express/create/cover/media_181e3d2c78f153ae7bf0e19a2faeb9a76e234da30.jpeg?width=400&format=jpeg&optimize=medium", author: "Patrick C.Harless", des: "In a small coastal town, a mysterious stranger arrives, bringing with him an air of intrigue and secrets. As the townspeople become entranced by his enigmatic presence, they soon discover that he holds the key to their deepest desires and darkest fears." },

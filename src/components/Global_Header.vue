@@ -8,6 +8,7 @@ import {
 <script>
 import Login from './Auth_Page.vue';
 export default {
+  emits: ['showLogin', 'closeLoginBox', 'logout'],
   data() {
     return {
       header_left: 'header_left',
@@ -16,6 +17,7 @@ export default {
       isSearchActive: false,
       searchInput: '',
       username: '',
+      isLoginVisible: false,
     }
   },
   components: {
