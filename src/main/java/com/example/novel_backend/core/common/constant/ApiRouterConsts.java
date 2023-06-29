@@ -32,6 +32,10 @@ public class ApiRouterConsts {
      */
     public static final String HOME_URL_PREFIX = "/home";
 
+    /**
+     * Book module request path prefix
+     */
+    public static final String BOOK_URL_PREFIX = "/book";
 
     /**
      * Front-end portal system User module request path prefix
@@ -42,4 +46,9 @@ public class ApiRouterConsts {
      * Foreground portal home page API request path prefix
      */
     public static final String API_FRONT_HOME_URL_PREFIX = API_FRONT_URL_PREFIX + HOME_URL_PREFIX;
+
+    /**
+     * Foreground portal book module API request path prefix
+     */
+    public static final String API_FRONT_BOOK_URL_PREFIX = API_FRONT_URL_PREFIX + BOOK_URL_PREFIX;
 }

@@ -23,21 +23,57 @@ public class BookRankCacheManager {
     private final BookInfoMapper bookInfoMapper;
 
     /**
-     * 查询小说点击榜列表，并放入缓存中
+     * Check the list of book hits and put them in the cache
      */
-//    @Cacheable(cacheManager = CacheConsts.REDIS_CACHE_MANAGER,
-//            value = CacheConsts.BOOK_VISIT_RANK_CACHE_NAME)
-//    public List<BookRankRespDto> listVisitRankBook() {
-//    }
-//
-//    private List<BookRankRespDto> listRankBooks(QueryWrapper<BookInfo> bookInfoQueryWrapper){
-//        return bookInfoMapper.selectList(bookInfoQueryWrapper).stream().map(bookInfo -> {
-//            BookRankRespDto respDto = new BookRankRespDto();
-//            respDto.setId(bookInfo.getId());
-//            respDto.setCategoryId(bookInfo.getCategoryId());
-//            respDto.setPicUrl(bookInfo.getPicUrl());
-//
-//            return respDto;
-//        }).toList();
-//    }
+    @Cacheable(cacheManager = CacheConsts.REDIS_CACHE_MANAGER,
+            value = CacheConsts.BOOK_VISIT_RANK_CACHE_NAME)
+    public List<BookRankRespDto> listVisitRankBook() {
+        QueryWrapper<BookInfo> bookInfoQueryWrapper = new QueryWrapper<>();
+        bookInfoQueryWrapper.orderByAsc("visit_count")
+                .last("limit 30");
+        return listRankBooks(bookInfoQueryWrapper);
+    }
+
+    /**
+     * Check the list of new books and put it in the cache
+     */
+    @Cacheable(cacheManager = CacheConsts.CAFFEINE_CACHE_MANAGER,
+            value = CacheConsts.BOOK_NEWEST_RANK_CACHE_NAME)
+    public List<BookRankRespDto> listNewestRankBooks() {
+        QueryWrapper<BookInfo> bookInfoQueryWrapper = new QueryWrapper<>();
+        bookInfoQueryWrapper.orderByDesc("create_time")
+                .last("limit 30");
+        return listRankBooks(bookInfoQueryWrapper);
+    }
+
+    /**
+     * Check the list of books updated and put them in the cache
+     */
+    @Cacheable(cacheManager = CacheConsts.CAFFEINE_CACHE_MANAGER,
+            value = CacheConsts.BOOK_UPDATE_RANK_CACHE_NAME)
+    public List<BookRankRespDto> listUpdateRankBooks() {
+        QueryWrapper<BookInfo> bookInfoQueryWrapper = new QueryWrapper<>();
+        bookInfoQueryWrapper.orderByDesc("update_time")
+                .last("limit 30");
+        return listRankBooks(bookInfoQueryWrapper);
+    }
+
+    private List<BookRankRespDto> listRankBooks(QueryWrapper<BookInfo> bookInfoQueryWrapper){
+        return bookInfoMapper.selectList(bookInfoQueryWrapper).stream().map(bookInfo -> {
+            BookRankRespDto respDto = new BookRankRespDto();
+            respDto.setId(bookInfo.getId());
+            respDto.setCategoryId(bookInfo.getCategoryId());
+            respDto.setPicUrl(bookInfo.getPicUrl());
+            respDto.setBookName(bookInfo.getBookName());
+            respDto.setAuthorName(bookInfo.getAuthorName());
+            respDto.setBookDesc(bookInfo.getBookDesc());
+            respDto.setWordCount(bookInfo.getWordCount());
+            respDto.setVisitCount(bookInfo.getVisitCount());
+            respDto.setCollectCount(bookInfo.getCollectCount());
+            respDto.setScore(bookInfo.getScore());
+            respDto.setLastChapterName(bookInfo.getLastChapterName());
+            respDto.setLastChapterUpdateTime(bookInfo.getLastChapterUpdateTime());
+            return respDto;
+        }).toList();
+    }
 }

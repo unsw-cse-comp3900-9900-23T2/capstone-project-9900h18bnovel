@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 /**
@@ -36,8 +35,7 @@ public class HomeBookCacheManager {
      * Check the front page for novel recommendations and put them in the cache
      * @return Home page book dto
      */
-    @Cacheable(cacheManager = CacheConsts.CAFFEINE_CACHE_MANAGER,
-            value = CacheConsts.HOME_BOOK_CACHE_NAME)
+
     public List<HomeBookRespDto> listHomeBooks(){
         // Search for a book to recommend from the novel recommendation table on the home page
         QueryWrapper<HomeBook> queryWrapper = new QueryWrapper<>();

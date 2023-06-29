@@ -77,10 +77,10 @@ public class BookRankRespDto {
     private Long collectCount;
 
     /**
-     * Book rating
+     * Book score
      */
-    @Schema(description = "Book rating")
-    private Integer rating;
+    @Schema(description = "Book score")
+    private Float score;
 
     /**
      * Latest Chapter Name
