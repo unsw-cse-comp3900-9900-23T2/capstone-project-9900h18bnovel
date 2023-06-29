@@ -226,9 +226,9 @@ export default {
                       style="font-size: 10pt; margin-top: 10px; margin-right: 10px; display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 11;overflow: hidden;">{{
                         item.bookDesc }}</span>
                     <span style="bottom: 10px;position: absolute;">
-                      20 <el-icon>
+                      {{ item.collectCount }} <el-icon>
                         <UserFilled />
-                      </el-icon> Liked
+                      </el-icon> Collected
                     </span>
                   </div>
                   <div class="carousel_image_container">
@@ -268,9 +268,9 @@ export default {
                       style="font-size: 10pt; margin-top: 10px; margin-right: 10px; display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 11;overflow: hidden;">{{
                         item.bookDesc }}</span>
                     <span style="bottom: 10px;position: absolute;">
-                      20 <el-icon>
+                      {{ item.collectCount }} <el-icon>
                         <UserFilled />
-                      </el-icon> Liked
+                      </el-icon> Collected
                     </span>
                   </div>
                   <div class="carousel_image_container">
