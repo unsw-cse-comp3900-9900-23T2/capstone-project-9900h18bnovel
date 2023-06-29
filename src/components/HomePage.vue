@@ -4,15 +4,23 @@ import {
   UserFilled,
   User
 } from '@element-plus/icons-vue';
-import { ref } from 'vue'
-const value = ref(4.8)
-</script >
+import { ElMessage } from 'element-plus'
+const svg = `
+<path class="path" d="
+          M 10 40
+          L 10 15
+          L 30 40
+          L 30 15
+        " style="stroke-width: 5px; fill: rgba(0, 0, 0, 0); animation: none;"/>
+      `
+</script>
 <script>
 import Header from './Global_Header.vue';
 import Nav from './Global_Nav.vue';
 import Footer from './Global_Footer.vue';
-import Login from './LoginPage.vue';
+import Login from './Auth_Page.vue';
 export default {
+  emits: ['showLogin', 'closeLoginBox', 'logout'],
   data() {
     const weekly_books_info = [
       { title: 'Memory', image: 'https://d1csarkz8obe9u.cloudfront.net/posterpreviews/contemporary-fiction-night-time-book-cover-design-template-1be47835c3058eb42211574e0c4ed8bf_screen.jpg?ts=1637012564', author: 'Ajax Mother', des: "I wandered lonely as a cloud that floats on high o'er vales and hills when all at once I saw a crowd, a host, of golden daffodils." },
@@ -43,22 +51,36 @@ export default {
       { value: 3.6, title: "When Blood Meets Earth", image: "https://www.nairaland.com/attachments/16975928_octoberillustration6768x1152_jpeg7ab7fc0d22a2a942cf8632fae8e2295b", author: "E.A.NOBLE", des: "Against the backdrop of war-torn lands, a group of unlikely companions bands together to reclaim their homeland from the clutches of evil. As they navigate treacherous landscapes and face unimaginable dangers, they learn the true meaning of sacrifice, loyalty, and the enduring strength of friendship." }
     ]
     return {
-      collect_flag: false,
       weekly_books_info: weekly_books_info,
       hottest_books_info: hottest_books_info,
+      best_books_info: '',
       comments_black_universe: comments_black_universe,
       newest_books_images: newest_books_images,
       login_button: 'Sign in',
       click_rank_info: click_rank_info,
+      newest_rank_info: '',
+      update_rank_info: '',
       isLoginVisible: false,
       VerImage: '',
       sessionId: '',
+      loading: true,
+      showHomePage: false,
     }
   },
   components: {
     Header,
     Nav,
     Footer
+  },
+  mounted() {
+    this.getHomeBooks();
+    if (localStorage.getItem("token")) {
+      this.$store.dispatch('login', localStorage.getItem("token"));
+    }
+    setTimeout(() => {
+      this.loading = false;
+      this.showHomePage = true;
+    }, 3000);
   },
   methods: {
     testFlag() {
@@ -78,10 +100,37 @@ export default {
             'Content-Type': 'application/json'
           },
         });
-
-        const data = await response.json();
-        this.verImage = "data:image/png;base64," + data.data.img;
-        this.sessionId = data.data.sessionId;
+        if (response.status == 200) {
+          const data = await response.json();
+          this.verImage = "data:image/png;base64," + data.data.img;
+          this.sessionId = data.data.sessionId;
+        } else {
+          console.log("Test");
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    async getHomeBooks() {
+      try {
+        const response = await fetch("http://localhost:8888/api/front/home/books", {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+        });
+        if (response.status == 200) {
+          const data = await response.json();
+          console.log(data);
+          this.weekly_books_info = data.data.filter(item => item.type === '0');
+          this.hottest_books_info = data.data.filter(item => item.type === '1');
+          this.best_books_info = data.data.filter(item => item.type === '2');
+          this.click_rank_info = data.data.filter(item => item.type === '3');
+          this.newest_rank_info = data.data.filter(item => item.type === '4');
+          this.update_rank_info = data.data.filter(item => item.type === '5');
+        } else {
+          console.log("Test");
+        }
       } catch (error) {
         console.error(error);
       }
@@ -89,219 +138,263 @@ export default {
     closeLoginBox() {
       this.isLoginVisible = false;
     },
+    logout() {
+      ElMessage({
+        message: "Log out successful",
+        type: 'success',
+      });
+      localStorage.removeItem('userName');
+      localStorage.removeItem('token');
+      localStorage.removeItem('uid');
+      this.$store.dispatch('logout');
+      this.$store.dispatch('clearusername');
+      this.$store.dispatch('clearuid');
+    }
   },
   computed: {
     filteredComments() {
-      return this.comments_black_universe.slice(0, 4);
+      return this.comments_black_universe.slice(0, 3);
     },
   },
 }
 </script>
 <template>
-  <div :class="{ 'blur': isLoginVisible }">
-    <div>
-      <Header @showLogin="showLogin" @closeLoginBox="closeLoginBox" />
-      <Nav />
-    </div>
-    <div class="homeBody">
+  <div v-loading.fullscreen.lock="loading" element-loading-text="Welcome to NovelHub, novels will ready for you ASAP"
+    :element-loading-spinner="svg" element-loading-svg-view-box="0, 5, 30, 40"
+    element-loading-background="rgba(255, 255, 255, 255)"></div>
+  <div v-if="showHomePage">
+    <div :class="{ 'blur': isLoginVisible }">
       <div>
+        <Header @showLogin="showLogin" @closeLoginBox="closeLoginBox" @logout="logout" />
+        <Nav />
       </div>
-      <div class="weekly_collect_books_container">
-        <div class="weekly_books">
-          <h2>Weekly Books</h2>
-          <el-carousel :interval="4000" height="300px">
-            <el-carousel-item v-for="item in weekly_books_info" :key="item.title">
-              <div class="carousel_weekly_background" :style="getBackgroundStyle(item.image)"></div>
-              <el-row>
-                <el-column class="carousel_weekly_image_container">
-                  <img :src="item.image" class="carousel_weekly_image">
-                </el-column>
-                <el-column class="carousel_weekly_text_container">
-                  <div class="carousel_weekly_text">
-                    <span class="carousel_weekly_text_title">{{ item.title }}</span>
-                    <span class="carousel_weekly_text_author">{{ item.author }}</span>
-                    <span class="carousel_weekly_text_descr">{{ item.des }}</span>
+      <div class="homeBody">
+        <div>
+        </div>
+        <div class="weekly_collect_books_container">
+          <div class="weekly_books">
+            <h2>Weekly Books</h2>
+            <el-carousel :interval="4000" height="300px">
+              <el-carousel-item v-for="item in weekly_books_info.slice(0, 3)" :key="item.title">
+                <div class="carousel_weekly_background" :style="getBackgroundStyle(item.picUrl)"></div>
+                <el-row>
+                  <el-column class="carousel_weekly_image_container">
+                    <img :src="item.picUrl" class="carousel_weekly_image">
+                  </el-column>
+                  <el-column class="carousel_weekly_text_container">
+                    <div class="carousel_weekly_text">
+                      <span class="carousel_weekly_text_title">{{ item.bookName }}</span>
+                      <span class="carousel_weekly_text_author">{{ item.authorName }}</span>
+                      <span class="carousel_weekly_text_descr">{{ item.bookDesc }}</span>
+                    </div>
+                  </el-column>
+                </el-row>
+              </el-carousel-item>
+            </el-carousel>
+          </div>
+          <div class="collected_novel_container">
+            <h2>Collected Books</h2>
+            <div v-if="!this.$store.state.token" class="collected_novel_na_user">
+              <el-empty :image-size="120" description="Please sign in to see more informations">
+                <el-button class="login_button" type="primary" @click="showLogin" @showLogin="showLogin"><el-icon>
+                    <User />
+                  </el-icon>{{ login_button }}</el-button>
+              </el-empty>
+            </div>
+            <div v-else class="collected_novel_user">
+              <el-empty :image-size="120" description="You don't have collect books"></el-empty>
+            </div>
+          </div>
+        </div>
+        <h2></h2>
+        <div class="recomm_books_container">
+          <div class="hottest_books">
+            <h2 style=" border-bottom: 1px solid; width: 100%; border-color: rgb(206, 204, 204); padding-bottom: 10px;">
+              Hottest Books</h2>
+            <el-carousel height="600px" style="width: 600px; margin-left: -30px;;" direction="vertical" type="card"
+              :autoplay="true">
+              <el-carousel-item style="border-radius: 15px;" v-for="item in hottest_books_info.slice(0, 6)"
+                :key="item.title">
+                <el-row class="carousel_container">
+                  <div class="carousel_left_container">
+                    <span
+                      style="font-size: 12pt; display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 2;overflow: hidden; margin-bottom: 5px;">
+                      <b>{{ item.bookName }}</b>
+                    </span>
+                    <span style="font-size: 12pt;">{{ item.authorName }}</span>
+                    <span
+                      style="font-size: 10pt; margin-top: 10px; margin-right: 10px; display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 11;overflow: hidden;">{{
+                        item.bookDesc }}</span>
+                    <span style="bottom: 10px;position: absolute;">
+                      20 <el-icon>
+                        <UserFilled />
+                      </el-icon> Liked
+                    </span>
                   </div>
-                </el-column>
-              </el-row>
-            </el-carousel-item>
-          </el-carousel>
-        </div>
-        <div class="collected_novel_container">
-          <h2>Collected Books</h2>
-          <div v-if="!collect_flag" class="collected_novel_na_user">
-            <h2>Please Login in to see the contents</h2>
-            <el-button class="login_button" type="primary" @click="showLogin" @showLogin="showLogin"><el-icon>
-                <User />
-              </el-icon>{{ login_button }}</el-button>
-          </div>
-          <div v-else class="collected_novel_user">
-            U don't have collect books
-          </div>
-        </div>
-      </div>
-      <h2></h2>
-      <div class="recomm_books_container">
-        <div class="hottest_books">
-          <h2 style=" border-bottom: 1px solid; width: 100%; border-color: rgb(206, 204, 204); padding-bottom: 10px;">
-            Hottest Books</h2>
-          <el-carousel height="600px" style="width: 600px; margin-left: -30px;;" direction="vertical" type="card"
-            :autoplay="true">
-            <el-carousel-item style="border-radius: 15px;" v-for="item in hottest_books_info" :key="item.title">
-              <el-row class="carousel_hot_container">
-                <div class="carousel_hot_left_container">
-                  <span style="font-size: 14pt;">{{ item.title }}</span>
-                  <span style="font-size: 12pt;">{{ item.author }}</span>
-                  <span style="font-size: 10pt; margin-top: 10px; margin-right: 10px;">{{ item.des }}</span>
-                  <span style="bottom: 10px;position: absolute;">
-                    20 <el-icon>
-                      <UserFilled />
-                    </el-icon> Liked
-                  </span>
-                </div>
-                <div class="carousel_hot_image_container">
-                  <img :src="item.image" class="carousel_hot_image">
-                </div>
-                <div class="carousel_hot_right_container">
-                  <div class="carousel_hot_right_comments_container">
-                    <el-text class="carousel_hot_right_comments" v-for="(com, index) in filteredComments" :key="index">{{
-                      com.comment
-                    }}</el-text>
+                  <div class="carousel_image_container">
+                    <img :src="item.picUrl" class="carousel_image">
                   </div>
-                  <div class="carousel_hot_right_rates_container">
-                    <el-rate v-model="value" disabled show-score text-color="#ff9900" size="small"
-                      score-template="{value} points" />
+                  <div class="carousel_right_container">
+                    <div class="carousel_right_comments_container">
+                      <div class="carousel_right_comments">
+                        <div class="comment-text">comments</div>
+                      </div>
+                    </div>
+                    <div class="carousel_right_rates_container">
+                      <el-rate v-model="item.value" disabled show-score text-color="#ff9900" size="small"
+                        score-template="{value} points" />
+                    </div>
                   </div>
-                </div>
-              </el-row>
-            </el-carousel-item>
-          </el-carousel>
+                </el-row>
+              </el-carousel-item>
+            </el-carousel>
+          </div>
+          <div class="best_books">
+            <h2 style="border-bottom: 1px solid; width: 100%; border-color: rgb(206, 204, 204);  padding-bottom: 10px;">
+              Best
+              Books
+            </h2>
+            <el-carousel height="600px" style="width: 600px;" direction="vertical" type="card" :autoplay="true">
+              <el-carousel-item style="border-radius: 15px;" v-for="item in best_books_info.slice(0, 6)"
+                :key="item.title">
+                <el-row class="carousel_container">
+                  <div class="carousel_left_container">
+                    <span
+                      style="font-size: 12pt; display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 2;overflow: hidden; margin-bottom: 5px;">
+                      <b>{{ item.bookName }}</b>
+                    </span>
+                    <span style="font-size: 12pt;">{{ item.authorName }}</span>
+                    <span
+                      style="font-size: 10pt; margin-top: 10px; margin-right: 10px; display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 11;overflow: hidden;">{{
+                        item.bookDesc }}</span>
+                    <span style="bottom: 10px;position: absolute;">
+                      20 <el-icon>
+                        <UserFilled />
+                      </el-icon> Liked
+                    </span>
+                  </div>
+                  <div class="carousel_image_container">
+                    <img :src="item.picUrl" class="carousel_image">
+                  </div>
+                  <div class="carousel_right_container">
+                    <div class="carousel_right_comments_container">
+                      <div class="carousel_right_comments">
+                        <div class="comment-text">comments</div>
+                      </div>
+                    </div>
+                    <div class="carousel_right_rates_container">
+                      <el-rate v-model="item.score" disabled show-score text-color="#ff9900" size="small"
+                        score-template="{value} points" />
+                    </div>
+                  </div>
+                </el-row>
+              </el-carousel-item>
+            </el-carousel>
+          </div>
         </div>
-        <div class="best_books">
-          <h2 style="border-bottom: 1px solid; width: 100%; border-color: rgb(206, 204, 204);  padding-bottom: 10px;">Best
-            Books
-          </h2>
-          <el-carousel height="600px" style="width: 600px;" direction="vertical" type="card" :autoplay="true">
-            <el-carousel-item style="border-radius: 15px;" v-for="item in newest_books_images" :key="item.title">
-              <el-row class="carousel_best_container">
-                <div class="carousel_best_left_container">
-                  <span style="font-size: 20pt;">Title</span>
-                  <span style="font-size: 18pt;">Author</span>
-                  <span style="font-size: 14pt;">Des</span>
-                  <span style="font-size: 110pt;">&nbsp;</span>
-                  <span>20 <el-icon>
-                      <UserFilled />
-                    </el-icon> Liked</span>
-                </div>
-                <div class="carousel_best_image_container">
-                  <img :src="item" class="carousel_best_image">
-                </div>
-                <div class="carousel_best_right_container">
-                  <span class="carousel_best_right_comments">comments 1</span>
-                  <span class="carousel_best_right_comments">comments 2</span>
-                  <span class="carousel_best_right_comments">comments 3</span>
-                  <span class="carousel_best_right_comments">comments 4</span>
-                  <el-rate v-model="value" disabled show-score text-color="#ff9900" size="small"
-                    score-template="{value} points" />
-                </div>
-              </el-row>
-            </el-carousel-item>
-          </el-carousel>
+        <h2
+          style=" border-bottom: 1px solid; border-color: rgb(223, 223, 223); padding-bottom: 10px; margin-bottom: 22px; margin-top: 30px; width: 60%; text-align: center;">
+          Ranking of Books</h2>
+        <div class="rank_books_container">
+          <div class="rank_container">
+            <div class="rank_name">Click Rank</div>
+            <div class="rank_items" v-for="(item, index) in click_rank_info.slice(0, 5)" :key="item.title">
+              <div class="rank_image">
+                <img style="height: 80px;" :src="item.picUrl" />
+              </div>
+              <div class="rank_rank" :class="{ 'red': index === 0, 'orange': index === 1, 'green': index === 2 }">
+                0{{ index + 1 }}
+              </div>
+              <div class="rank_info">
+                <el-text truncated style="font-size: 14pt; color: black; width: 250px;">{{ item.bookName }}</el-text>
+                <br />
+                <el-text truncated style="font-size: 10pt;">{{ item.authorName }}</el-text>
+                <br />
+                <el-text truncated style="font-size: 10pt; width: 250px;"><el-rate v-model="item.score" disabled
+                    show-score text-color="#ff9900" size="small" score-template="{value} points" /></el-text>
+              </div>
+            </div>
+          </div>
+          <div class="rank_container">
+            <div class="rank_name">Newest Rank</div>
+            <div class="rank_items" v-for="(item, index) in newest_rank_info.slice(0, 5)" :key="item">
+              <div class="rank_image">
+                <img style="height: 80px;" :src="item.picUrl" />
+              </div>
+              <div class="rank_rank" :class="{ 'red': index === 0, 'orange': index === 1, 'green': index === 2 }">
+                0{{ index + 1 }}
+              </div>
+              <div class="rank_info">
+                <el-text truncated style="font-size: 14pt; color: black; width: 250px;">{{ item.bookName }}</el-text>
+                <br />
+                <el-text truncated style="font-size: 10pt;">{{ item.authorName }}</el-text>
+                <br />
+                <el-text truncated style="font-size: 10pt; width: 250px;"><el-rate v-model="item.score" disabled
+                    show-score text-color="#ff9900" size="small" score-template="{value} points" /></el-text>
+              </div>
+            </div>
+          </div>
+          <div class="rank_container">
+            <div class="rank_name">Update Rank</div>
+            <div class="rank_items" v-for="(item, index) in update_rank_info.slice(0, 5)" :key="item">
+              <div class="rank_image">
+                <img style="height: 80px;" :src="item.picUrl" />
+              </div>
+              <div class="rank_rank" :class="{ 'red': index === 0, 'orange': index === 1, 'green': index === 2 }">
+                0{{ index + 1 }}
+              </div>
+              <div class="rank_info">
+                <el-text truncated style="font-size: 14pt; color: black; width: 250px;">{{ item.bookName }}</el-text>
+                <br />
+                <el-text truncated style="font-size: 10pt;">{{ item.authorName }}</el-text>
+                <br />
+                <el-text truncated style="font-size: 10pt; width: 250px;"><el-rate v-model="item.score" disabled
+                    show-score text-color="#ff9900" size="small" score-template="{value} points" /></el-text>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-      <h2
-        style=" border-bottom: 1px solid; border-color: rgb(223, 223, 223); padding-bottom: 10px; margin-bottom: 22px; margin-top: 30px; width: 60%; text-align: center;">
-        Ranking of Books</h2>
-      <div class="rank_books_container">
-        <div class="rank_container">
-          <div class="rank_name">Click Rank</div>
-          <div class="rank_items" v-for="(item, index) in click_rank_info" :key="item.title">
-            <div class="rank_image">
-              <img style="height: 80px;" :src="item.image" />
-            </div>
-            <div class="rank_rank" :class="{ 'red': index === 0, 'orange': index === 1, 'green': index === 2 }">
-              0{{ index + 1 }}
-            </div>
-            <div class="rank_info">
-              <el-text truncated style="font-size: 14pt; color: black;">{{ item.title }}</el-text>
-              <br />
-              <el-text truncated style="font-size: 10pt;">{{ item.author }}</el-text>
-              <br />
-              <el-text truncated style="font-size: 10pt; width: 250px;"><el-rate v-model="item.value" disabled show-score
-                  text-color="#ff9900" size="small" score-template="{value} points" /></el-text>
-            </div>
-          </div>
+      <!-- Go to top floating buttom -->
+      <el-backtop :bottom="100">
+        <div class="goTopButton">
+          <el-icon>
+            <CaretTop />
+          </el-icon>
         </div>
-        <div class="rank_container">
-          <div class="rank_name">Newest Rank</div>
-          <div class="rank_items" v-for="(item, index) in 5" :key="item">
-            <div class="rank_image">
-              <img style="height: 80px;"
-                src="https://www.adobe.com/express/create/cover/media_181e3d2c78f153ae7bf0e19a2faeb9a76e234da30.jpeg?width=400&format=jpeg&optimize=medium" />
-            </div>
-            <div class="rank_rank" :class="{ 'red': index === 0, 'orange': index === 1, 'green': index === 2 }">
-              0{{ index + 1 }}
-            </div>
-            <div class="rank_info">
-              <el-text truncated style="font-size: 14pt; color: black;">Title</el-text>
-              <br />
-              <el-text truncated style="font-size: 10pt;">Author</el-text>
-              <br />
-              <el-text truncated style="font-size: 10pt; width: 250px;"><el-rate disabled show-score text-color="#ff9900"
-                  size="small" /></el-text>
-            </div>
-          </div>
-        </div>
-        <div class="rank_container">
-          <div class="rank_name">Update Rank</div>
-          <div class="rank_items" v-for="(item, index) in 5" :key="item">
-            <div class="rank_image">
-              <img style="height: 80px;"
-                src="https://www.adobe.com/express/create/cover/media_181e3d2c78f153ae7bf0e19a2faeb9a76e234da30.jpeg?width=400&format=jpeg&optimize=medium" />
-            </div>
-            <div class="rank_rank" :class="{ 'red': index === 0, 'orange': index === 1, 'green': index === 2 }">
-              0{{ index + 1 }}
-            </div>
-            <div class="rank_info">
-              <el-text truncated style="font-size: 14pt; color: black;">title</el-text>
-              <br />
-              <el-text truncated style="font-size: 10pt;">author</el-text>
-              <br />
-              <el-text truncated style="font-size: 10pt; width: 250px;"><el-rate disabled show-score text-color="#ff9900"
-                  size="small" /></el-text>
-            </div>
-          </div>
-        </div>
-      </div>
+      </el-backtop>
+      <Footer />
     </div>
-    <!-- Go to top floating buttom -->
-    <el-backtop :bottom="100">
-      <div class="goTopButton">
-        <el-icon>
-          <CaretTop />
-        </el-icon>
-      </div>
-    </el-backtop>
-    <Footer />
   </div>
-  <div v-if="isLoginVisible" class="loginSection">
-    <Login class="login" :verImage="this.verImage" :sessionId="this.sessionId" @cancel="closeLoginBox" />
-  </div>
+  <transition name="fade">
+    <div v-if="isLoginVisible" class="loginSection">
+      <Login class="login" :verImage="this.verImage" :sessionId="this.sessionId" @showLogin="showLogin"
+        @cancel="closeLoginBox" />
+    </div>
+  </transition>
 </template>
 
-<style >
-.blur {
-  filter: blur(5px);
-  pointer-events: none;
+<style>
+.fade-enter,
+.fade-leave-to {
+  opacity: 0;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s;
 }
 
 body {
   margin: 0;
   font-family: Arial, Helvetica, sans-serif;
   font-size: 14px;
-  width: 100vh;
-  margin: 0 auto;
-  overflow-x: hidden;
+
+}
+
+.blur {
+  filter: blur(5px);
+  pointer-events: none;
 }
 
 .homeBody {
@@ -374,8 +467,12 @@ body {
 }
 
 .carousel_weekly_text_descr {
-  font-size: 12pt;
+  font-size: 10pt;
   padding-right: 50px;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 8;
+  overflow: hidden;
 }
 
 .collected_novel_container {
@@ -386,6 +483,16 @@ body {
 }
 
 .collected_novel_na_user {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  box-shadow: var(--el-box-shadow);
+  background-color: #FAFCFF;
+}
+
+.collected_novel_user {
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -425,109 +532,74 @@ body {
 }
 
 .el-carousel__item:nth-child(n) {
-  background-color: rgb(253, 244, 244);
+  background-color: rgb(231, 231, 231);
 }
 
-.carousel_hot_container {
+.carousel_container {
   height: 300px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06);
   transform: translateY(0);
   transition: transform 0.3s ease;
 }
 
-.carousel_hot_container:hover {
+.carousel_container:hover {
   transform: translateY(-4px);
 }
 
-.carousel_hot_left_container {
+.carousel_left_container {
   width: 30%;
   padding-left: 20px;
   padding-top: 20px;
+  margin-right: 5px;
   display: flex;
   flex-direction: column;
 }
 
-.carousel_hot_image_container {
-  width: 30%;
+.carousel_image_container {
+  height: 100%;
+
 }
 
-.carousel_hot_image {
-  height: 300px;
+.carousel_image {
+  height: 100%;
   object-fit: contain;
 }
 
-.carousel_hot_right_container {
+.carousel_right_container {
   width: 30%;
   height: 100%;
   padding-left: 25px;
   padding-top: 10px;
 }
 
-.carousel_hot_right_comments_container {
+.carousel_right_comments_container {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   height: 85%;
+  margin-left: -10px;
 }
 
-.carousel_hot_right_comments {
+.carousel_right_comments {
   display: block;
-  height: 23%;
-  width: 100%;
+  height: 31%;
+  width: 90%;
   border: 1px solid #1989fa;
   border-radius: 3px;
-  overflow: auto;
+  overflow: hidden;
 }
 
-.carousel_hot_right_rates_container {
+.carousel_right_comments .comment-text {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 5;
+  overflow: hidden;
+}
+
+.carousel_right_rates_container {
   bottom: 7px;
   position: absolute;
 }
-
-.carousel_best_container {
-  height: 300px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06);
-  transform: translateY(0);
-  transition: transform 0.3s ease;
-}
-
-.carousel_best_container:hover {
-  transform: translateY(-4px);
-}
-
-.carousel_best_left_container {
-  width: 30%;
-  padding-left: 20px;
-  padding-top: 20px;
-  display: flex;
-  flex-direction: column;
-}
-
-.carousel_best_image_container {
-  width: 30%;
-}
-
-.carousel_best_image {
-  height: 300px;
-  object-fit: contain;
-}
-
-.carousel_best_right_container {
-  width: 30%;
-  height: 100%;
-  padding-left: 25px;
-  padding-top: 10px;
-  display: flex;
-  flex-direction: column;
-}
-
-.carousel_best_right_comments {
-  height: 20%;
-  border: 1px solid #1989fa;
-  border-radius: 3px;
-  margin-bottom: 3px;
-}
-
 
 .rank_books_container {
   margin-top: -10px;

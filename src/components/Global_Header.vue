@@ -3,22 +3,35 @@ import {
   Search,
   User
 } from '@element-plus/icons-vue'
-import Login from './LoginPage';
+
 </script >
 <script>
+import Login from './Auth_Page.vue';
 export default {
+  emits: ['showLogin', 'closeLoginBox', 'logout'],
   data() {
     return {
-      header_container: 'header_container',
       header_left: 'header_left',
       header_right: 'header_right',
       login_button: 'Sign in',
       isSearchActive: false,
-      searchInput: ''
+      searchInput: '',
+      username: '',
+      isLoginVisible: false,
     }
+  },
+  components: {
+    Login,
   },
   mounted() {
     document.addEventListener('click', this.searchGlobalClick);
+    if (localStorage.getItem("token")) {
+      this.token = localStorage.getItem("token");
+      this.username = localStorage.getItem('username');
+    } else {
+      this.token = null;
+      this.username = null;
+    }
   },
   beforeUnmount() {
     document.removeEventListener('click', this.searchGlobalClick);
@@ -45,14 +58,18 @@ export default {
     showLogin() {
       this.$emit('showLogin');
     },
+    logout() {
+      this.$emit('logout');
+    }
   }
 }
 </script>
 <template>
-  <div :class="header_container">
+  <div class="header_container">
     <!-- Click here will return to Home page in any circumstances -->
-    <img src="..\JustForFunLogo.png" class="logo" @click="goHome">
-
+    <div class="logo_container">
+      <img src="..\logo.png" class="logo" @click="goHome">
+    </div>
     <div class="search_container">
       <div v-if="!isSearchActive">
         <el-button class="searchButton" ref="searchContainer" @click.stop="toggleSearch" :icon="Search"
@@ -81,12 +98,25 @@ export default {
     </div>
     <!-- This right side of class will represent user thumbnail, name and log out button once token exists -->
     <!-- Click here will link to login page -->
-    <el-button class="login_button" type="primary" @click="showLogin"><el-icon>
-        <User />
-      </el-icon>{{ login_button }}</el-button>
+    <div v-if="!this.$store.state.token"
+      style="display: flex; align-items: center; justify-content: flex-end; width: 200px;">
+      <el-button class="login_button" type="primary" @click="showLogin"><el-icon>
+          <User />
+        </el-icon>{{ login_button }}</el-button>
+    </div>
+    <div v-else style="color: white; display: flex; align-items: center; justify-content: space-between; width: 200px;">
+      <div style="display: flex; flex-direction: column; align-items: center;">
+        <el-avatar :size="70"
+          :src="img ? img : 'https://img-qn.51miz.com/Element/00/88/60/42/ea5b40df_E886042_1992a532.png!/quality/90/unsharp/true/compress/true/format/png/fw/300'" />
+        <div>{{ this.$store.state.userName ? this.$store.state.userName : username }}</div>
+      </div>
+      <el-button class="logout_button" type="primary" @click="logout"><el-icon>
+          <User />
+        </el-icon> Sign out </el-button>
+    </div>
   </div>
   <div v-if="isLoginVisible" class="loginSection">
-    <Login @cancel="closeLoginBox" />
+    <Login @showLogin="showLogin" @cancel="closeLoginBox" />
   </div>
 </template>
 
@@ -99,9 +129,17 @@ export default {
   transform: translate(-50%, -50%);
 }
 
+.logo_container{
+  height: 200px;
+  width: 200px;
+  margin-top: -20px;
+  margin-left: -20px;
+}
+
 .logo {
-  height: 60px;
-  width: 20vh
+ height: 100%;
+ width: 100%;
+ object-fit: contain;
 }
 
 .search_container {
@@ -113,7 +151,11 @@ export default {
 }
 
 .login_button {
-  width: 10vh;
+  width: 100px;
+}
+
+.logout_button {
+  width: 100px;
 }
 
 .mobile_search_container {
@@ -126,20 +168,8 @@ export default {
   align-items: center;
   background-color: black;
   padding: 20px;
-}
-
-.header_left {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 70%;
-}
-
-.header_right {
-  display: flex;
-  justify-content: right;
-  align-items: center;
-  width: 30%;
+  padding-right: 30px;
+  height: 80px;
 }
 
 @media (max-width: 500px) {
