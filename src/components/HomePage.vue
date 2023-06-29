@@ -80,7 +80,7 @@ export default {
     setTimeout(() => {
       this.loading = false;
       this.showHomePage = true;
-    }, 1000);
+    }, 500);
   },
   methods: {
     testFlag() {

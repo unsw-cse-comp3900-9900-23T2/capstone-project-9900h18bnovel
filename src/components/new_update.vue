@@ -4,6 +4,14 @@ import {
   UserFilled,
 } from '@element-plus/icons-vue';
 import { ElMessage } from 'element-plus';
+const svg = `
+<path class="path" d="
+          M 10 40
+          L 10 15
+          L 30 40
+          L 30 15
+        " style="stroke-width: 5px; fill: rgba(0, 0, 0, 0); animation: none;"/>
+      `
 </script >
 
 <script>
@@ -12,7 +20,7 @@ import Global_Footer from './Global_Footer.vue';
 import Global_Nav from './Global_Nav.vue';
 import Login from './Auth_Page.vue';
 export default {
-  emits: ['showLogin', 'closeLoginBox'],
+  emits: ['showLogin', 'closeLoginBox', 'logout'],
   data() {
     const update_book_info = [
       { value: 5, title: "Crack The Code", image: "https://www.adobe.com/express/create/cover/media_181e3d2c78f153ae7bf0e19a2faeb9a76e234da30.jpeg?width=400&format=jpeg&optimize=medium", author: "Patrick C.Harless", des: "In a small coastal town, a mysterious stranger arrives, bringing with him an air of intrigue and secrets. As the townspeople become entranced by his enigmatic presence, they soon discover that he holds the key to their deepest desires and darkest fears." },
@@ -33,10 +41,16 @@ export default {
       verImage: '',
       sessionId: '',
       newestUpdateBooks: null,
+      loading: true,
+      showNewestUpdatePage: false
     }
   },
   mounted() {
     this.getNewestUpdateBooks();
+    setTimeout(() => {
+      this.loading = false;
+      this.showNewestUpdatePage = true;
+    }, 500);
   },
   methods: {
     async showLogin() {
@@ -61,7 +75,7 @@ export default {
     },
     async getNewestUpdateBooks() {
       try {
-        const response = await fetch("http://localhost:8888/api/book/update_rank ", {
+        const response = await fetch("http://localhost:8888/api/front/book/update_rank ", {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json'
@@ -110,44 +124,52 @@ export default {
   <div :class="{ 'blur': isLoginVisible }">
     <Global_Header @logout="logout" @showLogin="showLogin" @closeLoginBox="closeLoginBox" />
     <Global_Nav />
-    <div class="new_update_body">
-      <h1
-        style=" border-bottom: 1px solid; border-color: rgb(223, 223, 223); padding-bottom: 10px; margin-bottom: 22px; margin-top: 30px; width: 60%; text-align: center;">
-        Newest Update</h1>
-      <div class="infinite-list">
-        <div v-for="(item, index) in newestUpdateBooks" :key="item.id" class="infinite-list-item">
-          <div style="font-size: 14pt; width: 150px; text-align: center;">{{ index < 9 ? '0' + (index + 1) : index + 1
-          }}</div>
-              <img :src="item.picUrl"
-                style="height: 155px; border-radius: 5px; box-shadow: 6px 4px 6px rgb(151, 151, 151);" />
-              <div class="update_book_item_container">
-                <div style="font-size: 18pt;">{{ item.bookName }}</div>
-                <div style="font-size: 12pt;">{{ item.authorName }}</div>
-                <div style="font-size: 10pt; margin-top: 10px;">{{ item.bookDesc }}</div>
-              </div>
-              <div class="update_book_reviews_container">
-                <div>{{ item.lastChapterUpdateTime }}</div>
-                <div>{{ item.collectCount }} <el-icon>
-                    <UserFilled />
-                  </el-icon> Collected</div>
-                <div>{{ item.visitCount }} <el-icon>
-                    <UserFilled />
-                  </el-icon> Viewed</div>
-                <el-rate v-model="item.score" disabled show-score text-color="#ff9900" size="small" score-template="{value} points" />
-              </div>
+    <div v-loading.lock="loading" :element-loading-spinner="svg" element-loading-svg-view-box="0, 5, 30, 40"
+      element-loading-background="rgba(255, 255, 255, 255)"
+      style="top:50%; left: 50%; transform: translate(-50%,-50%); position: absolute;"></div>
+    <div v-if="showNewestUpdatePage">
+      <div class="new_update_body">
+        <h1
+          style=" border-bottom: 1px solid; border-color: rgb(223, 223, 223); padding-bottom: 10px; margin-bottom: 22px; margin-top: 30px; width: 60%; text-align: center;">
+          Newest Update</h1>
+        <div class="infinite-list">
+          <div v-for="(item, index) in newestUpdateBooks" :key="item.id" class="infinite-list-item">
+            <div style="font-size: 14pt; width: 150px; text-align: center;">{{ index < 9 ? '0' + (index + 1) : index + 1
+            }}</div>
+                <img :src="item.picUrl"
+                  style="height: 155px; border-radius: 5px; box-shadow: 6px 4px 6px rgb(151, 151, 151);" />
+                <div class="update_book_item_container">
+                  <div style="font-size: 18pt; overflow: hidden; text-overflow: ellipsis;">{{ item.bookName }}</div>
+                  <div style="font-size: 12pt;">{{ item.authorName }}</div>
+                  <div
+                    style="font-size: 10pt; margin-top: 10px; display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 6; overflow: hidden;">
+                    {{ item.bookDesc }}</div>
+                </div>
+                <div class="update_book_reviews_container">
+                  <div>{{ item.lastChapterUpdateTime }}</div>
+                  <div>{{ item.collectCount }} <el-icon>
+                      <UserFilled />
+                    </el-icon> Collected</div>
+                  <div>{{ item.visitCount }} <el-icon>
+                      <UserFilled />
+                    </el-icon> Viewed</div>
+                  <el-rate v-model="item.score" disabled show-score text-color="#ff9900" size="small"
+                    score-template="{value} points" />
+                </div>
+            </div>
           </div>
-        </div>
 
-        <!-- Go to top floating buttom -->
-        <el-backtop :bottom="100">
-          <div class="goTopButton">
-            <el-icon>
-              <CaretTop />
-            </el-icon>
-          </div>
-        </el-backtop>
+          <!-- Go to top floating buttom -->
+          <el-backtop :bottom="100">
+            <div class="goTopButton">
+              <el-icon>
+                <CaretTop />
+              </el-icon>
+            </div>
+          </el-backtop>
+        </div>
+        <Global_Footer />
       </div>
-      <Global_Footer />
     </div>
     <transition name="fade">
       <div v-if="isLoginVisible" class="loginSection">

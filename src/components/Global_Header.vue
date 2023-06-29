@@ -129,7 +129,7 @@ export default {
   transform: translate(-50%, -50%);
 }
 
-.logo_container{
+.logo_container {
   height: 200px;
   width: 200px;
   margin-top: -20px;
@@ -137,9 +137,13 @@ export default {
 }
 
 .logo {
- height: 100%;
- width: 100%;
- object-fit: contain;
+  height: 100%;
+  width: 100%;
+  object-fit: contain;
+}
+
+.logo:hover {
+  cursor: pointer;
 }
 
 .search_container {
