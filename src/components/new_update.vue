@@ -32,7 +32,11 @@ export default {
       isLoginVisible: false,
       verImage: '',
       sessionId: '',
+      newestUpdateBooks: null,
     }
+  },
+  mounted() {
+    this.getNewestUpdateBooks();
   },
   methods: {
     async showLogin() {
@@ -48,6 +52,24 @@ export default {
           const data = await response.json();
           this.verImage = "data:image/png;base64," + data.data.img;
           this.sessionId = data.data.sessionId;
+        } else {
+          console.log("Test");
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    async getNewestUpdateBooks() {
+      try {
+        const response = await fetch("http://localhost:8888/api/book/update_rank ", {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+        });
+        if (response.status == 200) {
+          const data = await response.json();
+          this.newestUpdateBooks = data.data;
         } else {
           console.log("Test");
         }
@@ -93,28 +115,25 @@ export default {
         style=" border-bottom: 1px solid; border-color: rgb(223, 223, 223); padding-bottom: 10px; margin-bottom: 22px; margin-top: 30px; width: 60%; text-align: center;">
         Newest Update</h1>
       <div class="infinite-list">
-        <div v-for="(item, index) in filteredBooks" :key="item.title" class="infinite-list-item">
+        <div v-for="(item, index) in newestUpdateBooks" :key="item.id" class="infinite-list-item">
           <div style="font-size: 14pt; width: 150px; text-align: center;">{{ index < 9 ? '0' + (index + 1) : index + 1
           }}</div>
-              <img :src="item.image"
+              <img :src="item.picUrl"
                 style="height: 155px; border-radius: 5px; box-shadow: 6px 4px 6px rgb(151, 151, 151);" />
               <div class="update_book_item_container">
-                <div style="font-size: 18pt;">{{ item.title }}</div>
-                <div style="font-size: 12pt;">{{ item.author }}</div>
-                <div style="font-size: 10pt; margin-top: 10px;">{{ item.des }}</div>
+                <div style="font-size: 18pt;">{{ item.bookName }}</div>
+                <div style="font-size: 12pt;">{{ item.authorName }}</div>
+                <div style="font-size: 10pt; margin-top: 10px;">{{ item.bookDesc }}</div>
               </div>
               <div class="update_book_reviews_container">
-                <div>Update time</div>
-                <div>15 <el-icon>
+                <div>{{ item.lastChapterUpdateTime }}</div>
+                <div>{{ item.collectCount }} <el-icon>
                     <UserFilled />
                   </el-icon> Collected</div>
-                <div>10 <el-icon>
+                <div>{{ item.visitCount }} <el-icon>
                     <UserFilled />
-                  </el-icon> Likes</div>
-                <div>20 <el-icon>
-                    <UserFilled />
-                  </el-icon> viewed</div>
-                <el-rate disabled show-score text-color="#ff9900" size="small" />
+                  </el-icon> Viewed</div>
+                <el-rate v-model="item.score" disabled show-score text-color="#ff9900" size="small" score-template="{value} points" />
               </div>
           </div>
         </div>
