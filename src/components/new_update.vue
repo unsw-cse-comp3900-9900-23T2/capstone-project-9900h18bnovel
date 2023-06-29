@@ -3,6 +3,7 @@ import {
   CaretTop,
   UserFilled,
 } from '@element-plus/icons-vue';
+import { ElMessage } from 'element-plus';
 </script >
 
 <script>
@@ -29,6 +30,8 @@ export default {
     return {
       update_book_info: update_book_info,
       isLoginVisible: false,
+      verImage: '',
+      sessionId: '',
     }
   },
   methods: {
@@ -55,6 +58,18 @@ export default {
     closeLoginBox() {
       this.isLoginVisible = false;
     },
+    logout() {
+      ElMessage({
+        message: "Log out successful",
+        type: 'success',
+      });
+      localStorage.removeItem('userName');
+      localStorage.removeItem('token');
+      localStorage.removeItem('uid');
+      this.$store.dispatch('logout');
+      this.$store.dispatch('clearusername');
+      this.$store.dispatch('clearuid');
+    }
   },
   computed: {
     filteredBooks() {
@@ -71,57 +86,70 @@ export default {
 
 <template>
   <div :class="{ 'blur': isLoginVisible }">
-  <Global_Header @showLogin="showLogin" @closeLoginBox="closeLoginBox" />
-  <Global_Nav />
-  <div class="new_update_body">
-    <h1
-      style=" border-bottom: 1px solid; border-color: rgb(223, 223, 223); padding-bottom: 10px; margin-bottom: 22px; margin-top: 30px; width: 60%; text-align: center;">
-      Newest Update</h1>
-    <div class="infinite-list">
-      <div v-for="(item, index) in filteredBooks" :key="item.title" class="infinite-list-item">
-        <div style="font-size: 14pt; width: 150px; text-align: center;">{{ index < 9 ? '0' + (index + 1) : index + 1
-        }}</div>
-            <img :src="item.image"
-              style="height: 155px; border-radius: 5px; box-shadow: 6px 4px 6px rgb(151, 151, 151);" />
-            <div class="update_book_item_container">
-              <div style="font-size: 18pt;">{{ item.title }}</div>
-              <div style="font-size: 12pt;">{{ item.author }}</div>
-              <div style="font-size: 10pt; margin-top: 10px;">{{ item.des }}</div>
-            </div>
-            <div class="update_book_reviews_container">
-              <div>Update time</div>
-              <div>15 <el-icon>
-                  <UserFilled />
-                </el-icon> Collected</div>
-              <div>10 <el-icon>
-                  <UserFilled />
-                </el-icon> Likes</div>
-              <div>20 <el-icon>
-                  <UserFilled />
-                </el-icon> viewed</div>
-              <el-rate disabled show-score text-color="#ff9900" size="small" />
-            </div>
+    <Global_Header @logout="logout" @showLogin="showLogin" @closeLoginBox="closeLoginBox" />
+    <Global_Nav />
+    <div class="new_update_body">
+      <h1
+        style=" border-bottom: 1px solid; border-color: rgb(223, 223, 223); padding-bottom: 10px; margin-bottom: 22px; margin-top: 30px; width: 60%; text-align: center;">
+        Newest Update</h1>
+      <div class="infinite-list">
+        <div v-for="(item, index) in filteredBooks" :key="item.title" class="infinite-list-item">
+          <div style="font-size: 14pt; width: 150px; text-align: center;">{{ index < 9 ? '0' + (index + 1) : index + 1
+          }}</div>
+              <img :src="item.image"
+                style="height: 155px; border-radius: 5px; box-shadow: 6px 4px 6px rgb(151, 151, 151);" />
+              <div class="update_book_item_container">
+                <div style="font-size: 18pt;">{{ item.title }}</div>
+                <div style="font-size: 12pt;">{{ item.author }}</div>
+                <div style="font-size: 10pt; margin-top: 10px;">{{ item.des }}</div>
+              </div>
+              <div class="update_book_reviews_container">
+                <div>Update time</div>
+                <div>15 <el-icon>
+                    <UserFilled />
+                  </el-icon> Collected</div>
+                <div>10 <el-icon>
+                    <UserFilled />
+                  </el-icon> Likes</div>
+                <div>20 <el-icon>
+                    <UserFilled />
+                  </el-icon> viewed</div>
+                <el-rate disabled show-score text-color="#ff9900" size="small" />
+              </div>
+          </div>
         </div>
-      </div>
 
-      <!-- Go to top floating buttom -->
-      <el-backtop :bottom="100">
-        <div class="goTopButton">
-          <el-icon>
-            <CaretTop />
-          </el-icon>
-        </div>
-      </el-backtop>
+        <!-- Go to top floating buttom -->
+        <el-backtop :bottom="100">
+          <div class="goTopButton">
+            <el-icon>
+              <CaretTop />
+            </el-icon>
+          </div>
+        </el-backtop>
+      </div>
+      <Global_Footer />
     </div>
-    <Global_Footer />
-  </div>
-    <div v-if="isLoginVisible" class="loginSection">
-      <Login class="login" :verImage="this.verImage" :sessionId="this.sessionId" @cancel="closeLoginBox" />
-    </div>
+    <transition name="fade">
+      <div v-if="isLoginVisible" class="loginSection">
+        <Login class="login" :verImage="this.verImage" :sessionId="this.sessionId" @showLogin="showLogin"
+          @cancel="closeLoginBox" />
+      </div>
+    </transition>
 </template>
 
 
 <style >
+.fade-enter,
+.fade-leave-to {
+  opacity: 0;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s;
+}
+
 body {
   margin: 0;
   font-family: Arial, Helvetica, sans-serif;
