@@ -2,7 +2,7 @@
 import {
   CaretTop,
   UserFilled,
-  User
+  User,
 } from '@element-plus/icons-vue';
 import { ElMessage } from 'element-plus';
 const svg = `
@@ -158,6 +158,7 @@ export default {
   },
 }
 </script>
+
 <template>
   <div v-loading.fullscreen.lock="loading" element-loading-text="Welcome to NovelHub, novels will ready for you ASAP"
     :element-loading-spinner="svg" element-loading-svg-view-box="0, 5, 30, 40"
@@ -297,7 +298,11 @@ export default {
           Ranking of Books</h2>
         <div class="rank_books_container">
           <div class="rank_container">
-            <div class="rank_name">Click Rank</div>
+            <el-popover placement="top-start" :width="200" trigger="hover" content="Total clicks of novels">
+              <template #reference>
+                <div class="rank_name">Click Rank</div>
+              </template>
+            </el-popover>
             <div class="rank_items" v-for="(item, index) in click_rank_info.slice(0, 5)" :key="item.title">
               <div class="rank_image">
                 <img style="height: 80px;" :src="item.picUrl" />
@@ -316,7 +321,11 @@ export default {
             </div>
           </div>
           <div class="rank_container">
-            <div class="rank_name">Newest Rank</div>
+            <el-popover placement="top-start" :width="200" trigger="hover" content="Release time of novels">
+              <template #reference>
+                <div class="rank_name">Newest Rank</div>
+              </template>
+            </el-popover>
             <div class="rank_items" v-for="(item, index) in newest_rank_info.slice(0, 5)" :key="item">
               <div class="rank_image">
                 <img style="height: 80px;" :src="item.picUrl" />
@@ -335,7 +344,11 @@ export default {
             </div>
           </div>
           <div class="rank_container">
-            <div class="rank_name">Update Rank</div>
+            <el-popover placement="top-start" :width="200" trigger="hover" content="Update time of novels">
+              <template #reference>
+                <div class="rank_name">Update Rank</div>
+              </template>
+            </el-popover>
             <div class="rank_items" v-for="(item, index) in update_rank_info.slice(0, 5)" :key="item">
               <div class="rank_image">
                 <img style="height: 80px;" :src="item.picUrl" />
@@ -383,13 +396,6 @@ export default {
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity 0.5s;
-}
-
-body {
-  margin: 0;
-  font-family: Arial, Helvetica, sans-serif;
-  font-size: 14px;
-
 }
 
 .blur {
