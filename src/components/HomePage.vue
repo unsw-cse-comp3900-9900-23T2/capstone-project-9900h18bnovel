@@ -3,6 +3,7 @@ import {
   CaretTop,
   UserFilled,
   User,
+  Warning,
 } from '@element-plus/icons-vue';
 import { ElMessage } from 'element-plus';
 const svg = `
@@ -174,7 +175,17 @@ export default {
         </div>
         <div class="weekly_collect_books_container">
           <div class="weekly_books">
-            <h2>Weekly Books</h2>
+            <h2>
+              Weekly Books
+              <el-popover placement="right" :width="230" trigger="hover"
+                content="The Weekly Books features the highest-rated and most-viewed books of the week.">
+                <template #reference>
+                  <el-icon style="font-size: 10pt;">
+                    <Warning />
+                  </el-icon>
+                </template>
+              </el-popover>
+            </h2>
             <el-carousel :interval="4000" height="300px">
               <el-carousel-item v-for="item in weekly_books_info.slice(0, 3)" :key="item.title">
                 <div class="carousel_weekly_background" :style="getBackgroundStyle(item.picUrl)"></div>
@@ -194,7 +205,17 @@ export default {
             </el-carousel>
           </div>
           <div class="collected_novel_container">
-            <h2>Collected Books</h2>
+            <h2>
+              Collected Books
+              <el-popover placement="right" :width="250" trigger="hover"
+                content="The Collected Books determined by readers' personal collections, must signed in to view the section">
+                <template #reference>
+                  <el-icon style="font-size: 10pt;">
+                    <Warning />
+                  </el-icon>
+                </template>
+              </el-popover>
+            </h2>
             <div v-if="!this.$store.state.token" class="collected_novel_na_user">
               <el-empty :image-size="120" description="Please sign in to see more informations">
                 <el-button class="login_button" type="primary" @click="showLogin" @showLogin="showLogin"><el-icon>
@@ -211,7 +232,16 @@ export default {
         <div class="recomm_books_container">
           <div class="hottest_books">
             <h2 style=" border-bottom: 1px solid; width: 100%; border-color: rgb(206, 204, 204); padding-bottom: 10px;">
-              Hottest Books</h2>
+              Hottest Books
+              <el-popover placement="right" :width="275" trigger="hover"
+                content="The Hottest Books list features the most popular and sought-after literary gems based on the number of times they have been collected by readers">
+                <template #reference>
+                  <el-icon style="font-size: 10pt;">
+                    <Warning />
+                  </el-icon>
+                </template>
+              </el-popover>
+            </h2>
             <el-carousel height="600px" style="width: 600px; margin-left: -30px;;" direction="vertical" type="card"
               :autoplay="true">
               <el-carousel-item style="border-radius: 15px;" v-for="item in hottest_books_info.slice(0, 6)"
@@ -252,8 +282,15 @@ export default {
           </div>
           <div class="best_books">
             <h2 style="border-bottom: 1px solid; width: 100%; border-color: rgb(206, 204, 204);  padding-bottom: 10px;">
-              Best
-              Books
+              Best Books
+              <el-popover placement="right" :width="265" trigger="hover"
+                content="The Best Books list showcases the most highly-rated and acclaimed literary works based on their scores">
+                <template #reference>
+                  <el-icon style="font-size: 10pt;">
+                    <Warning />
+                  </el-icon>
+                </template>
+              </el-popover>
             </h2>
             <el-carousel height="600px" style="width: 600px;" direction="vertical" type="card" :autoplay="true">
               <el-carousel-item style="border-radius: 15px;" v-for="item in best_books_info.slice(0, 6)"
@@ -298,11 +335,17 @@ export default {
           Ranking of Books</h2>
         <div class="rank_books_container">
           <div class="rank_container">
-            <el-popover placement="top-start" :width="200" trigger="hover" content="Total clicks of novels">
-              <template #reference>
-                <div class="rank_name">Click Rank</div>
-              </template>
-            </el-popover>
+            <div style="display: flex;">
+              <div class="rank_name">Click Rank</div>
+              <el-popover placement="right" :width="210" trigger="hover"
+                content="The Click Rank is a list based on the total number of clicks a novel receives. It showcases the most popular and highly-clicked novels at the moment. ">
+                <template #reference>
+                  <el-icon style="margin-left: 10px;">
+                    <Warning />
+                  </el-icon>
+                </template>
+              </el-popover>
+            </div>
             <div class="rank_items" v-for="(item, index) in click_rank_info.slice(0, 5)" :key="item.title">
               <div class="rank_image">
                 <img style="height: 80px;" :src="item.picUrl" />
@@ -321,11 +364,17 @@ export default {
             </div>
           </div>
           <div class="rank_container">
-            <el-popover placement="top-start" :width="200" trigger="hover" content="Release time of novels">
-              <template #reference>
-                <div class="rank_name">Newest Rank</div>
-              </template>
-            </el-popover>
+            <div style="display: flex;">
+              <div class="rank_name">Newest Rank</div>
+              <el-popover placement="right" :width="215" trigger="hover"
+                content="The Newest Rank is a list that features the latest releases of novels. It highlights the freshest in the NovelHub.">
+                <template #reference>
+                  <el-icon style="margin-left: 10px;">
+                    <Warning />
+                  </el-icon>
+                </template>
+              </el-popover>
+            </div>
             <div class="rank_items" v-for="(item, index) in newest_rank_info.slice(0, 5)" :key="item">
               <div class="rank_image">
                 <img style="height: 80px;" :src="item.picUrl" />
@@ -344,11 +393,17 @@ export default {
             </div>
           </div>
           <div class="rank_container">
-            <el-popover placement="top-start" :width="200" trigger="hover" content="Update time of novels">
-              <template #reference>
-                <div class="rank_name">Update Rank</div>
-              </template>
-            </el-popover>
+            <div style="display: flex;">
+              <div class="rank_name">Update Rank</div>
+              <el-popover placement="right" :width="240" trigger="hover"
+                content="The Update Rank is a dynamic list that showcases novels with recent updates. It presents novels that have been recently added chapters or undergone significant updates">
+                <template #reference>
+                  <el-icon style="margin-left: 10px;">
+                    <Warning />
+                  </el-icon>
+                </template>
+              </el-popover>
+            </div>
             <div class="rank_items" v-for="(item, index) in update_rank_info.slice(0, 5)" :key="item">
               <div class="rank_image">
                 <img style="height: 80px;" :src="item.picUrl" />

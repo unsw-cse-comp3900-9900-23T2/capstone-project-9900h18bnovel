@@ -10,6 +10,7 @@ const svg = `
           L 10 15
           L 30 40
           L 30 15
+import { Linter } from 'eslint';
         " style="stroke-width: 5px; fill: rgba(0, 0, 0, 0); animation: none;"/>
       `
 </script >
@@ -42,7 +43,10 @@ export default {
       sessionId: '',
       newestUpdateBooks: null,
       loading: true,
-      showNewestUpdatePage: false
+      showNewestUpdatePage: false,
+      count: 5,
+      loadMore: false,
+
     }
   },
   mounted() {
@@ -84,6 +88,7 @@ export default {
         if (response.status == 200) {
           const data = await response.json();
           this.newestUpdateBooks = data.data;
+          console.log(this.newestUpdateBooks.length)
         } else {
           console.log("Test");
         }
@@ -105,78 +110,91 @@ export default {
       this.$store.dispatch('logout');
       this.$store.dispatch('clearusername');
       this.$store.dispatch('clearuid');
-    }
+    },
+    load() {
+      this.loadMore = true;
+      setTimeout(() => {
+        this.loadMore = false;
+        this.count += 5;
+        if (this.count >= this.newestUpdateBooks.length + 5) {
+          ElMessage.error("There is no more books");
+        }
+      }, 500);
+    },
   },
   computed: {
     filteredBooks() {
-      return this.update_book_info.slice(0, 19);
+      return this.newestUpdateBooks.slice(0, this.count);
     },
   },
   components: {
     Global_Footer,
     Global_Header,
-    Global_Nav
+    Global_Nav,
   }
 }
 </script>
 
 <template>
   <div :class="{ 'blur': isLoginVisible }">
-    <Global_Header @logout="logout" @showLogin="showLogin" @closeLoginBox="closeLoginBox" />
-    <Global_Nav />
-    <div v-loading.lock="loading" :element-loading-spinner="svg" element-loading-svg-view-box="0, 5, 30, 40"
-      element-loading-background="rgba(255, 255, 255, 255)"
-      style="top:50%; left: 50%; transform: translate(-50%,-50%); position: absolute;"></div>
-    <div v-if="showNewestUpdatePage">
-      <div class="new_update_body">
-        <h1
-          style=" border-bottom: 1px solid; border-color: rgb(223, 223, 223); padding-bottom: 10px; margin-bottom: 22px; margin-top: 30px; width: 60%; text-align: center;">
-          Newest Update</h1>
-        <div class="infinite-list">
-          <div v-for="(item, index) in newestUpdateBooks" :key="item.id" class="infinite-list-item">
-            <div style="font-size: 14pt; width: 150px; text-align: center;">{{ index < 9 ? '0' + (index + 1) : index + 1
-            }}</div>
-                <img :src="item.picUrl"
-                  style="height: 155px; border-radius: 5px; box-shadow: 6px 4px 6px rgb(151, 151, 151);" />
-                <div class="update_book_item_container">
-                  <div style="font-size: 18pt; overflow: hidden; text-overflow: ellipsis;">{{ item.bookName }}</div>
-                  <div style="font-size: 12pt;">{{ item.authorName }}</div>
-                  <div
-                    style="font-size: 10pt; margin-top: 10px; display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 6; overflow: hidden;">
-                    {{ item.bookDesc }}</div>
-                </div>
-                <div class="update_book_reviews_container">
-                  <div>{{ item.lastChapterUpdateTime }}</div>
-                  <div>{{ item.collectCount }} <el-icon>
-                      <UserFilled />
-                    </el-icon> Collected</div>
-                  <div>{{ item.visitCount }} <el-icon>
-                      <UserFilled />
-                    </el-icon> Viewed</div>
-                  <el-rate v-model="item.score" disabled show-score text-color="#ff9900" size="small"
-                    score-template="{value} points" />
-                </div>
-            </div>
-          </div>
-
-          <!-- Go to top floating buttom -->
-          <el-backtop :bottom="100">
-            <div class="goTopButton">
-              <el-icon>
-                <CaretTop />
-              </el-icon>
-            </div>
-          </el-backtop>
+    <div v-infinite-scroll="load" class="infinite-body">
+      <el-backtop :bottom="100">
+        <div class="goTopButton">
+          <el-icon>
+            <CaretTop />
+          </el-icon>
         </div>
-        <Global_Footer />
+      </el-backtop>
+      <Global_Header @logout="logout" @showLogin="showLogin" @closeLoginBox="closeLoginBox" />
+      <Global_Nav />
+      <div v-loading.lock="loading" :element-loading-spinner="svg" element-loading-svg-view-box="0, 5, 30, 40"
+        element-loading-background="rgba(255, 255, 255, 255)"
+        style="top:50%; left: 50%; transform: translate(-50%,-50%); position: absolute;"></div>
+      <div v-if="showNewestUpdatePage">
+        <div class="new_update_body">
+          <h1
+            style=" border-bottom: 1px solid; border-color: rgb(223, 223, 223); padding-bottom: 10px; margin-bottom: 22px; margin-top: 30px; width: 60%; text-align: center;">
+            Newest Update</h1>
+          <ul class="infinite-list">
+            <li v-for="(item, index) in filteredBooks" :key="item.id" class="infinite-list-item">
+              <div style="font-size: 14pt; width: 150px; text-align: center;">
+                {{ index < 9 ? '0' + (index + 1) : index + 1 }} </div>
+                  <img :src="item.picUrl"
+                    style="height: 155px; border-radius: 5px; box-shadow: 6px 4px 6px rgb(151, 151, 151);" />
+                  <div class="update_book_item_container">
+                    <div style="font-size: 18pt; overflow: hidden; text-overflow: ellipsis;">{{ item.bookName }}</div>
+                    <div style="font-size: 12pt;">{{ item.authorName }}</div>
+                    <div
+                      style="font-size: 10pt; margin-top: 10px; display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 6; overflow: hidden;">
+                      {{ item.bookDesc }}</div>
+                  </div>
+                  <div class="update_book_reviews_container">
+                    <div>{{ item.lastChapterUpdateTime }}</div>
+                    <div>{{ item.collectCount }} <el-icon>
+                        <UserFilled />
+                      </el-icon> Collected</div>
+                    <div>{{ item.visitCount }} <el-icon>
+                        <UserFilled />
+                      </el-icon> Viewed</div>
+                    <el-rate v-model="item.score" disabled show-score text-color="#ff9900" size="small"
+                      score-template="{value} points" />
+                  </div>
+            </li>
+          </ul>
+          <div v-loading.fullscreen.lock="loadMore" :element-loading-spinner="svg"
+            element-loading-svg-view-box="0, 5, 30, 40"></div>
+        </div>
       </div>
     </div>
-    <transition name="fade">
-      <div v-if="isLoginVisible" class="loginSection">
-        <Login class="login" :verImage="this.verImage" :sessionId="this.sessionId" @showLogin="showLogin"
-          @cancel="closeLoginBox" />
-      </div>
-    </transition>
+    <Global_Footer />
+  </div>
+  <!-- Go to top floating buttom -->
+  <transition name="fade">
+    <div v-if="isLoginVisible" class="loginSection">
+      <Login class="login" :verImage="this.verImage" :sessionId="this.sessionId" @showLogin="showLogin"
+        @cancel="closeLoginBox" />
+    </div>
+  </transition>
 </template>
 
 
@@ -205,6 +223,11 @@ body {
   pointer-events: none;
 }
 
+.infinite-body {
+  height: 929px;
+  overflow: auto;
+}
+
 .new_update_body {
   display: flex;
   flex-direction: column;
@@ -212,9 +235,9 @@ body {
 }
 
 .infinite-list {
-  height: 100%;
   width: 60%;
   margin-bottom: 10px;
+  overflow: auto
 }
 
 .infinite-list .infinite-list-item {

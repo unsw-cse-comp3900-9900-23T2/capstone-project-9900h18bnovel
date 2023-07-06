@@ -1,7 +1,7 @@
 <script setup>
-import {
-  User,
-} from '@element-plus/icons-vue'
+// import {
+//   User,
+// } from '@element-plus/icons-vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 </script >
 
@@ -93,10 +93,6 @@ export default {
       } else if (!this.isValidEmail(this.email)) {
         this.alertBox("emailInvalid");
       } else {
-        ElMessage({
-          message: 'Verification code sent',
-          type: 'success',
-        })
         let countdown;
         if (buttonIndex === 1) {
           countdown = this.countdown1;
@@ -119,6 +115,10 @@ export default {
           }
         }, 1000);
         this.getVerCode();
+        ElMessage({
+          message: 'Verification code sent',
+          type: 'success',
+        })
       }
     },
 
@@ -175,7 +175,7 @@ export default {
         ElMessageBox.alert("Confirm Password can' be empty", 'Error', {
           confirmButtonText: 'OK',
         })
-      }else if (situation === "conPassContainSpace") {
+      } else if (situation === "conPassContainSpace") {
         /* 确认密码不能有空格 */
         ElMessageBox.alert("Confirm Password can' contain any space", 'Error', {
           confirmButtonText: 'OK',
@@ -202,7 +202,7 @@ export default {
         this.alertBox("emailInvalid");
       } else if (this.password === '') {
         this.alertBox("passwordEmpty")
-      } else if(/\s/.test(this.password)){
+      } else if (/\s/.test(this.password)) {
         /*因为发现如果输入六个空格也会向后端发请求，所以我这里就加了个这个 */
         this.alertBox("passwordContainSpace")
       } else if (this.verCode === '') {
@@ -284,7 +284,7 @@ export default {
         this.alertBox("usernameContainSpace")
       } else if (this.password === '') {
         this.alertBox("passwordEmpty")
-      } else if(/\s/.test(this.password)){
+      } else if (/\s/.test(this.password)) {
         /*因为发现如果输入六个空格也会向后端发请求，所以我这里就加了个这个 */
         this.alertBox("passwordContainSpace")
       } else if (this.confirmPass === '') {
@@ -350,7 +350,7 @@ export default {
         this.alertBox("emailInvalid");
       } else if (this.password === '') {
         this.alertBox("passwordEmpty")
-      } else if(/\s/.test(this.password)){
+      } else if (/\s/.test(this.password)) {
         /*因为发现如果输入六个空格也会向后端发请求，所以我这里就加了个这个 */
         this.alertBox("passwordContainSpace")
       } else if (this.confirmPass === '') {
@@ -424,24 +424,29 @@ export default {
 
 <template>
   <div v-if="isLoginVisible" class="login_form">
-    <el-icon size="20pt" style="border: 1px solid; border-radius: 50px; padding: 10px;">
-      <User />
-    </el-icon>
+    <img src="../logo.png" style="height: 80px;" />
     <div style="font-size: 14pt; padding-top: 10px;">Sign in</div>
     <el-divider />
     <div class="each_input_container">
       <div class="text">Email: </div>
       <el-input placeholder="example@example.com" style="width: 30%;" v-model="email" />
+      <div style="color: red;">&nbsp;*</div>
     </div>
 
     <div class="each_input_container">
       <div class="text">Password: </div>
-      <el-input style="width: 30%;" v-model="password" show-password type="password" />
+      <el-input placeholder="eg: ****" style="width: 30%;" v-model="password" show-password type="password" />
+      <div style="color: red;">&nbsp;*</div>
     </div>
 
     <div class="each_input_container">
       <div class="text">Verification Code: </div>
-      <el-input style="width: 30%;" v-model="verCode" />
+      <el-input placeholder="eg: 0000" style="width: 30%;" v-model="verCode" />
+      <div style="color: red;">&nbsp;*&nbsp;</div>
+    </div>
+
+    <div class="each_input_container" style="margin-top: -20px;">
+      <div class="text"></div>
       <img style="height: 100%; width: 80px;" :src="verImage" />
     </div>
 
@@ -458,35 +463,42 @@ export default {
   </div>
 
   <div v-else-if="isRegisterVisible" class="register_form">
-    <el-icon size="20pt" style="border: 1px solid; border-radius: 50px; padding: 10px;">
-      <User />
-    </el-icon>
+    <img src="../logo.png" style="height: 80px;" />
     <div style="font-size: 14pt; padding-top: 10px;">Sign Up</div>
     <el-divider />
 
     <div class="each_input_container">
       <div class="text">Email: </div>
       <el-input placeholder="example@example.com" style="width: 30%;" v-model="email" />
+      <div style="color: red;">&nbsp;*</div>
     </div>
 
     <div class="each_input_container">
       <div class="text">Username: </div>
-      <el-input style="width: 30%;" v-model="username" />
+      <el-input placeholder="eg: Osiris" style="width: 30%;" v-model="username" />
+      <div style="color: red;">&nbsp;*</div>
     </div>
 
     <div class="each_input_container">
       <div class="text">Password: </div>
-      <el-input style="width: 30%;" v-model="password" show-password type="password" />
+      <el-input placeholder="eg: ****" style="width: 30%;" v-model="password" show-password type="password" />
+      <div style="color: red;">&nbsp;*</div>
     </div>
 
     <div class="each_input_container">
       <div class="text">Confirm Password: </div>
-      <el-input style="width: 30%;" v-model="confirmPass" show-password type="password" />
+      <el-input placeholder="eg: ****" style="width: 30%;" v-model="confirmPass" show-password type="password" />
+      <div style="color: red;">&nbsp;*</div>
     </div>
 
     <div class="each_input_container">
       <div class="text">Verification Code: </div>
-      <el-input style="width: 30%;" v-model="verCode" />
+      <el-input placeholder="eg: 0000" style="width: 30%;" v-model="verCode" />
+      <div style="color: red;">&nbsp;*&nbsp;</div>
+    </div>
+
+    <div class="each_input_container" style="margin-top: -21px;">
+      <div class="text"></div>
       <el-button :disabled="countdown1 > 0" @click="startCountdown(1)">
         {{ countdown1 > 0 ? countdown1 + 's' : 'Get Code' }}
       </el-button>
@@ -505,30 +517,36 @@ export default {
   </div>
 
   <div v-else-if="isForgetVisible" class="forget_form">
-    <el-icon size="20pt" style="border: 1px solid; border-radius: 50px; padding: 10px;">
-      <User />
-    </el-icon>
+    <img src="../logo.png" style="height: 80px;" />
     <div style="font-size: 14pt; padding-top: 10px;">Forget Password</div>
     <el-divider />
 
     <div class="each_input_container">
       <div class="text">Email: </div>
       <el-input placeholder="example@example.com" style="width: 30%;" v-model="email" />
+      <div style="color: red;">&nbsp;*</div>
     </div>
 
     <div class="each_input_container">
       <div class="text">New Password: </div>
-      <el-input style="width: 30%;" v-model="password" show-password type="password" />
+      <el-input placeholder="eg: ****" style="width: 30%;" v-model="password" show-password type="password" />
+      <div style="color: red;">&nbsp;*</div>
     </div>
 
     <div class="each_input_container">
       <div class="text">Confirm New Password: </div>
-      <el-input style="width: 30%;" v-model="confirmPass" show-password type="password" />
+      <el-input placeholder="eg: ****" style="width: 30%;" v-model="confirmPass" show-password type="password" />
+      <div style="color: red;">&nbsp;*</div>
     </div>
 
     <div class="each_input_container">
       <div class="text">Verification Code: </div>
-      <el-input style="width: 30%;" v-model="verCode" />
+      <el-input placeholder="eg: 0000" style="width: 30%;" v-model="verCode" />
+      <div style="color: red;">&nbsp;*&nbsp;</div>
+    </div>
+
+    <div class="each_input_container" style="margin-top: -21px;">
+      <div class="text"></div>
       <el-button :disabled="countdown2 > 0" @click="startCountdown(2)">
         {{ countdown2 > 0 ? countdown2 + 's' : 'Get Code' }}
       </el-button>
@@ -554,11 +572,13 @@ export default {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background-color: rgb(245, 243, 243);
   width: 600px;
   border-radius: 50px;
   box-shadow: 0 10px 10px rgba(0, 0, 0, 0.4);
   padding: 20px;
+  background: url(D:\COMP9900\Official\Front-end\src\AuthBG.jpg);
+  background-size: cover;
+  background-position: 40% 60%;
 }
 
 .register_form {
@@ -566,7 +586,9 @@ export default {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background-color: rgb(245, 243, 243);
+  background: url(D:\COMP9900\Official\Front-end\src\AuthBG.jpg);
+  background-size: cover;
+  background-position: 40% 60%;
   width: 600px;
   border-radius: 50px;
   box-shadow: 0 10px 10px rgba(0, 0, 0, 0.4);
@@ -578,7 +600,9 @@ export default {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background-color: rgb(245, 243, 243);
+  background: url(D:\COMP9900\Official\Front-end\src\AuthBG.jpg);
+  background-size: cover;
+  background-position: 40% 60%;
   width: 600px;
   border-radius: 50px;
   box-shadow: 0 10px 10px rgba(0, 0, 0, 0.4);
