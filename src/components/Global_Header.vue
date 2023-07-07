@@ -26,11 +26,8 @@ export default {
   mounted() {
     document.addEventListener('click', this.searchGlobalClick);
     if (localStorage.getItem("token")) {
-      this.token = localStorage.getItem("token");
-      this.username = localStorage.getItem('username');
-    } else {
-      this.token = null;
-      this.username = null;
+      this.$store.dispatch('login', localStorage.getItem("token"));
+      this.$store.dispatch('username', localStorage.getItem("username"));
     }
   },
   beforeUnmount() {

@@ -2,6 +2,7 @@
 import {
   CaretTop,
   UserFilled,
+  CaretBottom,
 } from '@element-plus/icons-vue';
 import { ElMessage } from 'element-plus';
 const svg = `
@@ -44,7 +45,7 @@ export default {
       newestUpdateBooks: null,
       loading: true,
       showNewestUpdatePage: false,
-      count: 5,
+      count: 10,
       loadMore: false,
 
     }
@@ -121,6 +122,11 @@ export default {
         }
       }, 500);
     },
+    scrollToTop() {
+      this.$nextTick(() => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    },
   },
   computed: {
     filteredBooks() {
@@ -153,14 +159,14 @@ export default {
       <div v-if="showNewestUpdatePage">
         <div class="new_update_body">
           <h1
-            style=" border-bottom: 1px solid; border-color: rgb(223, 223, 223); padding-bottom: 10px; margin-bottom: 22px; margin-top: 30px; width: 60%; text-align: center;">
+            style="border-bottom: 1px solid; border-color: rgb(223, 223, 223); padding-bottom: 10px; margin-bottom: 22px; margin-top: 30px; width: 60%; text-align: center;">
             Newest Update</h1>
           <ul class="infinite-list">
             <li v-for="(item, index) in filteredBooks" :key="item.id" class="infinite-list-item">
               <div style="font-size: 14pt; width: 150px; text-align: center;">
                 {{ index < 9 ? '0' + (index + 1) : index + 1 }} </div>
                   <img :src="item.picUrl"
-                    style="height: 155px; border-radius: 5px; box-shadow: 6px 4px 6px rgb(151, 151, 151);" />
+                    style="margin-left: -50px; height: 155px; border-radius: 5px; box-shadow: 6px 4px 6px rgb(151, 151, 151);" />
                   <div class="update_book_item_container">
                     <div style="font-size: 18pt; overflow: hidden; text-overflow: ellipsis;">{{ item.bookName }}</div>
                     <div style="font-size: 12pt;">{{ item.authorName }}</div>
@@ -181,14 +187,36 @@ export default {
                   </div>
             </li>
           </ul>
-          <div v-loading.fullscreen.lock="loadMore" :element-loading-spinner="svg"
-            element-loading-svg-view-box="0, 5, 30, 40"></div>
+          <div style="height: 157px; width: 60%; display:flex; justify-content: center;" v-loading="loadMore"
+            :element-loading-spinner="svg" element-loading-svg-view-box="0, 5, 30, 40"
+            element-loading-background="rgba(255, 255, 255, 255)">
+            <div v-if="count >= newestUpdateBooks.length + 5" @click="scrollToTop"
+              style="width: 100%; text-align: center;">
+              <h3>
+                <el-icon>
+                  <CaretTop />
+                </el-icon>No more book behind<el-icon>
+                  <CaretTop />
+                </el-icon>
+              </h3>
+              <el-divider />
+            </div>
+            <h3 v-else>
+              <el-icon>
+                <CaretBottom />
+              </el-icon>
+              Scroll down to see more
+              <el-icon>
+                <CaretBottom />
+              </el-icon>
+            </h3>
+          </div>
         </div>
+        <Global_Footer />
       </div>
     </div>
-    <Global_Footer />
   </div>
-  <!-- Go to top floating buttom -->
+
   <transition name="fade">
     <div v-if="isLoginVisible" class="loginSection">
       <Login class="login" :verImage="this.verImage" :sessionId="this.sessionId" @showLogin="showLogin"
@@ -213,9 +241,7 @@ body {
   margin: 0;
   font-family: Arial, Helvetica, sans-serif;
   font-size: 14px;
-  width: 1920px;
-  margin: 0 auto;
-  overflow-x: hidden;
+  overflow: hidden;
 }
 
 .blur {
@@ -224,7 +250,7 @@ body {
 }
 
 .infinite-body {
-  height: 929px;
+  max-height: 969px;
   overflow: auto;
 }
 

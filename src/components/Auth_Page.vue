@@ -263,6 +263,11 @@ export default {
               this.password = '';
               this.verCode = '';
               this.showLogin();
+            } else if (data.code === "B0001") {
+              ElMessage.error('System execution error');
+              this.password = '';
+              this.confirmPass = '';
+              this.verCode = '';
             }
           } else {
             console.log("Test");
@@ -334,6 +339,11 @@ export default {
               this.password = '';
               this.confirmPass = '';
               this.verCode = '';
+            } else if (data.code === "B0001") {
+              ElMessage.error('System execution error');
+              this.password = '';
+              this.confirmPass = '';
+              this.verCode = '';
             }
           } else {
             console.log("Test");
@@ -396,6 +406,11 @@ export default {
               this.verCode = '';
             } else if (data.code === "A0201") {
               ElMessage.error("Email: " + this.email + " does not exists");
+              this.password = '';
+              this.confirmPass = '';
+              this.verCode = '';
+            } else if (data.code === "B0001") {
+              ElMessage.error('System execution error');
               this.password = '';
               this.confirmPass = '';
               this.verCode = '';
@@ -493,7 +508,7 @@ export default {
 
     <div class="each_input_container">
       <div class="text">Verification Code: </div>
-      <el-input placeholder="eg: 0000" style="width: 30%;" v-model="verCode" />
+      <el-input placeholder="eg: 000000" style="width: 30%;" v-model="verCode" />
       <div style="color: red;">&nbsp;*&nbsp;</div>
     </div>
 
@@ -541,7 +556,7 @@ export default {
 
     <div class="each_input_container">
       <div class="text">Verification Code: </div>
-      <el-input placeholder="eg: 0000" style="width: 30%;" v-model="verCode" />
+      <el-input placeholder="eg: 000000" style="width: 30%;" v-model="verCode" />
       <div style="color: red;">&nbsp;*&nbsp;</div>
     </div>
 
