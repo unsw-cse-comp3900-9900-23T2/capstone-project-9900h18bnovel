@@ -58,6 +58,35 @@ export default {
     }, 500);
   },
   methods: {
+    async getNewestUpdateBooks() {
+      try {
+        const response = await fetch("http://localhost:8888/api/front/book/update_rank ", {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+        });
+        if (response.status == 200) {
+          const data = await response.json();
+          this.newestUpdateBooks = data.data;
+          console.log(this.newestUpdateBooks.length)
+        } else {
+          console.log("Test");
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    load() {
+      this.loadMore = true;
+      setTimeout(() => {
+        this.loadMore = false;
+        this.count += 5;
+        if (this.count >= this.newestUpdateBooks.length + 5) {
+          ElMessage.error("There is no more books");
+        }
+      }, 500);
+    },
     async showLogin() {
       this.isLoginVisible = true;
       try {
@@ -71,25 +100,6 @@ export default {
           const data = await response.json();
           this.verImage = "data:image/png;base64," + data.data.img;
           this.sessionId = data.data.sessionId;
-        } else {
-          console.log("Test");
-        }
-      } catch (error) {
-        console.error(error);
-      }
-    },
-    async getNewestUpdateBooks() {
-      try {
-        const response = await fetch("http://localhost:8888/api/front/book/update_rank ", {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-        });
-        if (response.status == 200) {
-          const data = await response.json();
-          this.newestUpdateBooks = data.data;
-          console.log(this.newestUpdateBooks.length)
         } else {
           console.log("Test");
         }
@@ -112,21 +122,7 @@ export default {
       this.$store.dispatch('clearusername');
       this.$store.dispatch('clearuid');
     },
-    load() {
-      this.loadMore = true;
-      setTimeout(() => {
-        this.loadMore = false;
-        this.count += 5;
-        if (this.count >= this.newestUpdateBooks.length + 5) {
-          ElMessage.error("There is no more books");
-        }
-      }, 500);
-    },
-    scrollToTop() {
-      this.$nextTick(() => {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      });
-    },
+
   },
   computed: {
     filteredBooks() {
@@ -163,10 +159,10 @@ export default {
             Newest Update</h1>
           <ul class="infinite-list">
             <li v-for="(item, index) in filteredBooks" :key="item.id" class="infinite-list-item">
-              <div style="font-size: 14pt; width: 150px; text-align: center;">
+              <div style="font-size: 14pt; width:100px; text-align: center;">
                 {{ index < 9 ? '0' + (index + 1) : index + 1 }} </div>
                   <img :src="item.picUrl"
-                    style="margin-left: -50px; height: 155px; border-radius: 5px; box-shadow: 6px 4px 6px rgb(151, 151, 151);" />
+                    style=" height: 155px; border-radius: 5px; box-shadow: 6px 4px 6px rgb(151, 151, 151);" />
                   <div class="update_book_item_container">
                     <div style="font-size: 18pt; overflow: hidden; text-overflow: ellipsis;">{{ item.bookName }}</div>
                     <div style="font-size: 12pt;">{{ item.authorName }}</div>
