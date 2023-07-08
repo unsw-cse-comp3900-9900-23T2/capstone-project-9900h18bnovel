@@ -53,7 +53,7 @@ public class BookRankCacheManager {
             value = CacheConsts.BOOK_UPDATE_RANK_CACHE_NAME)
     public List<BookRankRespDto> listUpdateRankBooks() {
         QueryWrapper<BookInfo> bookInfoQueryWrapper = new QueryWrapper<>();
-        bookInfoQueryWrapper.orderByDesc("update_time")
+        bookInfoQueryWrapper.orderByDesc("last_chapter_update_time")
                 .last("limit 30");
         return listRankBooks(bookInfoQueryWrapper);
     }
