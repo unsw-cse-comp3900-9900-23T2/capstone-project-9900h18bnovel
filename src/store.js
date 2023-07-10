@@ -6,6 +6,7 @@ export default createStore({
       token: null,
       userName: null,
       uid: null,
+      currentURL: null,
     };
   },
   mutations: {
@@ -27,6 +28,12 @@ export default createStore({
     clearUid(state) {
       state.uid = null;
     },
+    setCurrentURL(state, url) {
+      state.currentURL = url;
+    },
+    clearCurrentURL(state) {
+      state.currentURL = null;
+    },
   },
   actions: {
     login({ commit }, token) {
@@ -47,10 +54,19 @@ export default createStore({
     clearuid({ commit }) {
       commit('clearUid');
     },
+    updateCurrentURL({ commit }, url) {
+      commit('setCurrentURL', url);
+    },
+    clearCurrentURL({ commit }) {
+      commit('clearCurrentURL');
+    },
   },
   getters: {
     isAuthenticated: (state) => {
       return !!state.token;
+    },
+    getCurrentURL: (state) => {
+      return state.currentURL;
     },
   },
 });
