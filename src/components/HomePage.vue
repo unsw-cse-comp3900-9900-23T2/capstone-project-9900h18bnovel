@@ -20,6 +20,7 @@ import Header from './Global_Header.vue';
 import Nav from './Global_Nav.vue';
 import Footer from './Global_Footer.vue';
 import Login from './Auth_Page.vue';
+// import Profile from './User_Profile.vue';
 export default {
   emits: ['showLogin', 'closeLoginBox', 'logout'],
   data() {
@@ -71,7 +72,8 @@ export default {
   components: {
     Header,
     Nav,
-    Footer
+    Footer,
+    // Profile,
   },
   mounted() {
     this.getHomeBooks();

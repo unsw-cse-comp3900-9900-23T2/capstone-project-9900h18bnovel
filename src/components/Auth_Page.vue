@@ -591,7 +591,7 @@ export default {
   border-radius: 50px;
   box-shadow: 0 10px 10px rgba(0, 0, 0, 0.4);
   padding: 20px;
-  background: url(D:\COMP9900\Official\Front-end\src\AuthBG.jpg);
+  background: url(../AuthBG.jpg);
   background-size: cover;
   background-position: 40% 60%;
 }
@@ -601,7 +601,7 @@ export default {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background: url(D:\COMP9900\Official\Front-end\src\AuthBG.jpg);
+  background: url(../AuthBG.jpg);
   background-size: cover;
   background-position: 40% 60%;
   width: 600px;
@@ -615,7 +615,7 @@ export default {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background: url(D:\COMP9900\Official\Front-end\src\AuthBG.jpg);
+  background: url(../AuthBG.jpg);
   background-size: cover;
   background-position: 40% 60%;
   width: 600px;
