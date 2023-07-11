@@ -4,11 +4,12 @@ export default {
     return {
     }
   },
-  methods:{
-    goAllNov(){
-      this.$router.push('/allnovels');
+  methods: {
+    goAllNov() {
+      const currentURL = this.$store.getters.getCurrentURL;
+      this.$router.push(`/allnovels/${currentURL}`);
     },
-    goNewUpdate(){
+    goNewUpdate() {
       this.$router.push('/newupdate');
     }
   }
@@ -16,8 +17,8 @@ export default {
 </script>
 <template>
   <div class="nav_container">
-    <el-menu class="el-menu-demo" mode="horizontal" background-color="#545c64"
-      text-color="#fff" active-text-color="#ffd04b">
+    <el-menu class="el-menu-demo" mode="horizontal" background-color="#545c64" text-color="#fff"
+      active-text-color="#ffd04b">
       <el-menu-item index="1" @click="goAllNov">All Novels</el-menu-item>
       <el-sub-menu index="2">
         <template #title>Browse</template>
@@ -47,17 +48,16 @@ export default {
           <el-menu-item index="2-4-2">2</el-menu-item>
           <el-menu-item index="2-4-3">3</el-menu-item>
         </el-sub-menu>
-        </el-sub-menu>
-        <el-sub-menu index="3">
-          <template #title>Ranking</template>
-          <el-menu-item index="3-1">Click Rank</el-menu-item>
-          <el-menu-item index="3-2">Newest Rank</el-menu-item>
-          <el-menu-item index="3-3">Update Rank</el-menu-item>
       </el-sub-menu>
-    <el-menu-item index="4">My Creation</el-menu-item>
-    <el-menu-item index="5"  @click="goNewUpdate">Newest Update</el-menu-item>
-  </el-menu>
-</div>
+      <el-sub-menu index="3">
+        <template #title>Ranking</template>
+        <el-menu-item index="3-1">Click Rank</el-menu-item>
+        <el-menu-item index="3-2">Newest Rank</el-menu-item>
+        <el-menu-item index="3-3">Update Rank</el-menu-item>
+      </el-sub-menu>
+      <el-menu-item index="4">My Creation</el-menu-item>
+      <el-menu-item index="5" @click="goNewUpdate">Newest Update</el-menu-item>
+    </el-menu>
+  </div>
 </template>
-<style>
-</style>
+<style></style>
