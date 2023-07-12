@@ -68,8 +68,14 @@ public class BookSearchReqDto extends PageReqDto {
     private Date updateTimeMin;
 
     /**
-     * Sort methods
+     * Sort method,
+     * Popular - visit_count,
+     * Collection - collect_count,
+     * Score - score,
+     * Update time - last_chapter_update_time
+     *
      */
-    @Parameter(description = "Sort methods")
+    @Parameter(description = "Sort methods, Popular - visit_count, " +
+            "Collection - collect_count, Score - score, Update time - last_chapter_update_time")
     private String sort;
 }

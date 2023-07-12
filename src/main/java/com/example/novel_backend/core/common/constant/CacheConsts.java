@@ -58,6 +58,10 @@ public class CacheConsts {
      */
     public static final String BOOK_UPDATE_RANK_CACHE_NAME = "bookUpdateRankCache";
 
+    /**
+     * Book Category List Cache
+     */
+    public static final String BOOK_CATEGORY_LIST_CACHE_NAME = "bookCategoryListCache";
 
     /**
      * Cache configuration constants
@@ -72,6 +76,8 @@ public class CacheConsts {
         BOOK_NEWEST_RANK_CACHE(0, BOOK_NEWEST_RANK_CACHE_NAME, 60 * 30, 1),
 
         BOOK_UPDATE_RANK_CACHE(0, BOOK_UPDATE_RANK_CACHE_NAME, 60, 1),
+
+        BOOK_CATEGORY_LIST_CACHE(0, BOOK_CATEGORY_LIST_CACHE_NAME, 0, 2),
 
         USER_INFO_CACHE(2, EMAIL_VERIFY_CODE_CACHE_KEY, 60 * 60 * 24, 10000);
         /**

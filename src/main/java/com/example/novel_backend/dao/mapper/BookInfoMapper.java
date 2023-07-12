@@ -2,6 +2,7 @@ package com.example.novel_backend.dao.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.example.novel_backend.dao.entity.BookChapter;
 import com.example.novel_backend.dao.entity.BookInfo;
 import com.example.novel_backend.dto.req.BookSearchReqDto;
 import com.example.novel_backend.dto.resp.BookInfoRespDto;
@@ -23,4 +24,11 @@ public interface BookInfoMapper extends BaseMapper<BookInfo> {
      * @return book result
      */
     List<BookInfo> searchBooks(IPage<BookInfoRespDto> page, BookSearchReqDto dto);
+
+    /**
+     * Book chapter list
+     * @param bookId book id
+     * @return Book chapter list
+     */
+    List<BookChapter> listChapters(Long bookId);
 }
