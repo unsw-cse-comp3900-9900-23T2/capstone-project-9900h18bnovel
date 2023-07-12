@@ -2,7 +2,7 @@
   <footer class="footer">
     <div class="footer-top">
       <div class="footer-top-blocks">
-        <img src="../logo.png" style="height: 100px;"/>
+        <img src="../logo.png" style="height: 100px;" />
       </div>
       <div class="footer-top-blocks">
         <h2>TEAMS</h2>
@@ -53,7 +53,9 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 20px;
+  width: 100%;
+  padding-top: 20px;
+  padding-bottom: 20px;
 }
 
 .footer-top {
@@ -64,6 +66,7 @@
   display: flex;
   flex-direction: column;
   margin-right: 60px;
+  
 }
 
 .footer-elements {

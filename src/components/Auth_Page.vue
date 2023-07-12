@@ -594,6 +594,7 @@ export default {
   background: url(../AuthBG.jpg);
   background-size: cover;
   background-position: 40% 60%;
+  margin: 0 auto;
 }
 
 
