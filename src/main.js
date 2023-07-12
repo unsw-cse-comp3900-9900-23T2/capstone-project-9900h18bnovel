@@ -15,7 +15,19 @@ app.use(ElementPlus);
 const routes = [
   { path: '/', redirect: '/home' },
   { path: '/home', component: HomePage },
-  { path: '/allnovels', component: All_Novels },
+  {
+    path: '/allnovels/',
+    component: All_Novels,
+  },
+  {
+    path: '/allnovels/:currentURL',
+    component: All_Novels,
+    beforeEnter: (to, from, next) => {
+      // Modify the route path to include currentURL
+      to.params.currentURL = store.getters.getCurrentURL;
+      next();
+    },
+  },
   { path: '/newupdate', component: new_update },
 ];
 

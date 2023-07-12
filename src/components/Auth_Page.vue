@@ -438,7 +438,7 @@ export default {
 </script>
 
 <template>
-  <div v-if="isLoginVisible" class="login_form">
+  <div v-if="isLoginVisible" class="auth_form">
     <img src="../logo.png" style="height: 80px;" />
     <div style="font-size: 14pt; padding-top: 10px;">Sign in</div>
     <el-divider />
@@ -477,7 +477,7 @@ export default {
     </div>
   </div>
 
-  <div v-else-if="isRegisterVisible" class="register_form">
+  <div v-else-if="isRegisterVisible" class="auth_form">
     <img src="../logo.png" style="height: 80px;" />
     <div style="font-size: 14pt; padding-top: 10px;">Sign Up</div>
     <el-divider />
@@ -531,7 +531,7 @@ export default {
     </div>
   </div>
 
-  <div v-else-if="isForgetVisible" class="forget_form">
+  <div v-else-if="isForgetVisible" class="auth_form">
     <img src="../logo.png" style="height: 80px;" />
     <div style="font-size: 14pt; padding-top: 10px;">Forget Password</div>
     <el-divider />
@@ -582,7 +582,7 @@ export default {
 
 
 <style >
-.login_form {
+.auth_form {
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -591,38 +591,11 @@ export default {
   border-radius: 50px;
   box-shadow: 0 10px 10px rgba(0, 0, 0, 0.4);
   padding: 20px;
-  background: url(D:\COMP9900\Official\Front-end\src\AuthBG.jpg);
+  background: url(../AuthBG.jpg);
   background-size: cover;
   background-position: 40% 60%;
 }
 
-.register_form {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  background: url(D:\COMP9900\Official\Front-end\src\AuthBG.jpg);
-  background-size: cover;
-  background-position: 40% 60%;
-  width: 600px;
-  border-radius: 50px;
-  box-shadow: 0 10px 10px rgba(0, 0, 0, 0.4);
-  padding: 20px;
-}
-
-.forget_form {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  background: url(D:\COMP9900\Official\Front-end\src\AuthBG.jpg);
-  background-size: cover;
-  background-position: 40% 60%;
-  width: 600px;
-  border-radius: 50px;
-  box-shadow: 0 10px 10px rgba(0, 0, 0, 0.4);
-  padding: 20px;
-}
 
 .each_input_container {
   display: flex;
