@@ -65,7 +65,12 @@ public enum ErrorCodeEnum {
     /**
      * Level 2 macro error code, user request parameter error
      */
-    USER_REQUEST_PARAM_ERROR("A0400", "User request parameter error");
+    USER_REQUEST_PARAM_ERROR("A0400", "User request parameter error"),
+
+    /**
+     * User comment fail
+     */
+    USER_COMMENTED("A2001", "You have already commented!");
 
     /**
      * Error Code

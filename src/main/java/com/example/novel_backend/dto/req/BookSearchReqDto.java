@@ -15,6 +15,12 @@ import java.util.Date;
 @Data
 public class BookSearchReqDto extends PageReqDto {
 
+//    /**
+//     * Page data number
+//     */
+//    @Parameter(description = "Page data number")
+//    private Integer pageNum;
+
     /**
      * Search key word
      */

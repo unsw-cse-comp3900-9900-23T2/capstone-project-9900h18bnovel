@@ -3,6 +3,7 @@ package com.example.novel_backend.service;
 import com.example.novel_backend.core.common.resp.PageRespDto;
 import com.example.novel_backend.core.common.resp.RestResp;
 import com.example.novel_backend.dto.req.BookSearchReqDto;
+import com.example.novel_backend.dto.req.UserCommentReqDto;
 import com.example.novel_backend.dto.resp.BookCategoryRespDto;
 import com.example.novel_backend.dto.resp.BookChapterRespDto;
 import com.example.novel_backend.dto.resp.BookInfoRespDto;
@@ -41,7 +42,7 @@ public interface BookService {
      * @param dto Search condition
      * @return search result
      */
-    RestResp<PageRespDto<BookInfoRespDto>> searchBooks(BookSearchReqDto dto);
+    RestResp<List<BookInfoRespDto>> searchBooks(BookSearchReqDto dto);
 
     /**
      * Book category List Search
@@ -63,5 +64,12 @@ public interface BookService {
      * @return Book chapter list
      */
     RestResp<List<BookChapterRespDto>> listChapters(Long bookId);
+
+    /**
+     * Post comment
+     * @param dto comment dto
+     * @return void
+     */
+    RestResp<Void> postComment(UserCommentReqDto dto);
     
 }

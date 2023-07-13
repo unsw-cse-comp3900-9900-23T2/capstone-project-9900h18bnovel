@@ -4,6 +4,7 @@ import com.example.novel_backend.core.common.constant.ApiRouterConsts;
 import com.example.novel_backend.core.common.resp.PageRespDto;
 import com.example.novel_backend.core.common.resp.RestResp;
 import com.example.novel_backend.dto.req.BookSearchReqDto;
+import com.example.novel_backend.dto.req.UserCommentReqDto;
 import com.example.novel_backend.dto.resp.BookCategoryRespDto;
 import com.example.novel_backend.dto.resp.BookChapterRespDto;
 import com.example.novel_backend.dto.resp.BookInfoRespDto;
@@ -12,12 +13,10 @@ import com.example.novel_backend.service.BookService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.core.annotations.ParameterObject;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -67,7 +66,7 @@ public class BookController {
      */
     @Operation(summary = "Book search interface")
     @GetMapping("books")
-    public RestResp<PageRespDto<BookInfoRespDto>> searchBooks(
+    public RestResp<List<BookInfoRespDto>> searchBooks(
             @ParameterObject BookSearchReqDto dto) {
         return bookService.searchBooks(dto);
     }
@@ -100,5 +99,14 @@ public class BookController {
     public RestResp<List<BookChapterRespDto>> listChapters(
             @Parameter(description = "Book ID") Long bookId) {
         return bookService.listChapters(bookId);
+    }
+
+    /**
+     * Post Comment
+     */
+    @Operation(summary = "Post Comment")
+    @PostMapping("comment")
+    public RestResp<Void> comment(@Valid @RequestBody UserCommentReqDto dto) {
+        return bookService.postComment(dto);
     }
 }

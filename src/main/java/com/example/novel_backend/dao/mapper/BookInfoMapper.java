@@ -19,11 +19,10 @@ public interface BookInfoMapper extends BaseMapper<BookInfo> {
 
     /**
      * Book search
-     * @param page mybatis-plus page Object
      * @param dto search condition
      * @return book result
      */
-    List<BookInfo> searchBooks(IPage<BookInfoRespDto> page, BookSearchReqDto dto);
+    List<BookInfo> searchBooks(BookSearchReqDto dto);
 
     /**
      * Book chapter list
