@@ -13,13 +13,13 @@ import java.util.Date;
  * @create 2023/7/8 14:25
  */
 @Data
-public class BookSearchReqDto extends PageReqDto {
+public class BookSearchReqDto {
 
-//    /**
-//     * Page data number
-//     */
-//    @Parameter(description = "Page data number")
-//    private Integer pageNum;
+    /**
+     * Page data number
+     */
+    @Parameter(description = "Page data number")
+    private Integer pageNum;
 
     /**
      * Search key word

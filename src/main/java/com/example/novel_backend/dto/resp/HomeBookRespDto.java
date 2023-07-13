@@ -66,4 +66,9 @@ public class HomeBookRespDto {
     @Schema(description = "Book score")
     private Float score;
 
+    /**
+     * Category Name
+     */
+    private String categoryName;
+
 }

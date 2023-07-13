@@ -29,7 +29,7 @@ public class BookRankCacheManager {
             value = CacheConsts.BOOK_VISIT_RANK_CACHE_NAME)
     public List<BookRankRespDto> listVisitRankBook() {
         QueryWrapper<BookInfo> bookInfoQueryWrapper = new QueryWrapper<>();
-        bookInfoQueryWrapper.orderByAsc("visit_count")
+        bookInfoQueryWrapper.orderByDesc("visit_count")
                 .last("limit 30");
         return listRankBooks(bookInfoQueryWrapper);
     }
@@ -71,6 +71,7 @@ public class BookRankCacheManager {
             respDto.setVisitCount(bookInfo.getVisitCount());
             respDto.setCollectCount(bookInfo.getCollectCount());
             respDto.setScore(bookInfo.getScore());
+            respDto.setCategoryName(bookInfo.getCategoryName());
             respDto.setLastChapterName(bookInfo.getLastChapterName());
             respDto.setLastChapterUpdateTime(bookInfo.getLastChapterUpdateTime());
             return respDto;

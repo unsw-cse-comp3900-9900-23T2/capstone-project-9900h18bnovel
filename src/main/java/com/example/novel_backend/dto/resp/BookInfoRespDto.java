@@ -20,12 +20,15 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 public class BookInfoRespDto {
+
+    @Schema(description = "Page total data number")
+    private Integer totalNum;
+
     /**
      * Page data number
      */
     @Schema(description = "Page data number")
     private Integer pageNum;
-
 
     /**
      * ID

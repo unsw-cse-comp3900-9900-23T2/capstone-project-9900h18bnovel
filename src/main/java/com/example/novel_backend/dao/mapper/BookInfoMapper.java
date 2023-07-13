@@ -18,6 +18,13 @@ import java.util.List;
 public interface BookInfoMapper extends BaseMapper<BookInfo> {
 
     /**
+     * Book search All
+     * @param dto search condition
+     * @return book result all
+     */
+    List<BookInfo> searchAllBooks(BookSearchReqDto dto);
+
+    /**
      * Book search
      * @param dto search condition
      * @return book result

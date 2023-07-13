@@ -45,4 +45,37 @@
         where book_id = #{bookId}
         order by chapter_num
     </select>
+    <select id="searchAllBooks" resultType="com.example.novel_backend.dao.entity.BookInfo">
+        SELECT
+        id, category_id, category_name, pic_url, book_name, author_id,
+        author_name, word_count, visit_count, collect_count, last_chapter_name,score,last_chapter_update_time
+        FROM book_info
+        WHERE word_count > 0
+        <if test="keyword != null">
+            AND (book_name LIKE concat('%', #{keyword}, '%') OR
+            author_name LIKE concat('%', #{keyword}, '%') OR
+            last_chapter_name LIKE concat('%', #{keyword}, '%'))
+        </if>
+        <if test="workDirection != null">
+            AND work_direction = #{workDirection}
+        </if>
+        <if test="categoryId != null">
+            AND category_id = #{categoryId}
+        </if>
+        <if test="bookStatus != null">
+            AND book_status = #{bookStatus}
+        </if>
+        <if test="wordCountMin != null">
+            AND word_count >= #{wordCountMin}
+        </if>
+        <if test="wordCountMax != null">
+            AND word_count <![CDATA[ < ]]> #{wordCountMax}
+        </if>
+        <if test="updateTimeMin != null">
+            AND last_chapter_update_time >= #{updateTimeMin}
+        </if>
+        <if test="sort != null">
+            ORDER BY ${sort} DESC
+        </if>
+    </select>
 </mapper>

@@ -68,6 +68,7 @@ public class HomeBookCacheManager {
                     homeBookRespDto.setVisitCount(bookInfo.getVisitCount());
                     homeBookRespDto.setCollectCount(bookInfo.getCollectCount());
                     homeBookRespDto.setScore(bookInfo.getScore());
+                    homeBookRespDto.setCategoryName(bookInfo.getCategoryName());
                     homeBookRespDtos.add(homeBookRespDto);
                 }
                 return homeBookRespDtos;

@@ -65,11 +65,20 @@ public interface BookService {
      */
     RestResp<List<BookChapterRespDto>> listChapters(Long bookId);
 
+
+
     /**
      * Post comment
      * @param dto comment dto
      * @return void
      */
     RestResp<Void> postComment(UserCommentReqDto dto);
+
+    /**
+     * Update comment
+     * @param dto update comment dto
+     * @return void
+     */
+    RestResp<Void> updateComment(UserCommentReqDto dto);
     
 }

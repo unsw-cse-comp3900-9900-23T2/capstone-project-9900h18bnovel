@@ -62,8 +62,10 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public RestResp<List<BookInfoRespDto>> searchBooks(BookSearchReqDto dto) {
-
+        //
+        List<BookInfo> bookAllInfos = bookInfoMapper.searchAllBooks(dto);
         List<BookInfo> bookInfos = bookInfoMapper.searchBooks(dto);
+
         return RestResp.ok(
                 bookInfos.stream().map(bookInfo -> BookInfoRespDto.builder()
                         .id(bookInfo.getId())
@@ -79,6 +81,7 @@ public class BookServiceImpl implements BookService {
                         .lastChapterName(bookInfo.getLastChapterName())
                         .score(bookInfo.getScore())
                         .lastChapterUpdateTime(bookInfo.getLastChapterUpdateTime())
+                        .totalNum(bookAllInfos.size())
                         .build()).toList());
     }
 
@@ -137,7 +140,10 @@ public class BookServiceImpl implements BookService {
         newComment.setUpdateTime(LocalDateTime.now());
         bookCommentMapper.insert(newComment);
         return RestResp.ok();
+    }
 
-
+    @Override
+    public RestResp<Void> updateComment(UserCommentReqDto dto) {
+        return null;
     }
 }
