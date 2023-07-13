@@ -48,10 +48,16 @@ export default {
       showNewestUpdatePage: false,
       count: 10,
       loadMore: false,
-
+      isClickRank: false,
+      isNewestRank: false,
+      isUpdateRank: false,
     }
   },
   mounted() {
+    const path = this.$route.path;
+    path === "/newestrank" ? this.isNewestRank = true : this.isNewestRank = false;
+    path === "/updaterank" ? this.isUpdateRank = true : this.isUpdateRank = false;
+    path === "/clickrank" ? this.isClickRank = true : this.isClickRank = false;
     this.getNewestUpdateBooks();
     setTimeout(() => {
       this.loading = false;
@@ -63,8 +69,9 @@ export default {
       this.$router.push('/allnovels');
     },
     async getNewestUpdateBooks() {
+      const whichrank = this.isNewestRank ? "newest_rank" : this.isClickRank ? "visit_rank" : this.isUpdateRank ? "update_rank" : null;
       try {
-        const response = await fetch("http://localhost:8888/api/front/book/update_rank ", {
+        const response = await fetch("http://localhost:8888/api/front/book/" + whichrank, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json'
@@ -132,6 +139,32 @@ export default {
       return this.newestUpdateBooks.slice(0, this.count);
     },
   },
+  watch: {
+    '$route'(to) {
+      if (to.path === "/newestrank") {
+        this.isNewestRank = true;
+        this.isUpdateRank = false;
+        this.isClickRank = false;
+        this.getNewestUpdateBooks();
+      } else if (to.path === "/updaterank") {
+        this.isNewestRank = false;
+        this.isUpdateRank = true;
+        this.isClickRank = false;
+        this.getNewestUpdateBooks();
+      } else if (to.path === "/clickrank") {
+        this.isNewestRank = false;
+        this.isUpdateRank = false;
+        this.isClickRank = true;
+        this.getNewestUpdateBooks();
+      }
+      this.loading = true;
+      this.showNewestUpdatePage = false;
+      setTimeout(() => {
+        this.loading = false;
+        this.showNewestUpdatePage = true;
+      }, 500);
+    }
+  },
   components: {
     Global_Footer,
     Global_Header,
@@ -161,7 +194,7 @@ export default {
           <ul class="infinite-list">
             <h1
               style="border-bottom: 1px solid; border-color: rgb(223, 223, 223); padding-bottom: 10px; margin-bottom: 22px; width: 100%; text-align: center;">
-              Newest Update
+              {{ isUpdateRank ? "Update Rank" : isClickRank ? "Click Rank" : isNewestRank ? "Newest Rank" : null}}
               <el-popover placement="right" :width="240" trigger="hover"
                 content="Newest Update is typically based on the update time and release time of novels to determine the most recent novels.">
                 <template #reference>

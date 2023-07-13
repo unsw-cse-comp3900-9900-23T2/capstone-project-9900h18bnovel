@@ -12,7 +12,16 @@ export default {
     },
     goNewUpdate() {
       this.$router.push('/newupdate');
-    }
+    },
+    goNewestRank(){
+      this.$router.push('/newestrank');
+    },
+    goClickRank(){
+      this.$router.push('/clickrank');
+    },
+    goUpdateRank(){
+      this.$router.push('/updaterank');
+    },
   }
 }
 </script>
@@ -53,9 +62,9 @@ export default {
     -->
       <el-sub-menu index="3">
         <template #title>Ranking</template>
-        <el-menu-item index="3-1">Click Rank</el-menu-item>
-        <el-menu-item index="3-2">Newest Rank</el-menu-item>
-        <el-menu-item index="3-3">Update Rank</el-menu-item>
+        <el-menu-item index="3-1" @click="goClickRank">Click Rank</el-menu-item>
+        <el-menu-item index="3-2" @click="goNewestRank">Newest Rank</el-menu-item>
+        <el-menu-item index="3-3" @click="goUpdateRank">Update Rank</el-menu-item>
       </el-sub-menu>
       <el-menu-item index="4">My Creation</el-menu-item>
       <el-menu-item index="5" @click="goNewUpdate">Newest Update</el-menu-item>
