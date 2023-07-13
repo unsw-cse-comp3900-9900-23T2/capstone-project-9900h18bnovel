@@ -1,3 +1,7 @@
+<!-- 目前存在的问题：
+1. 每次调用load(),pageNum会加一
+2. 分辨率
+3. back to top -->
 <script setup>
 import Global_Header from './Global_Header.vue';
 import Global_Footer from './Global_Footer.vue';
@@ -58,7 +62,7 @@ export default {
       clickedLoad: false,
 
       keyword: null,
-      workDirection: 1,
+      workDirection: null,
       categoryId: null,
       bookStatus: null,
       wordCount: [0, 10],
@@ -81,6 +85,7 @@ export default {
     },
   },
   mounted() {
+    this.keyword = this.$store.getters.getSearchInput ? this.$store.getters.getSearchInput : null;
     this.getResultBooks();
     setTimeout(() => {
       this.loading = false;
@@ -88,9 +93,61 @@ export default {
     }, 500);
   },
   methods: {
+    clearSearch() {
+      this.keyword = null;
+      this.$store.dispatch('clearSearchInput');
+      this.pageNum = 1;
+      this.pageSize = 12;
+      this.clickedLoading();
+    },
+
+    clearFilters() {
+      this.genreChecked = [false, false, false, false, false, false, false];
+      this.bookstatusChecked = [false, false];
+      this.dirChecked = [false, false];
+      this.statusChecked = [false, false];
+      this.updateChecked = [false, false];
+      this.workDirection = null;
+      this.categoryId = null;
+      this.bookStatus = null;
+      this.wordCount = [0, 10];
+      this.wordCountMin = null;
+      this.wordCountMax = null;
+      this.updateTimeMin = null;
+      this.pageNum = 1;
+      this.pageSize = 12;
+      this.clickedLoading();
+    },
+
+    clearAll() {
+      this.keyword = null;
+      this.genreChecked = [false, false, false, false, false, false, false];
+      this.bookstatusChecked = [false, false];
+      this.dirChecked = [false, false];
+      this.statusChecked = [false, false];
+      this.updateChecked = [false, false];
+      this.workDirection = null;
+      this.categoryId = null;
+      this.bookStatus = null;
+      this.wordCount = [0, 10];
+      this.wordCountMin = null;
+      this.wordCountMax = null;
+      this.updateTimeMin = null;
+      this.pageNum = 1;
+      this.pageSize = 12;
+      this.$store.dispatch('clearSearchInput');
+      this.clickedLoading();
+    },
+
+    handleSearch(searchInput) {
+      this.clickedLoading();
+      this.keyword = searchInput;
+    },
+
     updateAllNovelsRoute(newURL) {
       this.$router.replace(`/allnovels/${newURL}`);
     },
+
     genreonChange(index) {
       this.genreChecked[index]
         ? (() => {
@@ -203,11 +260,10 @@ export default {
 
     clickedLoading() {
       this.clickedLoad = true;
-      this.getResultBooks();
       setTimeout(() => {
+        this.getResultBooks();
         this.clickedLoad = false;
       }, 500);
-
     },
 
     wordcountonchange() {
@@ -239,8 +295,9 @@ export default {
         });
         if (response.status == 200) {
           const data = await response.json();
-          console.log(data.data.list)
+          // console.log(data.data.list)
           this.novels = data.data.list;
+          console.log(data.data.list)
           this.$store.dispatch('updateCurrentURL', url.substring(url.indexOf('books')));
         } else {
           console.log("Test");
@@ -253,10 +310,12 @@ export default {
     load() {
       this.loadMore = true;
       setTimeout(() => {
-        this.loadMore = false;
-        this.pageNum += 1;
-        if (this.pageNum * this.pageSize >= this.novels.length + 12) {
+        if (this.pageNum >= this.novels.length) {
           ElMessage.error("There is no more books");
+        } else {
+          this.pageNum += 12;
+          this.getResultBooks();
+          this.loadMore = false;
         }
       }, 500);
     },
@@ -312,9 +371,6 @@ export default {
         }
       };
     },
-    currentURL() {
-      return this.$store.getters.getCurrentURL;
-    },
   }
 
 
@@ -323,21 +379,22 @@ export default {
 
 <template>
   <div :class="{ 'blur': isLoginVisible }">
-    <div v-infinite-scroll="load" class="infinite-body">
+    <div v-infinite-scroll="load">
       <!-- <div class="infinite-body"> -->
-      <Global_Header @logout="logout" @showLogin="showLogin" @closeLoginBox="closeLoginBox" />
-      <Global_Nav />
+      <Global_Header @handleSearch="handleSearch" @logout="logout" @showLogin="showLogin"
+        @closeLoginBox="closeLoginBox" />
+      <Global_Nav @clearFilters="clearFilters" />
       <div v-loading.lock="loading" :element-loading-spinner="svg" element-loading-svg-view-box="0, 5, 30, 40"
         element-loading-background="rgba(255, 255, 255, 255)"
         style="top:50%; left: 50%; transform: translate(-50%,-50%); position: absolute;"></div>
       <div v-if="showAllNovelPage">
-        <div class="allnovel_body">
-          <div class="picker_content">
-            <div class="filter_container">
-              <div class="picker_left">
-                <div class="genresofnovels">
-                  <div style="display: flex;">
-                    <h2 style="color: rgb(73, 73, 73);">
+        <div style="display: flex; justify-content: center;">
+          <div class="allnovel_body">
+            <div class="picker_content">
+              <div class="filter_container">
+                <div class="picker_left">
+                  <div class="genresofnovels">
+                    <h2>
                       Genres of Novels
                       <el-popover placement="right" :width="220" trigger="hover"
                         content="Genres of Novels refers to the different types or categories of novels">
@@ -348,163 +405,187 @@ export default {
                         </template>
                       </el-popover>
                     </h2>
+                    <el-divider />
+                    <div style="width: 100%;">
+                      <el-check-tag class="tags" :checked="genreChecked[0]"
+                        @click="genreonChange(0)">Action</el-check-tag>
+                      <el-check-tag class="tags" :checked="genreChecked[1]"
+                        @click="genreonChange(1)">Romance</el-check-tag>
+                      <el-check-tag class="tags" :checked="genreChecked[2]"
+                        @click="genreonChange(2)">Fantasy</el-check-tag>
+                      <el-check-tag class="tags" :checked="genreChecked[3]"
+                        @click="genreonChange(3)">Mystery</el-check-tag>
+                      <el-check-tag class="tags" :checked="genreChecked[4]"
+                        @click="genreonChange(4)">Horror</el-check-tag>
+                      <el-check-tag class="tags" :checked="genreChecked[5]"
+                        @click="genreonChange(5)">Thriller</el-check-tag>
+                      <el-check-tag class="tags" :checked="genreChecked[6]" @click="genreonChange(6)">Drama</el-check-tag>
+                    </div>
                   </div>
-                  <el-divider />
-                  <div style="width: 100%;">
-                    <el-check-tag class="tags" :checked="genreChecked[0]" @click="genreonChange(0)">Action</el-check-tag>
-                    <el-check-tag class="tags" :checked="genreChecked[1]" @click="genreonChange(1)">Romance</el-check-tag>
-                    <el-check-tag class="tags" :checked="genreChecked[2]" @click="genreonChange(2)">Fantasy</el-check-tag>
-                    <el-check-tag class="tags" :checked="genreChecked[3]" @click="genreonChange(3)">Mystery</el-check-tag>
-                    <el-check-tag class="tags" :checked="genreChecked[4]" @click="genreonChange(4)">Horror</el-check-tag>
-                    <el-check-tag class="tags" :checked="genreChecked[5]"
-                      @click="genreonChange(5)">Thriller</el-check-tag>
-                    <el-check-tag class="tags" :checked="genreChecked[6]" @click="genreonChange(6)">Drama</el-check-tag>
+                  <div class="bookdirection">
+                    <h2>Book direction
+                      <el-popover placement="right" :width="220" trigger="hover"
+                        content="Book Direction refers to the orientation of a book's content, particularly in relation to the reading direction">
+                        <template #reference>
+                          <el-icon style="font-size: 10pt;">
+                            <Warning />
+                          </el-icon>
+                        </template>
+                      </el-popover>
+                    </h2>
+                    <el-divider />
+                    <div style="width: 100%;">
+                      <el-check-tag class="tags" :checked="dirChecked[0]" @click="dironChange(0)">Male Lead</el-check-tag>
+                      <el-check-tag class="tags" :checked="dirChecked[1]" @click="dironChange(1)">Female
+                        Lead</el-check-tag>
+                    </div>
                   </div>
                 </div>
-                <div class="bookdirection">
-                  <h2 style="color: rgb(73, 73, 73);">Book direction
-                    <el-popover placement="right" :width="220" trigger="hover"
-                      content="Book Direction refers to the orientation of a book's content, particularly in relation to the reading direction">
-                      <template #reference>
-                        <el-icon style="font-size: 10pt;">
-                          <Warning />
-                        </el-icon>
-                      </template>
-                    </el-popover>
-                  </h2>
-                  <el-divider />
-                  <div style="width: 100%;">
-                    <el-check-tag class="tags" :checked="dirChecked[0]" @click="dironChange(0)">Male Lead</el-check-tag>
-                    <el-check-tag class="tags" :checked="dirChecked[1]" @click="dironChange(1)">Female Lead</el-check-tag>
-                  </div>
-                </div>
-              </div>
-              <div class="picker_right">
-                <div class="filterby">
-                  <h2 style="color: rgb(73, 73, 73);">Filter By
-                    <el-popover placement="right" :width="220" trigger="hover"
-                      content="Filter By refers to the selection of book status, update time and word count based on specific criteria">
-                      <template #reference>
-                        <el-icon style="font-size: 10pt;">
-                          <Warning />
-                        </el-icon>
-                      </template>
-                    </el-popover>
-                  </h2>
-                  <el-divider />
-                  <div
-                    style="width: 100%; display: flex; flex-wrap: wrap; justify-content: space-between;  margin-top: -20px;">
-                    <div style="width: 49%;">
-                      <h4 style="color: rgb(117, 117, 117);">Book Status</h4>
-                      <!-- 0-Continued 1-Completed -->
+                <div class="picker_right">
+                  <div class="filterby">
+                    <h2>Filter By
+                      <el-popover placement="right" :width="220" trigger="hover"
+                        content="Filter By refers to the selection of book status, update time and word count based on specific criteria">
+                        <template #reference>
+                          <el-icon style="font-size: 10pt;">
+                            <Warning />
+                          </el-icon>
+                        </template>
+                      </el-popover>
+                    </h2>
+                    <el-divider />
+                    <div
+                      style="width: 100%; display: flex; flex-wrap: wrap; justify-content: space-between;  margin-top: -20px;">
+                      <div style="width: 49%;">
+                        <h4 style="color: rgb(117, 117, 117);">Book Status</h4>
+                        <!-- 0-Continued 1-Completed -->
 
-                      <el-check-tag class="tags" :checked="statusChecked[0]"
-                        @click="statusonChange(0)">Ongoing</el-check-tag>
-                      <el-check-tag class="tags" :checked="statusChecked[1]"
-                        @click="statusonChange(1)">Completed</el-check-tag>
+                        <el-check-tag class="tags" :checked="statusChecked[0]"
+                          @click="statusonChange(0)">Ongoing</el-check-tag>
+                        <el-check-tag class="tags" :checked="statusChecked[1]"
+                          @click="statusonChange(1)">Completed</el-check-tag>
+                      </div>
+                      <div style="width: 49%;">
+                        <h4 style="color: rgb(117, 117, 117);">Update Time (&le;)</h4>
+                        <el-check-tag class="tags" :checked="updateChecked[0]" @click="updateonChange(0)">A
+                          week</el-check-tag>
+                        <el-check-tag class="tags" :checked="updateChecked[1]" @click="updateonChange(1)">A
+                          month</el-check-tag>
+                        <el-check-tag class="tags" :checked="updateChecked[2]" @click="updateonChange(2)">A
+                          year</el-check-tag>
+                      </div>
                     </div>
-                    <div style="width: 49%;">
-                      <h4 style="color: rgb(117, 117, 117);">Update Time (&le;)</h4>
-                      <el-check-tag class="tags" :checked="updateChecked[0]" @click="updateonChange(0)">A
-                        week</el-check-tag>
-                      <el-check-tag class="tags" :checked="updateChecked[1]" @click="updateonChange(1)">A
-                        month</el-check-tag>
-                      <el-check-tag class="tags" :checked="updateChecked[2]" @click="updateonChange(2)">A
-                        year</el-check-tag>
+                    <div style="width: 100%; margin: auto;">
+                      <h4 style="color: rgb(117, 117, 117);">Word Count</h4>
+                      <el-slider v-model="wordCount" range :marks="marks" show-stops :show-tooltip="false" :max="10"
+                        style="width: 98%; margin: auto;" @change="wordcountonchange()" />
                     </div>
-                  </div>
-                  <div style="width: 100%; margin: auto;">
-                    <h4 style="color: rgb(117, 117, 117);">Word Count</h4>
-                    <el-slider v-model="wordCount" range :marks="marks" show-stops :show-tooltip="false" :max="10"
-                      style="width: 98%; margin: auto;" @change="wordcountonchange()" />
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-          <!-- <h2 style="margin-top: -30px;">Results</h2> -->
-          <el-divider />
-          <div style="display: flex; justify-content: space-between; position: relative;">
-            <div class="sortby">
-              <!-- 如果是Popular, 就传visit_count, 如果是Collection就传collect_count,如果是Score就传score,如果是更新时间就传last_chapter_update_time -->
-              <span
-                style="color: rgb(73, 73, 73); width: 8%; padding-bottom: 4px; display: flex; align-items: center; font-size: 14pt;"><b>Sort
-                  By</b></span>
-              <el-check-tag class="tags" :checked="sortChecked[0]" @click="sortonChange(0)">Popular</el-check-tag>
-              <el-check-tag class="tags" :checked="sortChecked[1]" @click="sortonChange(1)">Most
-                Collections</el-check-tag>
-              <el-check-tag class="tags" :checked="sortChecked[2]" @click="sortonChange(2)">Score</el-check-tag>
-              <el-check-tag class="tags" :checked="sortChecked[3]" @click="sortonChange(3)">Time
-                updated</el-check-tag>
-            </div>
-            <div>
-              <span style="color: rgb(73, 73, 73); padding-bottom: 4px; font-size: 14pt; right: 10px; position: absolute;"><b>{{ novels.length }} {{ novels.length === 1 ? "Novel" : "Novels"}}</b></span>
-            </div>
-          </div>
-          <div class="novels_container" v-loading.fullscreen.lock="clickedLoad" :element-loading-spinner="svg"
-            element-loading-svg-view-box="0, 5, 30, 40">
-            <h1 v-if="novels.length === 0" style="width: 100%; text-align: center;">No Results</h1>
-            <div v-for="(item) in novels" :key="item.bookName" class="each_novel_container">
-              <el-card shadow="hover" :body-style="{ padding: '10px' }">
-                <div class="each_novel_card">
-                  <div>
-                    <img :src="item.picUrl" class="novel_img" />
-                  </div>
-                  <div style="display: flex; flex-direction: column; margin-left: 20px;">
-                    <span
-                      style="font-size: 12pt; display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 1;overflow: hidden; margin-bottom: 5px;">
-                      <b>{{ item.bookName }}</b>
-                    </span>
-                    <span style="font-size: 11pt;">{{ item.authorName }}</span>
-                    <span
-                      style="font-size: 10pt; margin-top: 10px; margin-right: 10px; display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 3;overflow: hidden;">{{
-                        item.bookDesc }}</span>
-                    <div style="bottom: 40px; position: absolute;">
-                      <el-tag style="margin-right: 5px;">{{ item.categoryName }}</el-tag>
-                    </div>
-                    <div style="margin-left: 2px; bottom: 20px; position: absolute; display: flex;">
-                      Last update: {{ item.lastChapterUpdateTime }}
-                    </div>
-                    <div style="bottom: 0; position: absolute; display: flex;">
-                      <div style="margin-top: 1px;">
-                        <el-icon>
-                          <StarFilled />
-                        </el-icon>
-                      </div>
-                      {{ item.score }}
-                      &nbsp;&nbsp;&nbsp;
-                      <div style="margin-top: 1px;">
-                        <el-icon>
-                          <Document />
-                        </el-icon>
-                      </div>
-                      {{ simplifiedWordCount(item.wordCount) }}
-                      &nbsp;&nbsp;&nbsp;
-                      <div style="margin-top: 1px;">
-                        <el-icon>
-                          <View />
-                        </el-icon>
-                      </div>
-                      {{ simplifiedWordCount(item.visitCount) }}
-                      &nbsp;&nbsp;&nbsp;
-                      <div style="margin-top: 1px;">
-                        <el-icon>
-                          <CollectionTag />
-                        </el-icon>
-                      </div>
-                      {{ simplifiedWordCount(item.collectCount) }}
-                    </div>
-                  </div>
+            <!-- <h2 style="margin-top: -30px;">Results</h2> -->
+            <el-divider />
+            <div style="display: flex; justify-content: space-between; position: relative;">
+              <div class="sortby">
+                <!-- 如果是Popular, 就传visit_count, 如果是Collection就传collect_count,如果是Score就传score,如果是更新时间就传last_chapter_update_time -->
+                <span style="padding-bottom: 4px; display: flex; align-items: center; font-size: 14pt;"><b>Sort
+                    By</b></span>&nbsp;&nbsp;&nbsp;
+                <el-check-tag class="tags" :checked="sortChecked[0]" @click="sortonChange(0)">Popular</el-check-tag>
+                <el-check-tag class="tags" :checked="sortChecked[1]" @click="sortonChange(1)">Most
+                  Collections</el-check-tag>
+                <el-check-tag class="tags" :checked="sortChecked[2]" @click="sortonChange(2)">Score</el-check-tag>
+                <el-check-tag class="tags" :checked="sortChecked[3]" @click="sortonChange(3)">Time
+                  updated</el-check-tag>
+              </div>
+              <div style="display: flex;">
+                <div style="display: flex; margin-top: -8px; height:fit-content;">
+                  <el-button :disabled="!keyword" text type="primary" @click="clearSearch">
+                    Clear search
+                  </el-button>
+                  <el-button
+                    :disabled="!genreChecked.some(checked => checked) && !bookstatusChecked.some(checked => checked) && !dirChecked.some(checked => checked) && !statusChecked.some(checked => checked) && !updateChecked.some(checked => checked) && !(wordCount[0] !== 0 || wordCount[1] !== 10)"
+                    text type="primary" @click="clearFilters">
+                    Clear filter
+                  </el-button>
+                  <el-button
+                    :disabled="!keyword && !genreChecked.some(checked => checked) && !bookstatusChecked.some(checked => checked) && !dirChecked.some(checked => checked) && !statusChecked.some(checked => checked) && !updateChecked.some(checked => checked) && !(wordCount[0] !== 0 || wordCount[1] !== 10)"
+                    text type="primary" @click="clearAll">
+                    Clear all
+                  </el-button>
                 </div>
-              </el-card>
+                <div style="margin-top: -2px; font-size: 14pt; width: 110px; text-align: right;">
+                  <b>{{
+                    novels.length }} {{ novels.length === 0 ? "Novel" : (novels.length === 1 ? "Novel" : "Novels") }}
+                  </b>
+                </div>
+              </div>
+            </div>
+            <div class="novels_container" v-loading.fullscreen.lock="clickedLoad" :element-loading-spinner="svg"
+              element-loading-svg-view-box="0, 5, 30, 40">
+              <h3 v-if="this.keyword" style="width: 100%;">Search result for "{{ this.keyword }}"</h3>
+              <h1 v-if="novels.length === 0" style="width: 100%; text-align: center;">No Results</h1>
+              <div v-for="(item) in novels" :key="item.bookName" class="each_novel_container">
+                <el-card shadow="hover" :body-style="{ padding: '10px' }">
+                  <div class="each_novel_card">
+                    <div>
+                      <img :src="item.picUrl" class="novel_img" />
+                    </div>
+                    <div style="display: flex; flex-direction: column; margin-left: 20px;">
+                      <span
+                        style="font-size: 12pt; display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 1;overflow: hidden; margin-bottom: 5px;">
+                        <b>{{ item.bookName }}</b>
+                      </span>
+                      <span style="font-size: 11pt;">{{ item.authorName }}</span>
+                      <span
+                        style="font-size: 10pt; margin-top: 10px; margin-right: 10px; display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 3;overflow: hidden;">{{
+                          item.bookDesc }}</span>
+                      <div style="bottom: 40px; position: absolute;">
+                        <el-tag style="margin-right: 5px;">{{ item.categoryName }}</el-tag>
+                      </div>
+                      <div style="margin-left: 2px; bottom: 20px; position: absolute; display: flex;">
+                        Last update: {{ item.lastChapterUpdateTime }}
+                      </div>
+                      <div style="bottom: 0; position: absolute; display: flex;">
+                        <div style="margin-top: 1px;">
+                          <el-icon>
+                            <StarFilled />
+                          </el-icon>
+                        </div>
+                        {{ item.score }}
+                        &nbsp;&nbsp;&nbsp;
+                        <div style="margin-top: 1px;">
+                          <el-icon>
+                            <Document />
+                          </el-icon>
+                        </div>
+                        {{ simplifiedWordCount(item.wordCount) }}
+                        &nbsp;&nbsp;&nbsp;
+                        <div style="margin-top: 1px;">
+                          <el-icon>
+                            <View />
+                          </el-icon>
+                        </div>
+                        {{ simplifiedWordCount(item.visitCount) }}
+                        &nbsp;&nbsp;&nbsp;
+                        <div style="margin-top: 1px;">
+                          <el-icon>
+                            <CollectionTag />
+                          </el-icon>
+                        </div>
+                        {{ simplifiedWordCount(item.collectCount) }}
+                      </div>
+                    </div>
+                  </div>
+                </el-card>
+              </div>
             </div>
           </div>
         </div>
         <div style="height: 157px; width: 60%; display:flex; justify-content: center; margin: auto;" v-loading="loadMore"
           :element-loading-spinner="svg" element-loading-svg-view-box="0, 5, 30, 40"
           element-loading-background="rgba(255, 255, 255, 255)">
-          <div v-if="pageNum * pageSize >= novels.length + 12" @click="scrollToTop"
-            style="width: 100%; text-align: center;">
+          <div v-if="pageNum >= novels.length + 12" @click="scrollToTop" style="width: 100%; text-align: center;">
             <h3>
               <el-icon>
                 <CaretTop />
@@ -538,18 +619,14 @@ export default {
 
 
 <style>
-.infinite-body {
-  overflow: auto;
-}
-
 .blur {
   filter: blur(5px);
   pointer-events: none;
 }
 
 .allnovel_body {
-  width: 60%;
-  margin: auto;
+  min-width: 1152px;
+  width: 1152px;
 }
 
 .picker_content {

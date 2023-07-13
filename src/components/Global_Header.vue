@@ -38,8 +38,8 @@ export default {
       this.isSearchActive = true;
     },
     handleSearch() {
-      // Waiting for API
-      console.log(this.searchInput);
+      this.$store.dispatch("setSearchInput", this.searchInput);
+      this.$emit("handleSearch", this.searchInput);
     },
     searchGlobalClick() {
       if (this.isSearchActive == true) {
@@ -127,16 +127,13 @@ export default {
 }
 
 .logo_container {
-  height: 200px;
-  width: 200px;
-  margin-top: -20px;
-  margin-left: -20px;
+  height: 100px;
+  margin-left: 20px;
+  object-fit: contain;
 }
 
 .logo {
   height: 100%;
-  width: 100%;
-  object-fit: contain;
 }
 
 .logo:hover {
@@ -152,6 +149,7 @@ export default {
 }
 
 .login_button {
+  margin-right: 20px;
   width: 100px;
 }
 
@@ -169,9 +167,8 @@ export default {
   justify-content: space-between;
   align-items: center;
   background-color: black;
-  padding: 20px;
-  padding-right: 30px;
-  height: 80px;
+  height: 100px;
+  min-width: 1152px;
 }
 
 @media (max-width: 500px) {
