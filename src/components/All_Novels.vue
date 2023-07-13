@@ -70,8 +70,7 @@ export default {
       wordCountMax: null,
       updateTimeMin: null,
       sort: "visit_count",
-      pageNum: 1,
-      pageSize: 12,
+      pageNum: 12,
     }
   },
   components: {
@@ -96,8 +95,7 @@ export default {
     clearSearch() {
       this.keyword = null;
       this.$store.dispatch('clearSearchInput');
-      this.pageNum = 1;
-      this.pageSize = 12;
+      this.pageNum = 12;
       this.clickedLoading();
     },
 
@@ -114,8 +112,7 @@ export default {
       this.wordCountMin = null;
       this.wordCountMax = null;
       this.updateTimeMin = null;
-      this.pageNum = 1;
-      this.pageSize = 12;
+      this.pageNum = 12;
       this.clickedLoading();
     },
 
@@ -133,8 +130,7 @@ export default {
       this.wordCountMin = null;
       this.wordCountMax = null;
       this.updateTimeMin = null;
-      this.pageNum = 1;
-      this.pageSize = 12;
+      this.pageNum = 12;
       this.$store.dispatch('clearSearchInput');
       this.clickedLoading();
     },
@@ -283,7 +279,6 @@ export default {
       url += this.updateTimeMin !== null ? "updateTimeMin=" + this.updateTimeMin + "&" : "";
       url += this.sort !== null ? "sort=" + this.sort + "&" : "";
       url += this.pageNum !== null ? "pageNum=" + this.pageNum + "&" : "";
-      url += this.pageSize !== null ? "pageSize=" + this.pageSize + "&" : "";
 
       url = url.slice(0, -1);
       try {
@@ -295,9 +290,8 @@ export default {
         });
         if (response.status == 200) {
           const data = await response.json();
-          // console.log(data.data.list)
-          this.novels = data.data.list;
-          console.log(data.data.list)
+          this.novels = data.data;
+          console.log(data.data)
           this.$store.dispatch('updateCurrentURL', url.substring(url.indexOf('books')));
         } else {
           console.log("Test");
@@ -309,14 +303,14 @@ export default {
 
     load() {
       this.loadMore = true;
+      this.pageNum += 12;
       setTimeout(() => {
         if (this.pageNum >= this.novels.length) {
           ElMessage.error("There is no more books");
-        } else {
-          this.pageNum += 12;
-          this.getResultBooks();
-          this.loadMore = false;
+          this.pageNum = this.novels.length;
         }
+        this.getResultBooks();
+        this.loadMore = false;
       }, 500);
     },
 
@@ -585,7 +579,7 @@ export default {
         <div style="height: 157px; width: 60%; display:flex; justify-content: center; margin: auto;" v-loading="loadMore"
           :element-loading-spinner="svg" element-loading-svg-view-box="0, 5, 30, 40"
           element-loading-background="rgba(255, 255, 255, 255)">
-          <div v-if="pageNum >= novels.length + 12" @click="scrollToTop" style="width: 100%; text-align: center;">
+          <div v-if="pageNum >= novels.length" @click="scrollToTop" style="width: 100%; text-align: center;">
             <h3>
               <el-icon>
                 <CaretTop />

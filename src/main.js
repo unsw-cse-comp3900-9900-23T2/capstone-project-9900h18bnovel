@@ -29,6 +29,9 @@ const routes = [
     },
   },
   { path: '/newupdate', component: new_update },
+  { path: '/newestrank', component: new_update },
+  { path: '/clickrank', component: new_update },
+  { path: '/updaterank', component: new_update },
 ];
 
 const router = createRouter({
