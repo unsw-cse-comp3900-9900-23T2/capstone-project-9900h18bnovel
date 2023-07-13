@@ -81,7 +81,7 @@ export default {
           const data = await response.json();
           this.newestUpdateBooks = data.data;
         } else {
-          console.log("Test");
+          console.log(response.status);
         }
       } catch (error) {
         console.error(error);
@@ -111,7 +111,7 @@ export default {
           this.verImage = "data:image/png;base64," + data.data.img;
           this.sessionId = data.data.sessionId;
         } else {
-          console.log("Test");
+          console.log(response.status);
         }
       } catch (error) {
         console.error(error);
@@ -131,6 +131,26 @@ export default {
       this.$store.dispatch('logout');
       this.$store.dispatch('clearusername');
       this.$store.dispatch('clearuid');
+    },
+    getItemColor(categoryName) {
+      switch (categoryName) {
+        case 'action':
+          return '#FF6F61';
+        case 'romance':
+          return '#FFC0CB';
+        case 'fantasy':
+          return '#91D18B';
+        case 'mystery':
+          return '#6B705C';
+        case 'horror':
+          return '#585481';
+        case 'thriller':
+          return '#333A56';
+        case 'drama':
+          return '#FFC09F';
+        default:
+          return null;
+      }
     },
 
   },
@@ -175,7 +195,7 @@ export default {
 
 <template>
   <div :class="{ 'blur': isLoginVisible }">
-    <div v-infinite-scroll="load" class="infinite-body">
+    <div v-infinite-scroll="load">
       <el-backtop :bottom="100">
         <div class="goTopButton">
           <el-icon>
@@ -194,9 +214,9 @@ export default {
           <ul class="infinite-list">
             <h1
               style="border-bottom: 1px solid; border-color: rgb(223, 223, 223); padding-bottom: 10px; margin-bottom: 22px; width: 100%; text-align: center;">
-              {{ isUpdateRank ? "Update Rank" : isClickRank ? "Click Rank" : isNewestRank ? "Newest Rank" : null}}
+              {{ isUpdateRank ? "Update Rank" : isClickRank ? "Click Rank" : isNewestRank ? "Newest Rank" : null }}
               <el-popover placement="right" :width="240" trigger="hover"
-                content="Newest Update is typically based on the update time and release time of novels to determine the most recent novels.">
+                :content="isUpdateRank ? 'The Update Rank is a dynamic list that showcases novels with recent updates. It presents novels that have been recently added chapters or undergone significant updates' : isNewestRank ? 'The Newest Rank is a list that features the latest releases of novels. It highlights the freshest in the NovelHub.' : isClickRank ? 'The Click Rank is a list based on the total number of clicks a novel receives. It showcases the most popular and highly-clicked novels at the moment.' : null">
                 <template #reference>
                   <el-icon style="font-size: 10pt;">
                     <Warning />
@@ -213,8 +233,12 @@ export default {
                     <div style="font-size: 18pt; overflow: hidden; text-overflow: ellipsis;">{{ item.bookName }}</div>
                     <div style="font-size: 12pt;">{{ item.authorName }}</div>
                     <div
-                      style="font-size: 10pt; margin-top: 10px; display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 6; overflow: hidden;">
+                      style="font-size: 10pt; margin-top: 5px; display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 5; overflow: hidden;">
                       {{ item.bookDesc }}</div>
+                    <el-tag style="bottom: 12px; position: absolute; font-size: 10pt;"
+                      :color="getItemColor(item.categoryName)" effect="dark">{{
+                        item.categoryName
+                      }}</el-tag>
                   </div>
                   <div class="update_book_reviews_container">
                     <div>{{ item.lastChapterUpdateTime }}</div>

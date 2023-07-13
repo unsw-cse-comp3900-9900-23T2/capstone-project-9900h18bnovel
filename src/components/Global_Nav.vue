@@ -10,9 +10,6 @@ export default {
       const currentURL = this.$store.getters.getCurrentURL;
       this.$router.push(`/allnovels/${currentURL}`);
     },
-    goNewUpdate() {
-      this.$router.push('/newupdate');
-    },
     goNewestRank(){
       this.$router.push('/newestrank');
     },
@@ -67,7 +64,6 @@ export default {
         <el-menu-item index="3-3" @click="goUpdateRank">Update Rank</el-menu-item>
       </el-sub-menu>
       <el-menu-item index="4">My Creation</el-menu-item>
-      <el-menu-item index="5" @click="goNewUpdate">Newest Update</el-menu-item>
     </el-menu>
   </div>
 </template>

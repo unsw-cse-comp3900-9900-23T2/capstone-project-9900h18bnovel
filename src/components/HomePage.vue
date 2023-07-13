@@ -84,6 +84,15 @@ export default {
     }, 500);
   },
   methods: {
+    goNewestRank() {
+      this.$router.push('/newestrank');
+    },
+    goClickRank() {
+      this.$router.push('/clickrank');
+    },
+    goUpdateRank() {
+      this.$router.push('/updaterank');
+    },
     handleSearch() {
       this.$router.push('/allnovels');
     },
@@ -112,7 +121,7 @@ export default {
           this.verImage = "data:image/png;base64," + data.data.img;
           this.sessionId = data.data.sessionId;
         } else {
-          console.log("Test");
+          console.log(response.status);
         }
       } catch (error) {
         console.error(error);
@@ -128,7 +137,6 @@ export default {
         });
         if (response.status == 200) {
           const data = await response.json();
-          console.log(data);
           this.weekly_books_info = data.data.filter(item => item.type === '0');
           this.hottest_books_info = data.data.filter(item => item.type === '1');
           this.best_books_info = data.data.filter(item => item.type === '2');
@@ -136,7 +144,7 @@ export default {
           this.newest_rank_info = data.data.filter(item => item.type === '4');
           this.update_rank_info = data.data.filter(item => item.type === '5');
         } else {
-          console.log("Test");
+          console.log(response.status);
         }
       } catch (error) {
         console.error(error);
@@ -156,7 +164,27 @@ export default {
       this.$store.dispatch('logout');
       this.$store.dispatch('clearusername');
       this.$store.dispatch('clearuid');
-    }
+    },
+    getItemColor(categoryName) {
+      switch (categoryName) {
+        case 'action':
+          return '#FF6F61';
+        case 'romance':
+          return '#FFC0CB';
+        case 'fantasy':
+          return '#91D18B';
+        case 'mystery':
+          return '#6B705C';
+        case 'horror':
+          return '#585481';
+        case 'thriller':
+          return '#333A56';
+        case 'drama':
+          return '#FFC09F';
+        default:
+          return null;
+      }
+    },
   },
   computed: {
     filteredComments() {
@@ -201,6 +229,10 @@ export default {
                         <span class="carousel_weekly_text_title">{{ item.bookName }}</span>
                         <span class="carousel_weekly_text_author">{{ item.authorName }}</span>
                         <span class="carousel_weekly_text_descr">{{ item.bookDesc }}</span>
+                        <el-tag class="tag" style="font-size: 10pt;" :color="getItemColor(item.categoryName)"
+                          effect="dark">{{
+                            item.categoryName
+                          }}</el-tag>
                       </div>
                     </el-column>
                   </el-row>
@@ -256,8 +288,12 @@ export default {
                       </span>
                       <span style="font-size: 12pt;">{{ item.authorName }}</span>
                       <span
-                        style="font-size: 10pt; margin-top: 10px; margin-right: 10px; display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 11;overflow: hidden;">{{
+                        style="font-size: 10pt; margin-top: 10px; margin-right: 10px; display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 10;overflow: hidden;">{{
                           item.bookDesc }}</span>
+                      <el-tag class="tag" style="font-size: 10pt;" :color="getItemColor(item.categoryName)"
+                        effect="dark">{{
+                          item.categoryName
+                        }}</el-tag>
                       <span style="bottom: 10px;position: absolute;">
                         {{ item.collectCount }} <el-icon>
                           <UserFilled />
@@ -305,8 +341,12 @@ export default {
                       </span>
                       <span style="font-size: 12pt;">{{ item.authorName }}</span>
                       <span
-                        style="font-size: 10pt; margin-top: 10px; margin-right: 10px; display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 11;overflow: hidden;">{{
+                        style="font-size: 10pt; margin-top: 10px; margin-right: 10px; display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 10;overflow: hidden;">{{
                           item.bookDesc }}</span>
+                      <el-tag class="tag" style="font-size: 10pt;" :color="getItemColor(item.categoryName)"
+                        effect="dark">{{
+                          item.categoryName
+                        }}</el-tag>
                       <span style="bottom: 10px;position: absolute;">
                         {{ item.collectCount }} <el-icon>
                           <UserFilled />
@@ -338,9 +378,9 @@ export default {
           <div class="rank_books_container">
             <div class="rank_container">
               <div style="display: flex;">
-                <div class="rank_name">Click Rank</div>
+                <div class="rank_name" @click="goClickRank">Click Rank</div>
                 <el-popover placement="right" :width="210" trigger="hover"
-                  content="The Click Rank is a list based on the total number of clicks a novel receives. It showcases the most popular and highly-clicked novels at the moment. ">
+                  content="The Click Rank is a list based on the total number of clicks a novel receives. It showcases the most popular and highly-clicked novels at the moment.">
                   <template #reference>
                     <el-icon style="margin-left: 10px;">
                       <Warning />
@@ -367,7 +407,7 @@ export default {
             </div>
             <div class="rank_container">
               <div style="display: flex;">
-                <div class="rank_name">Newest Rank</div>
+                <div class="rank_name" @click="goNewestRank">Newest Rank</div>
                 <el-popover placement="right" :width="215" trigger="hover"
                   content="The Newest Rank is a list that features the latest releases of novels. It highlights the freshest in the NovelHub.">
                   <template #reference>
@@ -396,7 +436,7 @@ export default {
             </div>
             <div class="rank_container">
               <div style="display: flex;">
-                <div class="rank_name">Update Rank</div>
+                <div class="rank_name" @click="goUpdateRank">Update Rank</div>
                 <el-popover placement="right" :width="240" trigger="hover"
                   content="The Update Rank is a dynamic list that showcases novels with recent updates. It presents novels that have been recently added chapters or undergone significant updates">
                   <template #reference>
@@ -446,6 +486,12 @@ export default {
 </template>
 
 <style>
+.tag {
+  bottom: 30px;
+  position: absolute;
+  margin-top: 10px;
+}
+
 .fade-enter,
 .fade-leave-to {
   opacity: 0;
@@ -536,7 +582,7 @@ export default {
   padding-right: 50px;
   display: -webkit-box;
   -webkit-box-orient: vertical;
-  -webkit-line-clamp: 8;
+  -webkit-line-clamp: 7;
   overflow: hidden;
 }
 
@@ -693,6 +739,10 @@ export default {
   margin-bottom: 22px;
   border-radius: 2px;
   padding: 2px;
+}
+
+.rank_name:hover {
+  cursor: pointer;
 }
 
 .rank_items {

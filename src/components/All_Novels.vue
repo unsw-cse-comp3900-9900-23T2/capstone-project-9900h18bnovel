@@ -1,7 +1,3 @@
-<!-- 目前存在的问题：
-1. 每次调用load(),pageNum会加一
-2. 分辨率
-3. back to top -->
 <script setup>
 import Global_Header from './Global_Header.vue';
 import Global_Footer from './Global_Footer.vue';
@@ -71,6 +67,7 @@ export default {
       updateTimeMin: null,
       sort: "visit_count",
       pageNum: 12,
+      totalNum: null,
     }
   },
   components: {
@@ -85,6 +82,7 @@ export default {
   },
   mounted() {
     this.keyword = this.$store.getters.getSearchInput ? this.$store.getters.getSearchInput : null;
+    this.pageNum = 12;
     this.getResultBooks();
     setTimeout(() => {
       this.loading = false;
@@ -95,7 +93,6 @@ export default {
     clearSearch() {
       this.keyword = null;
       this.$store.dispatch('clearSearchInput');
-      this.pageNum = 12;
       this.clickedLoading();
     },
 
@@ -112,7 +109,6 @@ export default {
       this.wordCountMin = null;
       this.wordCountMax = null;
       this.updateTimeMin = null;
-      this.pageNum = 12;
       this.clickedLoading();
     },
 
@@ -130,7 +126,6 @@ export default {
       this.wordCountMin = null;
       this.wordCountMax = null;
       this.updateTimeMin = null;
-      this.pageNum = 12;
       this.$store.dispatch('clearSearchInput');
       this.clickedLoading();
     },
@@ -256,6 +251,7 @@ export default {
 
     clickedLoading() {
       this.clickedLoad = true;
+      this.pageNum = 12;
       setTimeout(() => {
         this.getResultBooks();
         this.clickedLoad = false;
@@ -291,10 +287,10 @@ export default {
         if (response.status == 200) {
           const data = await response.json();
           this.novels = data.data;
-          console.log(data.data)
+          this.totalNum = data.data[0].totalNum;
           this.$store.dispatch('updateCurrentURL', url.substring(url.indexOf('books')));
         } else {
-          console.log("Test");
+          console.log(response.status);
         }
       } catch (error) {
         console.error(error);
@@ -302,17 +298,20 @@ export default {
     },
 
     load() {
-      this.loadMore = true;
-      this.pageNum += 12;
-      setTimeout(() => {
-        if (this.pageNum >= this.novels.length) {
-          ElMessage.error("There is no more books");
-          this.pageNum = this.novels.length;
-        }
-        this.getResultBooks();
-        this.loadMore = false;
-      }, 500);
+      if (!this.loadMore) {
+        this.loadMore = true;
+        this.pageNum += 12;
+        setTimeout(() => {
+          if (this.pageNum >= this.totalNum) {
+            ElMessage.error("There is no more books behind");
+            this.pageNum = this.totalNum;
+          }
+          this.getResultBooks();
+          this.loadMore = false;
+        }, 500);
+      }
     },
+
 
     async showLogin() {
       this.isLoginVisible = true;
@@ -328,7 +327,7 @@ export default {
           this.verImage = "data:image/png;base64," + data.data.img;
           this.sessionId = data.data.sessionId;
         } else {
-          console.log("Test");
+          console.log(response.status);
         }
       } catch (error) {
         console.error(error);
@@ -351,7 +350,26 @@ export default {
       this.$store.dispatch('clearusername');
       this.$store.dispatch('clearuid');
     },
-
+    getItemColor(categoryName) {
+      switch (categoryName) {
+        case 'action':
+          return '#FF6F61';
+        case 'romance':
+          return '#FFC0CB';
+        case 'fantasy':
+          return '#91D18B';
+        case 'mystery':
+          return '#6B705C';
+        case 'horror':
+          return '#585481';
+        case 'thriller':
+          return '#333A56';
+        case 'drama':
+          return '#FFC09F';
+        default:
+          return null;
+      }
+    },
   },
   computed: {
     simplifiedWordCount() {
@@ -374,9 +392,8 @@ export default {
 <template>
   <div :class="{ 'blur': isLoginVisible }">
     <div v-infinite-scroll="load">
-      <!-- <div class="infinite-body"> -->
-      <Global_Header @handleSearch="handleSearch" @logout="logout" @showLogin="showLogin"
-        @closeLoginBox="closeLoginBox" />
+      <Global_Header @clearSearch="clearSearch" @handleSearch="handleSearch" @logout="logout" @showLogin="showLogin"
+        @closeLoginBox="closeLoginBox" :keyword="this.keyword" />
       <Global_Nav @clearFilters="clearFilters" />
       <div v-loading.lock="loading" :element-loading-spinner="svg" element-loading-svg-view-box="0, 5, 30, 40"
         element-loading-background="rgba(255, 255, 255, 255)"
@@ -401,19 +418,20 @@ export default {
                     </h2>
                     <el-divider />
                     <div style="width: 100%;">
-                      <el-check-tag class="tags" :checked="genreChecked[0]"
+                      <el-check-tag class="tags Action" :checked="genreChecked[0]"
                         @click="genreonChange(0)">Action</el-check-tag>
-                      <el-check-tag class="tags" :checked="genreChecked[1]"
+                      <el-check-tag class="tags Romance" :checked="genreChecked[1]"
                         @click="genreonChange(1)">Romance</el-check-tag>
-                      <el-check-tag class="tags" :checked="genreChecked[2]"
+                      <el-check-tag class="tags Fantasy" :checked="genreChecked[2]"
                         @click="genreonChange(2)">Fantasy</el-check-tag>
-                      <el-check-tag class="tags" :checked="genreChecked[3]"
+                      <el-check-tag class="tags Mystery" :checked="genreChecked[3]"
                         @click="genreonChange(3)">Mystery</el-check-tag>
-                      <el-check-tag class="tags" :checked="genreChecked[4]"
+                      <el-check-tag class="tags Horror" :checked="genreChecked[4]"
                         @click="genreonChange(4)">Horror</el-check-tag>
-                      <el-check-tag class="tags" :checked="genreChecked[5]"
+                      <el-check-tag class="tags Thriller" :checked="genreChecked[5]"
                         @click="genreonChange(5)">Thriller</el-check-tag>
-                      <el-check-tag class="tags" :checked="genreChecked[6]" @click="genreonChange(6)">Drama</el-check-tag>
+                      <el-check-tag class="tags Drama" :checked="genreChecked[6]"
+                        @click="genreonChange(6)">Drama</el-check-tag>
                     </div>
                   </div>
                   <div class="bookdirection">
@@ -460,16 +478,18 @@ export default {
                           @click="statusonChange(1)">Completed</el-check-tag>
                       </div>
                       <div style="width: 49%;">
-                        <h4 style="color: rgb(117, 117, 117);">Update Time (&le;)</h4>
+                        <h4 style="color: rgb(117, 117, 117);">Update Time</h4>
                         <el-check-tag class="tags" :checked="updateChecked[0]" @click="updateonChange(0)">A
                           week</el-check-tag>
                         <el-check-tag class="tags" :checked="updateChecked[1]" @click="updateonChange(1)">A
                           month</el-check-tag>
                         <el-check-tag class="tags" :checked="updateChecked[2]" @click="updateonChange(2)">A
                           year</el-check-tag>
+                        <el-date-picker v-model="updateTimeMin" type="date" placeholder="Pick a Date"
+                          value-format="YYYY-MM-DD" @change="clickedLoading" style="width: 140px;" />
                       </div>
                     </div>
-                    <div style="width: 100%; margin: auto;">
+                    <div style="width: 100%; margin: auto; margin-top: -35px;">
                       <h4 style="color: rgb(117, 117, 117);">Word Count</h4>
                       <el-slider v-model="wordCount" range :marks="marks" show-stops :show-tooltip="false" :max="10"
                         style="width: 98%; margin: auto;" @change="wordcountonchange()" />
@@ -494,23 +514,23 @@ export default {
               </div>
               <div style="display: flex;">
                 <div style="display: flex; margin-top: -8px; height:fit-content;">
-                  <el-button :disabled="!keyword" text type="primary" @click="clearSearch">
+                  <el-button :disabled="!keyword" text type="danger" @click="clearSearch">
                     Clear search
                   </el-button>
                   <el-button
-                    :disabled="!genreChecked.some(checked => checked) && !bookstatusChecked.some(checked => checked) && !dirChecked.some(checked => checked) && !statusChecked.some(checked => checked) && !updateChecked.some(checked => checked) && !(wordCount[0] !== 0 || wordCount[1] !== 10)"
-                    text type="primary" @click="clearFilters">
+                    :disabled="!genreChecked.some(checked => checked) && !bookstatusChecked.some(checked => checked) && !dirChecked.some(checked => checked) && !statusChecked.some(checked => checked) && !updateChecked.some(checked => checked) && !(wordCount[0] !== 0 || wordCount[1] !== 10) && !updateTimeMin"
+                    text type="danger" @click="clearFilters">
                     Clear filter
                   </el-button>
                   <el-button
                     :disabled="!keyword && !genreChecked.some(checked => checked) && !bookstatusChecked.some(checked => checked) && !dirChecked.some(checked => checked) && !statusChecked.some(checked => checked) && !updateChecked.some(checked => checked) && !(wordCount[0] !== 0 || wordCount[1] !== 10)"
-                    text type="primary" @click="clearAll">
+                    text type="danger" @click="clearAll">
                     Clear all
                   </el-button>
                 </div>
                 <div style="margin-top: -2px; font-size: 14pt; width: 110px; text-align: right;">
                   <b>{{
-                    novels.length }} {{ novels.length === 0 ? "Novel" : (novels.length === 1 ? "Novel" : "Novels") }}
+                    this.totalNum }} {{ novels.length === 0 ? "Novel" : (novels.length === 1 ? "Novel" : "Novels") }}
                   </b>
                 </div>
               </div>
@@ -535,7 +555,10 @@ export default {
                         style="font-size: 10pt; margin-top: 10px; margin-right: 10px; display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 3;overflow: hidden;">{{
                           item.bookDesc }}</span>
                       <div style="bottom: 40px; position: absolute;">
-                        <el-tag style="margin-right: 5px;">{{ item.categoryName }}</el-tag>
+                        <el-tag style="margin-right: 5px; font-size: 10pt;" :color="getItemColor(item.categoryName)"
+                          effect="dark">{{
+                            item.categoryName
+                          }}</el-tag>
                       </div>
                       <div style="margin-left: 2px; bottom: 20px; position: absolute; display: flex;">
                         Last update: {{ item.lastChapterUpdateTime }}
@@ -579,7 +602,7 @@ export default {
         <div style="height: 157px; width: 60%; display:flex; justify-content: center; margin: auto;" v-loading="loadMore"
           :element-loading-spinner="svg" element-loading-svg-view-box="0, 5, 30, 40"
           element-loading-background="rgba(255, 255, 255, 255)">
-          <div v-if="pageNum >= novels.length" @click="scrollToTop" style="width: 100%; text-align: center;">
+          <div v-if="pageNum >= totalNum" @click="scrollToTop" style="width: 100%; text-align: center;">
             <h3>
               <el-icon>
                 <CaretTop />
@@ -613,6 +636,41 @@ export default {
 
 
 <style>
+.Action.el-check-tag.is-checked {
+  background-color: #FF6F61;
+  color: white;
+}
+
+.Romance.el-check-tag.is-checked {
+  background-color: #FFC0CB;
+  color: white;
+}
+
+.Fantasy.el-check-tag.is-checked {
+  background-color: #91D18B;
+  color: white;
+}
+
+.Mystery.el-check-tag.is-checked {
+  background-color: #6B705C;
+  color: white;
+}
+
+.Horror.el-check-tag.is-checked {
+  background-color: #585481;
+  color: white;
+}
+
+.Thriller.el-check-tag.is-checked {
+  background-color: #333A56;
+  color: white;
+}
+
+.Drama.el-check-tag.is-checked {
+  background-color: #FFC09F;
+  color: white;
+}
+
 .blur {
   filter: blur(5px);
   pointer-events: none;

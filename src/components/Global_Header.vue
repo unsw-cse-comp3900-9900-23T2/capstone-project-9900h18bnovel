@@ -1,13 +1,27 @@
+<!-- 1.回车搜索
+2.搜索清除键
+3.无限滚动条问题
+4.可选择日期
+5.homepage可点击rank进入排行榜页面
+6.homepage, rankspages加入tag
+7.tags加入可分辨颜色-->
 <script setup>
 import {
   Search,
-  User
+  User,
+  CircleCloseFilled,
 } from '@element-plus/icons-vue'
 
 </script >
 <script>
 import Login from './Auth_Page.vue';
 export default {
+  props: {
+    keyword: {
+      type: String,
+      default: ''
+    },
+  },
   emits: ['showLogin', 'closeLoginBox', 'logout'],
   data() {
     return {
@@ -57,6 +71,10 @@ export default {
     },
     logout() {
       this.$emit('logout');
+    },
+    clearSearch() {
+      this.searchInput = null;
+      this.$emit("clearSearch");
     }
   }
 }
@@ -73,9 +91,13 @@ export default {
           round>Search</el-button>
       </div>
       <div v-else @click.stop>
-        <el-input class="searchText" v-model="searchInput" placeholder="Please Enter Keyword">
+        <el-input class="searchText" v-model="searchInput"
+          :placeholder="keyword ? keyword : 'Please Enter Keyword'" @keyup.enter="handleSearch">
           <template #prepend>
             <el-button @click.stop="handleSearch" :icon="Search" />
+          </template>
+          <template #append>
+            <el-button :icon="CircleCloseFilled" @click="clearSearch" />
           </template>
         </el-input>
       </div>
@@ -142,10 +164,13 @@ export default {
 
 .search_container {
   display: block;
+  text-align: center;
+  width: 500px;
 }
 
 .searchButton {
-  width: 20vh;
+  width: 30vh;
+
 }
 
 .login_button {
