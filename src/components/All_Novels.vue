@@ -370,6 +370,9 @@ export default {
           return null;
       }
     },
+    goBookInfo(bookId) {
+      this.$router.push(`/bookInfo/${bookId}`);
+    },
   },
   computed: {
     simplifiedWordCount() {
@@ -543,11 +546,10 @@ export default {
                 <el-card shadow="hover" :body-style="{ padding: '10px' }">
                   <div class="each_novel_card">
                     <div>
-                      <img :src="item.picUrl" class="novel_img" />
+                      <img :src="item.picUrl" class="novel_img" @click="goBookInfo(item.id)" />
                     </div>
                     <div style="display: flex; flex-direction: column; margin-left: 20px;">
-                      <span
-                        style="font-size: 12pt; display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 1;overflow: hidden; margin-bottom: 5px;">
+                      <span class="novel_title" @click="goBookInfo(item.id)">
                         <b>{{ item.bookName }}</b>
                       </span>
                       <span style="font-size: 11pt;">{{ item.authorName }}</span>
@@ -563,33 +565,25 @@ export default {
                       <div style="margin-left: 2px; bottom: 20px; position: absolute; display: flex;">
                         Last update: {{ item.lastChapterUpdateTime }}
                       </div>
-                      <div style="bottom: 0; position: absolute; display: flex;">
-                        <div style="margin-top: 1px;">
-                          <el-icon>
-                            <StarFilled />
-                          </el-icon>
-                        </div>
+                      <div style="bottom: 0; position: absolute; display: flex; align-items: center;">
+                        <el-icon>
+                          <StarFilled />
+                        </el-icon>
                         {{ item.score }}
                         &nbsp;&nbsp;&nbsp;
-                        <div style="margin-top: 1px;">
-                          <el-icon>
-                            <Document />
-                          </el-icon>
-                        </div>
+                        <el-icon>
+                          <Document />
+                        </el-icon>
                         {{ simplifiedWordCount(item.wordCount) }}
                         &nbsp;&nbsp;&nbsp;
-                        <div style="margin-top: 1px;">
-                          <el-icon>
-                            <View />
-                          </el-icon>
-                        </div>
+                        <el-icon>
+                          <View />
+                        </el-icon>
                         {{ simplifiedWordCount(item.visitCount) }}
                         &nbsp;&nbsp;&nbsp;
-                        <div style="margin-top: 1px;">
-                          <el-icon>
-                            <CollectionTag />
-                          </el-icon>
-                        </div>
+                        <el-icon>
+                          <CollectionTag />
+                        </el-icon>
                         {{ simplifiedWordCount(item.collectCount) }}
                       </div>
                     </div>
@@ -744,5 +738,20 @@ export default {
 
 .novel_img:hover {
   transform: scale(1.03);
+  cursor: pointer;
+}
+
+.novel_title {
+  font-size: 12pt;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  overflow: hidden;
+  margin-bottom: 5px;
+}
+
+.novel_title:hover {
+  cursor: pointer;
+  text-decoration: underline;
 }
 </style>

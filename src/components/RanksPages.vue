@@ -152,7 +152,9 @@ export default {
           return null;
       }
     },
-
+    goBookInfo(bookId) {
+      this.$router.push(`/bookInfo/${bookId}`);
+    },
   },
   computed: {
     filteredBooks() {
@@ -224,7 +226,7 @@ export default {
                 </template>
               </el-popover>
             </h1>
-            <li v-for="(item, index) in filteredBooks" :key="item.id" class="infinite-list-item">
+            <li v-for="(item, index) in filteredBooks" :key="item.id" class="infinite-list-item" @click="goBookInfo(item.id)">
               <div style="font-size: 14pt; width:100px; text-align: center;">
                 {{ index < 9 ? '0' + (index + 1) : index + 1 }} </div>
                   <img :src="item.picUrl"
@@ -241,7 +243,7 @@ export default {
                       }}</el-tag>
                   </div>
                   <div class="update_book_reviews_container">
-                    <div>{{ item.lastChapterUpdateTime }}</div>
+                    <div>Last update:{{ item.lastChapterUpdateTime }}</div>
                     <div>{{ item.collectCount }} <el-icon>
                         <UserFilled />
                       </el-icon> Collected</div>
@@ -330,6 +332,7 @@ export default {
 
 .infinite-list .infinite-list-item:hover {
   transform: translateY(-5px);
+  cursor: pointer;
 }
 
 .infinite-list .infinite-list-item+.list-item {

@@ -4,6 +4,7 @@ import App from './App.vue';
 import HomePage from './components/HomePage.vue';
 import All_Novels from './components/All_Novels.vue';
 import ranksPages from './components/RanksPages.vue';
+import bookInfo from './components/bookInfo.vue';
 import store from './store';
 import ElementPlus from 'element-plus';
 import 'element-plus/theme-chalk/index.css';
@@ -31,6 +32,7 @@ const routes = [
   { path: '/newestrank', component: ranksPages },
   { path: '/clickrank', component: ranksPages },
   { path: '/updaterank', component: ranksPages },
+  { path: '/bookInfo/:bookId', component: bookInfo}
 ];
 
 const router = createRouter({

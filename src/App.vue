@@ -1,3 +1,4 @@
+<!-- 将所有header,nav,footer,login移到这里 -->
 <script>
 export default {
 }
