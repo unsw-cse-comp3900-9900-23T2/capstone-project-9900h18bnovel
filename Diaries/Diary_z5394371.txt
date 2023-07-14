@@ -22,3 +22,9 @@ Week6:
   -Fixed bugs and implemented suggestions(info reminder, infinite scroll) obtained from demonstration 1
   -Built All_Novels page
   -Optimized UI/UX
+  -Implemented search and filters
+  -Fixed resolution problem
+Week7:
+  -Implemented ranks pages, novel detail page
+
+  
