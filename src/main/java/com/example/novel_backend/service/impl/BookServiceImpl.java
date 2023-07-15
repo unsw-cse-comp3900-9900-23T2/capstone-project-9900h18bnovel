@@ -9,23 +9,26 @@ import com.example.novel_backend.core.common.resp.RestResp;
 import com.example.novel_backend.dao.entity.BookChapter;
 import com.example.novel_backend.dao.entity.BookComment;
 import com.example.novel_backend.dao.entity.BookInfo;
+import com.example.novel_backend.dao.entity.UserInfo;
 import com.example.novel_backend.dao.mapper.BookCommentMapper;
 import com.example.novel_backend.dao.mapper.BookInfoMapper;
+import com.example.novel_backend.dao.mapper.UserInfoMapper;
 import com.example.novel_backend.dto.req.BookSearchReqDto;
 import com.example.novel_backend.dto.req.UserCommentReqDto;
-import com.example.novel_backend.dto.resp.BookCategoryRespDto;
-import com.example.novel_backend.dto.resp.BookChapterRespDto;
-import com.example.novel_backend.dto.resp.BookInfoRespDto;
-import com.example.novel_backend.dto.resp.BookRankRespDto;
+import com.example.novel_backend.dto.resp.*;
 import com.example.novel_backend.manager.cache.BookCategoryCacheManager;
 import com.example.novel_backend.manager.cache.BookRankCacheManager;
 import com.example.novel_backend.service.BookService;
+import com.example.novel_backend.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * Book Module Service Implementation Classes
@@ -45,6 +48,9 @@ public class BookServiceImpl implements BookService {
     private final BookCategoryCacheManager bookCategoryCacheManager;
 
     private final BookCommentMapper bookCommentMapper;
+
+    private final UserInfoMapper userInfoMapper;
+
     @Override
     public RestResp<List<BookRankRespDto>> listUpdateRankBooks() {
         return RestResp.ok(bookRankCacheManager.listUpdateRankBooks());
@@ -72,6 +78,7 @@ public class BookServiceImpl implements BookService {
                         .categoryId(bookInfo.getCategoryId())
                         .categoryName(bookInfo.getCategoryName())
                         .picUrl(bookInfo.getPicUrl())
+                        .bookDesc(bookInfo.getBookDesc())
                         .bookName(bookInfo.getBookName())
                         .authorId(bookInfo.getAuthorId())
                         .authorName(bookInfo.getAuthorName())
@@ -123,7 +130,44 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public RestResp<Void> postComment(UserCommentReqDto dto) {
+    public RestResp<BookComment> getCommentById(UserCommentReqDto dto) {
+        QueryWrapper<BookComment> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("user_id", dto.getUserId())
+                .eq("book_id", dto.getBookId()).last("LIMIT 1");
+        BookComment bookComment = bookCommentMapper.selectOne(queryWrapper);
+        return RestResp.ok(bookComment);
+    }
+
+    @Override
+    public RestResp<PageRespDto<BookCommentRespDto>> listComments(UserCommentReqDto dto) {
+        IPage<BookComment> page = new Page<>();
+        page.setCurrent(dto.getPageNum());
+        page.setSize(dto.getPageSize());
+        QueryWrapper<BookComment> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("book_id", dto.getBookId())
+                .orderByDesc("update_time");
+        IPage<BookComment> bookCommentPage = bookCommentMapper.selectPage(page, queryWrapper);
+        List<BookComment> bookComments = bookCommentMapper.selectList(queryWrapper);
+        List<Long> userIds = bookComments.stream().map(BookComment::getUserId).toList();
+        // Get user information
+        QueryWrapper<UserInfo> userInfoQueryWrapper = new QueryWrapper<>();
+        queryWrapper.in("id", userIds);
+        List<UserInfo> userInfos = userInfoMapper.selectList(userInfoQueryWrapper);
+        Map<Long, UserInfo> userInfoMap =userInfos.stream()
+                .collect(Collectors.toMap(UserInfo::getId, Function.identity()));
+        return RestResp.ok(PageRespDto.of(dto.getPageNum(), dto.getPageSize(), page.getTotal(),
+                bookCommentPage.getRecords().stream().map(bookComment ->
+                        BookCommentRespDto.builder()
+                                .id(bookComment.getId())
+                                .commentContent(bookComment.getCommentContent())
+                                .commentUserId(bookComment.getUserId())
+                                .commentUserName(userInfoMap.get(bookComment.getUserId()).getUsername())
+                                .commentUserImage(userInfoMap.get(bookComment.getUserId()).getUserPhoto())
+                                .commentTime(bookComment.getUpdateTime()).build()).toList()));
+    }
+
+    @Override
+    public RestResp<Void> newComment(UserCommentReqDto dto) {
         // User has already commented or not
         QueryWrapper<BookComment> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("user_id", dto.getUserId())
@@ -136,14 +180,39 @@ public class BookServiceImpl implements BookService {
         newComment.setBookId(dto.getBookId());
         newComment.setUserId(dto.getUserId());
         newComment.setCommentContent(dto.getCommentContent());
+        newComment.setScore(dto.getScore());
         newComment.setCreateTime(LocalDateTime.now());
         newComment.setUpdateTime(LocalDateTime.now());
         bookCommentMapper.insert(newComment);
+        // update book information
+        BookInfo bookInfo = bookInfoMapper.selectById(dto.getBookId());
+        float score = 0.0f;
+        score = (bookInfo.getScore() * bookInfo.getCommentCount() + dto.getScore())
+                / (bookInfo.getCommentCount() + 1);
+        bookInfo.setScore(score);
+        bookInfo.setCommentCount(bookInfo.getCommentCount() + 1);
+        bookInfoMapper.updateById(bookInfo);
         return RestResp.ok();
     }
 
     @Override
     public RestResp<Void> updateComment(UserCommentReqDto dto) {
-        return null;
+        QueryWrapper<BookComment> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("user_id", dto.getUserId())
+                .eq("book_id", dto.getBookId()).last("LIMIT 1");
+        BookComment bookComment = new BookComment();
+        bookComment.setCommentContent(dto.getCommentContent());
+        bookComment.setUpdateTime(LocalDateTime.now());
+        bookCommentMapper.update(bookComment, queryWrapper);
+        // update book information
+        BookInfo bookInfo = bookInfoMapper.selectById(dto.getBookId());
+        float score = 0.0f;
+        score = (bookInfo.getScore() * (bookInfo.getCommentCount() - 1) + dto.getScore())
+                / (bookInfo.getCommentCount());
+        bookInfo.setScore(score);
+        bookInfoMapper.updateById(bookInfo);
+        return RestResp.ok();
+
     }
+
 }

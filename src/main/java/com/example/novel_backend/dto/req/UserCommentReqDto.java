@@ -1,10 +1,11 @@
 package com.example.novel_backend.dto.req;
 
+import com.example.novel_backend.core.common.req.PageReqDto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
-import org.hibernate.validator.constraints.Length;
+
 
 /**
  * User post comment Dto
@@ -12,7 +13,7 @@ import org.hibernate.validator.constraints.Length;
  * @create 2023/7/13 14:03
  */
 @Data
-public class UserCommentReqDto {
+public class UserCommentReqDto extends PageReqDto {
 
     /**
      * userId
@@ -26,4 +27,10 @@ public class UserCommentReqDto {
     @Schema(description = "Comment content", required = true)
     @NotBlank(message="Comment can not be empty！")
     private String commentContent;
+
+    /**
+     * Book score
+     */
+    @Schema(description = "Book score")
+    private Float score;
 }

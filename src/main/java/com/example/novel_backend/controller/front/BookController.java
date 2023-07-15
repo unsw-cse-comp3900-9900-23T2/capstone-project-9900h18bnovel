@@ -3,12 +3,10 @@ package com.example.novel_backend.controller.front;
 import com.example.novel_backend.core.common.constant.ApiRouterConsts;
 import com.example.novel_backend.core.common.resp.PageRespDto;
 import com.example.novel_backend.core.common.resp.RestResp;
+import com.example.novel_backend.dao.entity.BookComment;
 import com.example.novel_backend.dto.req.BookSearchReqDto;
 import com.example.novel_backend.dto.req.UserCommentReqDto;
-import com.example.novel_backend.dto.resp.BookCategoryRespDto;
-import com.example.novel_backend.dto.resp.BookChapterRespDto;
-import com.example.novel_backend.dto.resp.BookInfoRespDto;
-import com.example.novel_backend.dto.resp.BookRankRespDto;
+import com.example.novel_backend.dto.resp.*;
 import com.example.novel_backend.service.BookService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -102,11 +100,38 @@ public class BookController {
     }
 
     /**
+     * Get comment by id interface
+     */
+    @Operation(summary = "Get comment interface")
+    @PostMapping("get_comment")
+    public RestResp<BookComment> getCommentById(@Valid @RequestBody UserCommentReqDto dto) {
+        return bookService.getCommentById(dto);
+    }
+
+    /**
+     * Get all comments interface
+     */
+    @Operation(summary = "Get all comments interface")
+    @PostMapping("all_comments")
+    public RestResp<PageRespDto<BookCommentRespDto>> listComments(@Valid @RequestBody UserCommentReqDto dto) {
+        return bookService.listComments(dto);
+    }
+
+    /**
      * Post Comment
      */
     @Operation(summary = "Post Comment")
-    @PostMapping("comment")
-    public RestResp<Void> comment(@Valid @RequestBody UserCommentReqDto dto) {
-        return bookService.postComment(dto);
+    @PostMapping("new_comment")
+    public RestResp<Void> newComment(@Valid @RequestBody UserCommentReqDto dto) {
+        return bookService.newComment(dto);
+    }
+
+    /**
+     * Update comment interface
+     */
+    @Operation(summary = "Update comment interface")
+    @PostMapping("updateComment")
+    public RestResp<Void> updateComment(@Valid @RequestBody UserCommentReqDto dto) {
+        return bookService.updateComment(dto);
     }
 }

@@ -2,12 +2,10 @@ package com.example.novel_backend.service;
 
 import com.example.novel_backend.core.common.resp.PageRespDto;
 import com.example.novel_backend.core.common.resp.RestResp;
+import com.example.novel_backend.dao.entity.BookComment;
 import com.example.novel_backend.dto.req.BookSearchReqDto;
 import com.example.novel_backend.dto.req.UserCommentReqDto;
-import com.example.novel_backend.dto.resp.BookCategoryRespDto;
-import com.example.novel_backend.dto.resp.BookChapterRespDto;
-import com.example.novel_backend.dto.resp.BookInfoRespDto;
-import com.example.novel_backend.dto.resp.BookRankRespDto;
+import com.example.novel_backend.dto.resp.*;
 
 import java.util.List;
 
@@ -65,14 +63,26 @@ public interface BookService {
      */
     RestResp<List<BookChapterRespDto>> listChapters(Long bookId);
 
+    /**
+     * Get comment
+     * @param dto get comment id
+     * @return
+     */
+    RestResp<BookComment> getCommentById(UserCommentReqDto dto);
 
+    /**
+     * List all comments
+     * @param dto Comments dto
+     * @return All comments
+     */
+    RestResp<PageRespDto<BookCommentRespDto>> listComments(UserCommentReqDto dto);
 
     /**
      * Post comment
      * @param dto comment dto
      * @return void
      */
-    RestResp<Void> postComment(UserCommentReqDto dto);
+    RestResp<Void> newComment(UserCommentReqDto dto);
 
     /**
      * Update comment

@@ -4,7 +4,7 @@
 
     <select id="searchBooks" resultType="com.example.novel_backend.dao.entity.BookInfo">
         SELECT
-        id, category_id, category_name, pic_url, book_name, author_id,
+        id, category_id, category_name, pic_url, book_name, author_id, book_desc,
         author_name, word_count, visit_count, collect_count, last_chapter_name,score,last_chapter_update_time
         FROM book_info
         WHERE word_count > 0
@@ -39,16 +39,9 @@
         </if>
     </select>
 
-    <select id="listChapters" resultType="com.example.novel_backend.dao.entity.BookChapter">
-        select id, chapter_name, word_count
-        from book_chapter
-        where book_id = #{bookId}
-        order by chapter_num
-    </select>
     <select id="searchAllBooks" resultType="com.example.novel_backend.dao.entity.BookInfo">
         SELECT
-        id, category_id, category_name, pic_url, book_name, author_id,
-        author_name, word_count, visit_count, collect_count, last_chapter_name,score,last_chapter_update_time
+        id
         FROM book_info
         WHERE word_count > 0
         <if test="keyword != null">
@@ -77,5 +70,13 @@
         <if test="sort != null">
             ORDER BY ${sort} DESC
         </if>
+    </select>
+
+
+    <select id="listChapters" resultType="com.example.novel_backend.dao.entity.BookChapter">
+        select id, chapter_name, word_count
+        from book_chapter
+        where book_id = #{bookId}
+        order by chapter_num
     </select>
 </mapper>
