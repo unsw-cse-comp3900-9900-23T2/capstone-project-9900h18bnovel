@@ -10,13 +10,14 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
- * Book comment
+ * Book collect
+ *
  * @author :Contanstin
- * @create 2023/6/24 16:16
+ * @create 2023/7/16 15:51
  */
-@TableName("book_comment")
+@TableName("book_collect")
 @Data
-public class BookComment implements Serializable {
+public class BookCollect implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
@@ -38,16 +39,6 @@ public class BookComment implements Serializable {
     private Long userId;
 
     /**
-     * Comment content
-     */
-    private String commentContent;
-
-    /**
-     * Book score
-     */
-    private Float score;
-
-    /**
      * Create Time
      */
     private LocalDateTime createTime;
@@ -56,5 +47,4 @@ public class BookComment implements Serializable {
      * Update Time
      */
     private LocalDateTime updateTime;
-
 }

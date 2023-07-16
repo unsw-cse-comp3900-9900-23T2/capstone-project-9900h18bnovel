@@ -7,13 +7,14 @@ import com.example.novel_backend.core.common.constant.SystemConfigConsts;
 import com.example.novel_backend.core.common.exception.BusinessException;
 import com.example.novel_backend.core.common.resp.RestResp;
 import com.example.novel_backend.core.util.JwtUtils;
+import com.example.novel_backend.dao.entity.BookCollect;
+import com.example.novel_backend.dao.entity.BookInfo;
 import com.example.novel_backend.dao.entity.UserInfo;
+import com.example.novel_backend.dao.mapper.BookCollectMapper;
+import com.example.novel_backend.dao.mapper.BookInfoMapper;
 import com.example.novel_backend.dao.mapper.UserInfoMapper;
 import com.example.novel_backend.dto.req.*;
-import com.example.novel_backend.dto.resp.ImgVerifyCodeRespDto;
-import com.example.novel_backend.dto.resp.UserInfoRespDto;
-import com.example.novel_backend.dto.resp.UserLoginRespDto;
-import com.example.novel_backend.dto.resp.UserRegisterRespDto;
+import com.example.novel_backend.dto.resp.*;
 import com.example.novel_backend.manager.redis.VerifyCodeManager;
 import com.example.novel_backend.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +26,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.Base64;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -41,6 +43,10 @@ public class UserServiceImpl implements UserService {
     private final VerifyCodeManager verifyCodeManager;
 
     private final UserInfoMapper userInfoMapper;
+
+    private final BookCollectMapper bookCollectMapper;
+
+    private final BookInfoMapper bookInfoMapper;
 
     private final JwtUtils jwtUtils;
 
@@ -185,6 +191,33 @@ public class UserServiceImpl implements UserService {
         userInfoMapper.updateById(userInfo);
         log.info("Update user information successful, username: {}", userInfo.getUsername());
         return RestResp.ok();
+    }
+
+    @Override
+    public RestResp<List<UserCollectBookRespDto>> listUserCollect(Long userId) {
+        QueryWrapper<BookCollect> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("user_id", userId);
+        List<BookCollect> bookCollects = bookCollectMapper.selectList(queryWrapper);
+        List<Long> bookIds = bookCollects.stream().map(BookCollect::getBookId).toList();
+        QueryWrapper<BookInfo> bookInfoQueryWrapper = new QueryWrapper<>();
+        bookInfoQueryWrapper.in("id", bookIds);
+        List<BookInfo> bookInfos = bookInfoMapper.selectList(bookInfoQueryWrapper);
+        return RestResp.ok(bookInfos.stream().map(bookInfo ->
+                UserCollectBookRespDto.builder()
+                        .bookId(bookInfo.getId())
+                        .categoryId(bookInfo.getCategoryId())
+                        .categoryName(bookInfo.getCategoryName())
+                        .picUrl(bookInfo.getPicUrl())
+                        .bookName(bookInfo.getBookName())
+                        .authorId(bookInfo.getAuthorId())
+                        .authorName(bookInfo.getAuthorName())
+                        .score(bookInfo.getScore())
+                        .bookDesc(bookInfo.getBookDesc())
+                        .bookStatus(bookInfo.getBookStatus())
+                        .visitCount(bookInfo.getVisitCount())
+                        .wordCount(bookInfo.getWordCount())
+                        .commentCount(bookInfo.getCommentCount())
+                        .collectCount(bookInfo.getCollectCount()).build()).toList());
     }
 
 

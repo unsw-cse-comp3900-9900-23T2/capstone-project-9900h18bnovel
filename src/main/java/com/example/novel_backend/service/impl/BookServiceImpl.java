@@ -6,20 +6,18 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.novel_backend.core.common.constant.ErrorCodeEnum;
 import com.example.novel_backend.core.common.resp.PageRespDto;
 import com.example.novel_backend.core.common.resp.RestResp;
-import com.example.novel_backend.dao.entity.BookChapter;
-import com.example.novel_backend.dao.entity.BookComment;
-import com.example.novel_backend.dao.entity.BookInfo;
-import com.example.novel_backend.dao.entity.UserInfo;
+import com.example.novel_backend.dao.entity.*;
+import com.example.novel_backend.dao.mapper.BookCollectMapper;
 import com.example.novel_backend.dao.mapper.BookCommentMapper;
 import com.example.novel_backend.dao.mapper.BookInfoMapper;
 import com.example.novel_backend.dao.mapper.UserInfoMapper;
 import com.example.novel_backend.dto.req.BookSearchReqDto;
+import com.example.novel_backend.dto.req.UserCollectReqDto;
 import com.example.novel_backend.dto.req.UserCommentReqDto;
 import com.example.novel_backend.dto.resp.*;
 import com.example.novel_backend.manager.cache.BookCategoryCacheManager;
 import com.example.novel_backend.manager.cache.BookRankCacheManager;
 import com.example.novel_backend.service.BookService;
-import com.example.novel_backend.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -50,6 +48,8 @@ public class BookServiceImpl implements BookService {
     private final BookCommentMapper bookCommentMapper;
 
     private final UserInfoMapper userInfoMapper;
+
+    private final BookCollectMapper bookCollectMapper;
 
     @Override
     public RestResp<List<BookRankRespDto>> listUpdateRankBooks() {
@@ -161,6 +161,7 @@ public class BookServiceImpl implements BookService {
                                 .id(bookComment.getId())
                                 .commentContent(bookComment.getCommentContent())
                                 .commentUserId(bookComment.getUserId())
+                                .score(bookComment.getScore())
                                 .commentUserName(userInfoMap.get(bookComment.getUserId()).getUsername())
                                 .commentUserImage(userInfoMap.get(bookComment.getUserId()).getUserPhoto())
                                 .commentTime(bookComment.getUpdateTime()).build()).toList()));
@@ -213,6 +214,40 @@ public class BookServiceImpl implements BookService {
         bookInfoMapper.updateById(bookInfo);
         return RestResp.ok();
 
+    }
+
+    @Override
+    public RestResp<Void> deleteComment(Long commentId) {
+        bookCommentMapper.deleteById(commentId);
+        return RestResp.ok();
+    }
+
+    @Override
+    public RestResp<Void> collect(UserCollectReqDto dto) {
+        BookCollect bookCollect = new BookCollect();
+        bookCollect.setBookId(dto.getBookId());
+        bookCollect.setUserId(dto.getUserId());
+        bookCollect.setCreateTime(LocalDateTime.now());
+        bookCollect.setUpdateTime(LocalDateTime.now());
+        bookCollectMapper.insert(bookCollect);
+        // update book info collect number
+        BookInfo bookInfo = bookInfoMapper.selectById(dto.getBookId());
+        bookInfo.setCollectCount(bookInfo.getCollectCount() + 1);
+        bookInfoMapper.updateById(bookInfo);
+        return RestResp.ok();
+    }
+
+    @Override
+    public RestResp<Void> cancelCollect(UserCollectReqDto dto) {
+        QueryWrapper<BookCollect> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("user_id", dto.getUserId())
+                .eq("book_id", dto.getBookId()).last("LIMIT 1");
+        bookCollectMapper.delete(queryWrapper);
+        // update book info collect number
+        BookInfo bookInfo = bookInfoMapper.selectById(dto.getBookId());
+        bookInfo.setCollectCount(bookInfo.getCollectCount() - 1);
+        bookInfoMapper.updateById(bookInfo);
+        return null;
     }
 
 }

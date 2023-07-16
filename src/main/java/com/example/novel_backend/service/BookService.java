@@ -4,6 +4,7 @@ import com.example.novel_backend.core.common.resp.PageRespDto;
 import com.example.novel_backend.core.common.resp.RestResp;
 import com.example.novel_backend.dao.entity.BookComment;
 import com.example.novel_backend.dto.req.BookSearchReqDto;
+import com.example.novel_backend.dto.req.UserCollectReqDto;
 import com.example.novel_backend.dto.req.UserCommentReqDto;
 import com.example.novel_backend.dto.resp.*;
 
@@ -66,7 +67,7 @@ public interface BookService {
     /**
      * Get comment
      * @param dto get comment id
-     * @return
+     * @return Comment
      */
     RestResp<BookComment> getCommentById(UserCommentReqDto dto);
 
@@ -90,5 +91,26 @@ public interface BookService {
      * @return void
      */
     RestResp<Void> updateComment(UserCommentReqDto dto);
+
+    /**
+     * Delete comment
+     * @param commentId Comment id
+     * @return void
+     */
+    RestResp<Void> deleteComment(Long commentId);
+
+    /**
+     * Collect book
+     * @param dto user collect book dto
+     * @return void
+     */
+    RestResp<Void> collect(UserCollectReqDto dto);
+
+    /**
+     * Cancel collect
+     * @param dto User collect book dto
+     * @return void
+     */
+    RestResp<Void> cancelCollect(UserCollectReqDto dto);
     
 }

@@ -3,12 +3,10 @@ package com.example.novel_backend.service;
 import com.example.novel_backend.core.common.resp.RestResp;
 import com.example.novel_backend.dao.entity.UserInfo;
 import com.example.novel_backend.dto.req.*;
-import com.example.novel_backend.dto.resp.ImgVerifyCodeRespDto;
-import com.example.novel_backend.dto.resp.UserInfoRespDto;
-import com.example.novel_backend.dto.resp.UserLoginRespDto;
-import com.example.novel_backend.dto.resp.UserRegisterRespDto;
+import com.example.novel_backend.dto.resp.*;
 
 import java.io.IOException;
+import java.util.List;
 
 /**
  * User module - Service
@@ -70,5 +68,12 @@ public interface UserService {
      * @return void
      */
     RestResp<Void> updateUserInfo(UserInfoUpdateReqDto dto);
+
+    /**
+     * List all user collected books
+     * @param userId user id
+     * @return All user collected books list
+     */
+    RestResp<List<UserCollectBookRespDto>> listUserCollect(Long userId);
 
 }

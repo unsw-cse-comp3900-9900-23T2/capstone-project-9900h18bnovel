@@ -5,6 +5,7 @@ import com.example.novel_backend.core.common.resp.PageRespDto;
 import com.example.novel_backend.core.common.resp.RestResp;
 import com.example.novel_backend.dao.entity.BookComment;
 import com.example.novel_backend.dto.req.BookSearchReqDto;
+import com.example.novel_backend.dto.req.UserCollectReqDto;
 import com.example.novel_backend.dto.req.UserCommentReqDto;
 import com.example.novel_backend.dto.resp.*;
 import com.example.novel_backend.service.BookService;
@@ -130,8 +131,35 @@ public class BookController {
      * Update comment interface
      */
     @Operation(summary = "Update comment interface")
-    @PostMapping("updateComment")
+    @PostMapping("update_comment")
     public RestResp<Void> updateComment(@Valid @RequestBody UserCommentReqDto dto) {
         return bookService.updateComment(dto);
+    }
+
+    /**
+     * Delete comment interface
+     */
+    @Operation(summary = "Delete comment interface")
+    @DeleteMapping("comment/{commentId}")
+    public RestResp<Void> deleteComment(@Parameter(description = "Comment ID") @PathVariable Long commentId) {
+        return bookService.deleteComment(commentId);
+    }
+
+    /**
+     * User collect book interface
+     */
+    @Operation(summary = "User collect book interface")
+    @PostMapping("collect")
+    public RestResp<Void> collect(@Valid @RequestBody UserCollectReqDto dto) {
+        return bookService.collect(dto);
+    }
+
+    /**
+     * User cancel collect book interface
+     */
+    @Operation(summary = "User cancel collect book interface")
+    @PostMapping("cancel_collect")
+    public RestResp<Void> cancelCollect(@Valid @RequestBody UserCollectReqDto dto) {
+        return bookService.cancelCollect(dto);
     }
 }

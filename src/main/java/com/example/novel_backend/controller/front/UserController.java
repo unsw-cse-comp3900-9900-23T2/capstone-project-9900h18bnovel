@@ -4,12 +4,10 @@ import com.example.novel_backend.core.common.constant.ApiRouterConsts;
 import com.example.novel_backend.core.common.constant.SystemConfigConsts;
 import com.example.novel_backend.core.common.resp.RestResp;
 import com.example.novel_backend.dto.req.*;
-import com.example.novel_backend.dto.resp.ImgVerifyCodeRespDto;
-import com.example.novel_backend.dto.resp.UserInfoRespDto;
-import com.example.novel_backend.dto.resp.UserLoginRespDto;
-import com.example.novel_backend.dto.resp.UserRegisterRespDto;
+import com.example.novel_backend.dto.resp.*;
 import com.example.novel_backend.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -17,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.List;
 
 /**
  * User module
@@ -90,5 +89,15 @@ public class UserController {
     @PutMapping("modify_userInfo")
     public RestResp<Void> updateUserInfo(@Valid @RequestBody UserInfoUpdateReqDto dto){
         return userService.updateUserInfo(dto);
+    }
+
+    /**
+     * List all user collected books Interface
+     */
+    @Operation(summary = "List all user collected books Interface")
+    @GetMapping("user_collect")
+    public RestResp<List<UserCollectBookRespDto>> listUserCollect(
+            @Parameter(description = "User ID") Long userId) {
+        return userService.listUserCollect(userId);
     }
 }

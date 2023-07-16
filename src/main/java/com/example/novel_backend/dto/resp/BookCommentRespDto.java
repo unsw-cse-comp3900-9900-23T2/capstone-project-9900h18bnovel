@@ -36,4 +36,7 @@ BookCommentRespDto {
     @Schema(description = "Comment time")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime commentTime;
+
+    @Schema(description = "Book score")
+    private Float score;
 }
