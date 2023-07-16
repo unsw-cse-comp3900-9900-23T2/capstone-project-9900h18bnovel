@@ -3,6 +3,8 @@ import { createRouter, createWebHistory } from 'vue-router';
 import App from './App.vue';
 import HomePage from './components/HomePage.vue';
 import All_Novels from './components/All_Novels.vue';
+//import new_update from './components/new_update.vue';
+import Profile from './components/User_Profile.vue';
 import ranksPages from './components/RanksPages.vue';
 import bookInfo from './components/bookInfo.vue';
 import store from './store';
@@ -29,6 +31,8 @@ const routes = [
       next();
     },
   },
+  //{ path: '/newupdate', component: new_update },
+  { path: '/userprofile', component: Profile},
   { path: '/newestrank', component: ranksPages },
   { path: '/clickrank', component: ranksPages },
   { path: '/updaterank', component: ranksPages },

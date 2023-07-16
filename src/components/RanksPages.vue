@@ -121,13 +121,6 @@ export default {
 
 <template>
   <div v-infinite-scroll="load">
-    <el-backtop :bottom="100">
-      <div class="goTopButton">
-        <el-icon>
-          <CaretTop />
-        </el-icon>
-      </div>
-    </el-backtop>
     <div v-loading.lock="loading" :element-loading-spinner="svg" element-loading-svg-view-box="0, 5, 30, 40"
       element-loading-background="rgba(255, 255, 255, 255)"
       style="top:50%; left: 50%; transform: translate(-50%,-50%); position: absolute;"></div>
@@ -254,17 +247,5 @@ export default {
   align-items: center;
   border-left: 1px solid;
   border-color: rgb(223, 223, 223);
-}
-
-.goTopButton {
-  height: 100%;
-  width: 100%;
-  background-color: var(--el-bg-color-overlay);
-  box-shadow: var(--el-box-shadow-lighter);
-  align-items: center;
-  display: flex;
-  justify-content: center;
-  line-height: 40px;
-  color: #1989fa;
 }
 </style>

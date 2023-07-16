@@ -210,6 +210,7 @@ export default {
       } else if (this.verCodeIsNumbers === false) {
         this.alertBox("verCodeIsNotNumbers")
       } else {
+
         const requestData = {
           email: this.email,
           password: this.password,
@@ -231,9 +232,11 @@ export default {
                 message: 'Welcome ' + data.data.userName,
                 type: 'success',
               });
+              localStorage.setItem('email', this.email);
               localStorage.setItem('token', data.data.token);
               localStorage.setItem('uid', data.data.uid);
               localStorage.setItem('username', data.data.userName);
+              this.$store.dispatch('email', data.data.email);
               this.$store.dispatch('login', data.data.token);
               this.$store.dispatch('uid', data.data.uid);
               this.$store.dispatch('username', data.data.userName);
@@ -596,6 +599,7 @@ export default {
   background-position: 40% 60%;
   margin: 0 auto;
 }
+
 
 
 .each_input_container {

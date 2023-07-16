@@ -1,4 +1,7 @@
 <script setup>
+import {
+  CaretTop,
+} from '@element-plus/icons-vue';
 const svg = `
 <path class="path" d="
           M 10 40
@@ -91,6 +94,14 @@ export default {
     <Global_Nav />
     <router-view>
     </router-view>
+    <!-- Go to top floating buttom -->
+    <el-backtop :bottom="100">
+      <div class="goTopButton">
+        <el-icon>
+          <CaretTop />
+        </el-icon>
+      </div>
+    </el-backtop>
   </div>
   <transition name="fade">
     <div v-if="isLoginVisible" class="loginSection">
@@ -121,5 +132,17 @@ export default {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+}
+
+.goTopButton {
+  height: 100%;
+  width: 100%;
+  background-color: var(--el-bg-color-overlay);
+  box-shadow: var(--el-box-shadow-lighter);
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  line-height: 40px;
+  color: #1989fa;
 }
 </style>

@@ -1,9 +1,5 @@
-<!-- 
-添加新的种类,
-修改tags成plain的 -->
 <script setup>
 import {
-  CaretTop,
   UserFilled,
   User,
   Warning,
@@ -21,10 +17,8 @@ const svg = `
 </script>
 <script>
 import Global_Footer from './Global_Footer.vue';
+import Profile from './User_Profile.vue';
 export default {
-  components: {
-    Global_Footer,
-  },
   emits: ['showLogin', 'closeLoginBox'],
   data() {
     return {
@@ -42,9 +36,13 @@ export default {
       sessionId: '',
       showHomePage: false,
       loading: true,
+      showProfile: false,
     }
   },
-
+  components: {
+    Global_Footer,
+    Profile,
+  },
   mounted() {
     this.getHomeBooks();
     setTimeout(() => {
@@ -374,14 +372,10 @@ export default {
         </div>
       </div>
     </div>
-    <!-- Go to top floating buttom -->
-    <el-backtop :bottom="100">
-      <div class="goTopButton">
-        <el-icon>
-          <CaretTop />
-        </el-icon>
-      </div>
-    </el-backtop>
+    <div v-if="showProfile">
+      <Profile />
+    </div>
+
     <Global_Footer />
   </div>
 </template>
@@ -717,15 +711,5 @@ export default {
   text-decoration: underline;
 }
 
-.goTopButton {
-  height: 100%;
-  width: 100%;
-  background-color: var(--el-bg-color-overlay);
-  box-shadow: var(--el-box-shadow-lighter);
-  align-items: center;
-  display: flex;
-  justify-content: center;
-  line-height: 40px;
-  color: #1989fa;
-}
+
 </style>
