@@ -41,7 +41,15 @@ import { Linter } from 'eslint';
         gender : '',
         isEditing: false,
         newGender: '',
+        SubmitSex: '',
+        CurrentPhoto: '',
         DefaultPhoto: 'https://img-qn.51miz.com/Element/00/88/60/42/ea5b40df_E886042_1992a532.png!/quality/90/unsharp/true/compress/true/format/png/fw/300',
+        //https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png
+      }
+    },
+    mounted() {
+      if (localStorage.getItem('userPhoto')=== 'undefined' || !localStorage.getItem('userPhoto')){
+        this.CurrentPhoto = this.DefaultPhoto;
       }
     },
     components:{
@@ -85,7 +93,7 @@ import { Linter } from 'eslint';
           return;
         }
         if (!this.userPhoto || this.userPhoto === 'undefined'){
-          this.userPhoto = this.DefaultPhoto;
+          this.userPhoto = '';
         }
         const requestData = {
           userId : parseInt(this.uid),
@@ -93,7 +101,6 @@ import { Linter } from 'eslint';
           userPhoto : this.userPhoto,
           userSex : parseInt(this.userSex)
         }
-        console.log(requestData);
         try {
           const response = await fetch("http://localhost:8888/api/front/user/modify_userInfo", {
             method: 'PUT',
@@ -105,12 +112,65 @@ import { Linter } from 'eslint';
           if (response.status === 200) {
             const data = await response.json();
             console.log(data);
-            this.isEditing = false;
-            // 先这样，还没试过，但肯定有问题
+            if (data.code ==='00000'){
+              this.isEditing = false;
+              this.userSex = this.newGender;
+              localStorage.setItem('userSex',this.userSex);
+            }
           }
         } catch (error){
           console.error(error);
         }
+      },
+      openPhotoInput() {
+        this.$refs.fileInput.click();
+      },
+      async CollectNewPhoto(event) {
+        const file = event.target.files[0];
+        const reader = new FileReader();
+        if (this.userSex.toLowerCase()==="male"){
+          this.SubmitSex = 0;
+        } else{
+          this.SubmitSex = 1;
+        }
+        reader.onload = () => {
+          const requestData = {
+            userId : parseInt(this.uid),
+            username : this.userName,
+            userPhoto : reader.result,
+            userSex : parseInt(this.SubmitSex)
+          }
+          this.SubmitPhoto(requestData);
+        };
+        if (file) {
+          reader.readAsDataURL(file);
+        }
+
+      },
+      async SubmitPhoto(requestData){
+        try {
+          console.log(requestData);
+          const response = await fetch("http://localhost:8888/api/front/user/modify_userInfo", {
+            method: 'PUT',
+            headers:{
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(requestData)
+          });
+          if (response.status === 200) {
+            const data = await response.json();
+            console.log(data);
+            if (data.code ==='00000'){
+            this.isEditing = false;
+            this.userSex = this.newGender;
+            localStorage.setItem('userSex',this.userSex);
+          } else{
+              console.log("User_Profile 169行有问题");
+            }
+        }
+      } catch (error){
+        console.error(error);
+      }
       },
       logout() {
         ElMessage({
@@ -150,13 +210,15 @@ import { Linter } from 'eslint';
       >User Profile</h1>
       <div class = "BasicInfoContainer">
         <div class ="AvatarContainer">
-          <span class="el-avatar el-avatar--circle" style="height: 200px; width: 200px; line-height: 200px; margin: 2em;"><img src="https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png" style="object-fit: cover;"></span>
-          <el-button class = "UploadPhotoButton" circle>
+          <span class="el-avatar el-avatar--circle" style="height: 200px; width: 200px; line-height: 200px; margin: 2em;"><img :src= "CurrentPhoto" style="object-fit: cover;"></span>
+          <input type="file" ref="fileInput" @change="CollectNewPhoto" style="display: none" />
+          <el-button class = "UploadPhotoButton" circle @click="openPhotoInput">
             <el-icon color="gray" >
               <Upload />
             </el-icon>
           </el-button>
         </div>
+
         <div class = "BasicInfo">
           <h3>UserID:  {{uid}}  </h3>
           <div class="UserNameContainer" >
@@ -176,26 +238,30 @@ import { Linter } from 'eslint';
             </el-button>
           </div>
           <div class="GenderContainer">
-            <h3>Gender:</h3>
-            <div v-if="!isEditing">
-              <span>{{ userSex }}</span>
-              <el-button class = "UpdateGenderButton" @click = "StartEditGender" circle>
-                <el-icon color="gray">
-                  <edit />
-                </el-icon>
-              </el-button>
+            <div class="gender-row" v-if="!isEditing">
+              <h3>Gender:</h3>
+              <div class="gender-info">
+                <h3>{{ userSex }}</h3>
+                <el-button class="UpdateGenderButton" @click="StartEditGender" circle>
+                  <el-icon color="gray">
+                    <edit />
+                  </el-icon>
+                </el-button>
+              </div>
             </div>
-            <div v-else class = "GenderInputCont">
-              <input type="text" v-model="newGender" placeholder="Male / Female" style="width: 70%"/>
-              <el-button class = "SubmitGender" @click="UpdateGender" circle>
-                <el-icon color="lightgreen" >
-                  <Check />
-                </el-icon>
-              </el-button>
+            <div class="gender-row" v-else>
+              <h3>Gender:</h3>
+              <div class="input-container">
+                <input type="text" v-model="newGender" placeholder="Male / Female" />
+                <el-button class="SubmitGender" @click="UpdateGender" circle>
+                  <el-icon color="lightgreen">
+                    <Check />
+                  </el-icon>
+                </el-button>
+              </div>
             </div>
-
-
           </div>
+
 
         </div>
       </div>
@@ -309,13 +375,39 @@ import { Linter } from 'eslint';
     text-align: left;
   }
 
-  .UserNameContainer, .EmailContainer, .GenderContainer{
+  .UserNameContainer, .EmailContainer{
     display: flex;
     flex-direction: row;
     margin: auto 0px;
     text-align: left;
     justify-content: space-between;
   }
+  .GenderContainer {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .gender-row {
+    display: flex;
+    align-items: center;
+  }
+
+  .gender-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-grow: 1;
+  }
+
+  .input-container {
+    display: flex;
+    align-items: center;
+  }
+
+  .gender-row h3:first-child {
+    margin-right: 10px;
+  }
+
   .goTopButton {
     height: 100%;
     width: 100%;
