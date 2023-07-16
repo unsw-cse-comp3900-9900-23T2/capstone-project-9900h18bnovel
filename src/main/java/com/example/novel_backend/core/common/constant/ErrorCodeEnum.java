@@ -58,6 +58,11 @@ public enum ErrorCodeEnum {
     USER_PASSWORD_ERROR("A0210", "User password error"),
 
     /**
+     * User photo error
+     */
+    USER_PHOTO_ERROR("A0220", "User photo error"),
+
+    /**
      * Level 1 macro error code, system execution error
      */
     SYSTEM_ERROR("B0001", "System execution error"),

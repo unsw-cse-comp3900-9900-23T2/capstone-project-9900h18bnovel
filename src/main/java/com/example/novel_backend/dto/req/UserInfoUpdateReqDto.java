@@ -20,7 +20,6 @@ public class UserInfoUpdateReqDto {
     private String username;
 
     @Schema(description = "Avatar")
-    @Pattern(regexp="^/[^\s]{10,}\\.(png|PNG|jpg|JPG|jpeg|JPEG|gif|GIF|bpm|BPM)$")
     private String userPhoto;
 
     @Schema(description = "User sex")

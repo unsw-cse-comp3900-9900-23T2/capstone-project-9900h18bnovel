@@ -24,6 +24,8 @@ import org.springframework.util.DigestUtils;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
+import java.util.Base64;
+import java.util.Objects;
 
 /**
  * User module - Service Implementation Classes
@@ -172,6 +174,13 @@ public class UserServiceImpl implements UserService {
         UserInfo userInfo = userInfoMapper.selectById(dto.getUserId());
         userInfo.setUsername(dto.getUsername());
         userInfo.setUserSex(dto.getUserSex());
+        if(!Objects.equals(dto.getUserPhoto(), "")) {
+            try {
+                byte[] decodedBytes = Base64.getDecoder().decode(dto.getUserPhoto());
+            } catch (Exception e) {
+                return RestResp.fail(ErrorCodeEnum.USER_PHOTO_ERROR);
+            }
+        }
         userInfo.setUserPhoto(dto.getUserPhoto());
         userInfoMapper.updateById(userInfo);
         log.info("Update user information successful, username: {}", userInfo.getUsername());
