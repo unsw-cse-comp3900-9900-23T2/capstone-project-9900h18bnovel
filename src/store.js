@@ -61,7 +61,7 @@ export default createStore({
     clearuid({ commit }) {
       commit('clearUid');
     },
-    updateCurrentURL({ commit }, url) {
+    setCurrentURL({ commit }, url) {
       commit('setCurrentURL', url);
     },
     clearCurrentURL({ commit }) {

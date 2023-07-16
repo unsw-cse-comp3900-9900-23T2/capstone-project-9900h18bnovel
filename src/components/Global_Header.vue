@@ -1,10 +1,3 @@
-<!-- 1.回车搜索
-2.搜索清除键
-3.无限滚动条问题
-4.可选择日期
-5.homepage可点击rank进入排行榜页面
-6.homepage, rankspages加入tag
-7.tags加入可分辨颜色-->
 <script setup>
 import {
   Search,
@@ -14,15 +7,27 @@ import {
 
 </script >
 <script>
-import Login from './Auth_Page.vue';
+import { logout } from '../utils';
+
 export default {
   props: {
     keyword: {
       type: String,
       default: ''
     },
+    isLoginVisible: {
+      type: Boolean,
+      default: false
+    },
+    verImage: {
+      type: String,
+      default: ''
+    },
+    sessionId: {
+      type: String,
+      default: ''
+    },
   },
-  emits: ['showLogin', 'closeLoginBox', 'logout'],
   data() {
     return {
       header_left: 'header_left',
@@ -31,18 +36,11 @@ export default {
       isSearchActive: false,
       searchInput: '',
       username: '',
-      isLoginVisible: false,
     }
   },
-  components: {
-    Login,
-  },
+
   mounted() {
     document.addEventListener('click', this.searchGlobalClick);
-    if (localStorage.getItem("token")) {
-      this.$store.dispatch('login', localStorage.getItem("token"));
-      this.$store.dispatch('username', localStorage.getItem("username"));
-    }
   },
   beforeUnmount() {
     document.removeEventListener('click', this.searchGlobalClick);
@@ -52,7 +50,6 @@ export default {
       this.isSearchActive = true;
     },
     handleSearch() {
-      this.$store.dispatch("setSearchInput", this.searchInput);
       this.$emit("handleSearch", this.searchInput);
     },
     searchGlobalClick() {
@@ -63,15 +60,13 @@ export default {
     goHome() {
       this.$router.push('/home');
     },
-    closeLoginBox() {
-      this.$emit('closeLoginBox');
-    },
     showLogin() {
       this.$emit('showLogin');
     },
-    logout() {
-      this.$emit('logout');
+    closeLoginBox() {
+      this.$emit('closeLoginBox');
     },
+
     clearSearch() {
       this.searchInput = null;
       this.$emit("clearSearch");
@@ -91,8 +86,8 @@ export default {
           round>Search</el-button>
       </div>
       <div v-else @click.stop>
-        <el-input class="searchText" v-model="searchInput"
-          :placeholder="keyword ? keyword : 'Please Enter Keyword'" @keyup.enter="handleSearch">
+        <el-input class="searchText" v-model="searchInput" :placeholder="keyword ? keyword : 'Please Enter Keyword'"
+          @keyup.enter="handleSearch">
           <template #prepend>
             <el-button @click.stop="handleSearch" :icon="Search" />
           </template>
@@ -134,20 +129,9 @@ export default {
         </el-icon> Sign out </el-button>
     </div>
   </div>
-  <div v-if="isLoginVisible" class="loginSection">
-    <Login @showLogin="showLogin" @cancel="closeLoginBox" />
-  </div>
 </template>
 
 <style >
-.loginSection {
-  position: absolute;
-  z-index: 100;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-}
-
 .logo_container {
   height: 100px;
   margin-left: 20px;

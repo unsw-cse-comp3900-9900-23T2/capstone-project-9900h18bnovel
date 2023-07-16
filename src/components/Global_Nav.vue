@@ -6,17 +6,16 @@ export default {
   },
   methods: {
     goAllNov() {
-      this.$emit('clearFilters');
       const currentURL = this.$store.getters.getCurrentURL;
       this.$router.push(`/allnovels/${currentURL}`);
     },
-    goNewestRank(){
+    goNewestRank() {
       this.$router.push('/newestrank');
     },
-    goClickRank(){
+    goClickRank() {
       this.$router.push('/clickrank');
     },
-    goUpdateRank(){
+    goUpdateRank() {
       this.$router.push('/updaterank');
     },
   }
@@ -25,7 +24,7 @@ export default {
 <template>
   <div class="nav_container" style="min-width: 1152px;">
     <el-menu class="el-menu-demo" mode="horizontal" background-color="#545c64" text-color="#fff"
-      active-text-color="#ffd04b" >
+      active-text-color="#ffd04b">
       <el-menu-item index="1" @click="goAllNov">Browse Novels</el-menu-item>
       <!-- <el-sub-menu index="2">
         <template #title>Browse</template>

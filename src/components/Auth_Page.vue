@@ -49,7 +49,7 @@ export default {
       }
     },
     closeLoginBox() {
-      this.$emit('cancel');
+      this.$emit('closeLoginBox');
     },
     showLogin() {
       this.$emit('showLogin');

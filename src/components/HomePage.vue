@@ -1,4 +1,6 @@
-<!-- 1.点击小说图片或名字可进入小说详情页 -->
+<!-- 
+添加新的种类,
+修改tags成plain的 -->
 <script setup>
 import {
   CaretTop,
@@ -6,7 +8,8 @@ import {
   User,
   Warning,
 } from '@element-plus/icons-vue';
-import { ElMessage } from 'element-plus';
+import { getItemColor } from '../utils'
+// import { ElMessage } from 'element-plus';
 const svg = `
 <path class="path" d="
           M 10 40
@@ -17,12 +20,12 @@ const svg = `
       `
 </script>
 <script>
-import Header from './Global_Header.vue';
-import Nav from './Global_Nav.vue';
-import Footer from './Global_Footer.vue';
-import Login from './Auth_Page.vue';
+import Global_Footer from './Global_Footer.vue';
 export default {
-  emits: ['showLogin', 'closeLoginBox', 'logout'],
+  components: {
+    Global_Footer,
+  },
+  emits: ['showLogin', 'closeLoginBox'],
   data() {
     return {
       weekly_books_info: '',
@@ -37,21 +40,14 @@ export default {
       isLoginVisible: false,
       VerImage: '',
       sessionId: '',
-      loading: true,
       showHomePage: false,
+      loading: true,
     }
   },
-  components: {
-    Header,
-    Nav,
-    Footer,
-  },
+
   mounted() {
-    if (localStorage.getItem("token")) {
-      this.$store.dispatch('login', localStorage.getItem("token"));
-    }
+    this.getHomeBooks();
     setTimeout(() => {
-      this.getHomeBooks();
       this.loading = false;
       this.showHomePage = true;
     }, 500);
@@ -66,9 +62,6 @@ export default {
     goUpdateRank() {
       this.$router.push('/updaterank');
     },
-    handleSearch() {
-      this.$router.push('/allnovels');
-    },
 
     testFlag() {
       this.collect_flag = !this.collect_flag;
@@ -80,26 +73,6 @@ export default {
       };
     },
 
-    async showLogin() {
-      this.isLoginVisible = true;
-      try {
-        const response = await fetch("http://localhost:8888/api/front/user/img_verify_code", {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-        });
-        if (response.status == 200) {
-          const data = await response.json();
-          this.verImage = "data:image/png;base64," + data.data.img;
-          this.sessionId = data.data.sessionId;
-        } else {
-          console.log(response.status);
-        }
-      } catch (error) {
-        console.error(error);
-      }
-    },
     async getHomeBooks() {
       try {
         const response = await fetch("http://localhost:8888/api/front/home/books", {
@@ -123,41 +96,7 @@ export default {
         console.error(error);
       }
     },
-    closeLoginBox() {
-      this.isLoginVisible = false;
-    },
-    logout() {
-      ElMessage({
-        message: "Log out successful",
-        type: 'success',
-      });
-      localStorage.removeItem('userName');
-      localStorage.removeItem('token');
-      localStorage.removeItem('uid');
-      this.$store.dispatch('logout');
-      this.$store.dispatch('clearusername');
-      this.$store.dispatch('clearuid');
-    },
-    getItemColor(categoryName) {
-      switch (categoryName) {
-        case 'action':
-          return '#FF6F61';
-        case 'romance':
-          return '#FFC0CB';
-        case 'fantasy':
-          return '#91D18B';
-        case 'mystery':
-          return '#6B705C';
-        case 'horror':
-          return '#585481';
-        case 'thriller':
-          return '#333A56';
-        case 'drama':
-          return '#FFC09F';
-        default:
-          return null;
-      }
-    },
+
     goBookInfo(bookId) {
       this.$router.push(`/bookInfo/${bookId}`);
     },
@@ -171,293 +110,280 @@ export default {
 </script>
 
 <template>
-  <div v-loading.fullscreen.lock="loading" element-loading-text="Welcome to NovelHub, novels will ready for you ASAP"
-    :element-loading-spinner="svg" element-loading-svg-view-box="0, 5, 30, 40"
-    element-loading-background="rgba(255, 255, 255, 255)"></div>
+  <div v-loading.lock="loading" :element-loading-spinner="svg" element-loading-svg-view-box="0, 5, 30, 40"
+    element-loading-background="rgba(255, 255, 255, 255)"
+    style="top:50%; left: 50%; transform: translate(-50%,-50%); position: absolute;"></div>
   <div v-if="showHomePage">
-    <div :class="{ 'blur': isLoginVisible }">
-      <Header @handleSearch="handleSearch" @showLogin="showLogin" @closeLoginBox="closeLoginBox" @logout="logout" />
-      <Nav />
-      <div style="display: flex; justify-content: center;">
-        <div class="homeBody">
-          <div class="weekly_collect_books_container">
-            <div class="weekly_books">
-              <h2>
-                Weekly Books
-                <el-popover placement="right" :width="230" trigger="hover"
-                  content="The Weekly Books features the highest-rated and most-viewed books of the week.">
-                  <template #reference>
-                    <el-icon style="font-size: 10pt;">
-                      <Warning />
-                    </el-icon>
-                  </template>
-                </el-popover>
-              </h2>
-              <el-carousel :interval="4000" height="300px">
-                <el-carousel-item v-for="item in weekly_books_info.slice(0, 3)" :key="item.title">
-                  <div class="carousel_weekly_background" :style="getBackgroundStyle(item.picUrl)"></div>
-                  <el-row>
-                    <el-column class="carousel_weekly_image_container">
-                      <img :src="item.picUrl" class="carousel_weekly_image" @click="goBookInfo(item.bookId)">
-                    </el-column>
-                    <el-column class="carousel_weekly_text_container">
-                      <div class="carousel_weekly_text">
-                        <span class="carousel_weekly_text_title" @click="goBookInfo(item.bookId)">{{ item.bookName
-                        }}</span>
-                        <span class="carousel_weekly_text_author">{{ item.authorName }}</span>
-                        <span class="carousel_weekly_text_descr">{{ item.bookDesc }}</span>
-                        <el-tag class="tag" style="font-size: 10pt;" :color="getItemColor(item.categoryName)"
-                          effect="dark">{{
-                            item.categoryName
-                          }}</el-tag>
-                      </div>
-                    </el-column>
-                  </el-row>
-                </el-carousel-item>
-              </el-carousel>
+    <div style="display: flex; justify-content: center;">
+      <div class="homeBody">
+        <div class="weekly_collect_books_container">
+          <div class="weekly_books">
+            <h2>
+              Weekly Books
+              <el-popover placement="right" :width="230" trigger="hover"
+                content="The Weekly Books features the highest-rated and most-viewed books of the week.">
+                <template #reference>
+                  <el-icon style="font-size: 10pt;">
+                    <Warning />
+                  </el-icon>
+                </template>
+              </el-popover>
+            </h2>
+            <el-carousel :interval="4000" height="300px">
+              <el-carousel-item v-for="item in weekly_books_info.slice(0, 3)" :key="item.title">
+                <div class="carousel_weekly_background" :style="getBackgroundStyle(item.picUrl)"></div>
+                <el-row>
+                  <el-column class="carousel_weekly_image_container">
+                    <img :src="item.picUrl" class="carousel_weekly_image" @click="goBookInfo(item.bookId)">
+                  </el-column>
+                  <el-column class="carousel_weekly_text_container">
+                    <div class="carousel_weekly_text">
+                      <span class="carousel_weekly_text_title" @click="goBookInfo(item.bookId)">{{ item.bookName
+                      }}</span>
+                      <span class="carousel_weekly_text_author">{{ item.authorName }}</span>
+                      <span class="carousel_weekly_text_descr">{{ item.bookDesc }}</span>
+                      <el-tag class="tag" effect="plain" :style="getItemColor(item.categoryName)">{{
+                        item.categoryName
+                      }}</el-tag>
+                    </div>
+                  </el-column>
+                </el-row>
+              </el-carousel-item>
+            </el-carousel>
+          </div>
+          <div class="collected_novel_container">
+            <h2>
+              Collected Books
+              <el-popover placement="right" :width="250" trigger="hover"
+                content="The Collected Books determined by readers' personal collections, must signed in to view the section">
+                <template #reference>
+                  <el-icon style="font-size: 10pt;">
+                    <Warning />
+                  </el-icon>
+                </template>
+              </el-popover>
+            </h2>
+            <div v-if="!this.$store.state.token" class="collected_novel_na_user">
+              <el-empty :image-size="120" description="Please sign in to see more informations">
+                <el-button class="login_button" type="primary" @click="showLogin" @showLogin="showLogin"><el-icon>
+                    <User />
+                  </el-icon>{{ login_button }}</el-button>
+              </el-empty>
             </div>
-            <div class="collected_novel_container">
-              <h2>
-                Collected Books
-                <el-popover placement="right" :width="250" trigger="hover"
-                  content="The Collected Books determined by readers' personal collections, must signed in to view the section">
-                  <template #reference>
-                    <el-icon style="font-size: 10pt;">
-                      <Warning />
-                    </el-icon>
-                  </template>
-                </el-popover>
-              </h2>
-              <div v-if="!this.$store.state.token" class="collected_novel_na_user">
-                <el-empty :image-size="120" description="Please sign in to see more informations">
-                  <el-button class="login_button" type="primary" @click="showLogin" @showLogin="showLogin"><el-icon>
-                      <User />
-                    </el-icon>{{ login_button }}</el-button>
-                </el-empty>
+            <div v-else class="collected_novel_user">
+              <el-empty :image-size="120" description="You don't have collect books"></el-empty>
+            </div>
+          </div>
+        </div>
+        <h2></h2>
+        <div class="recomm_books_container">
+          <div class="hottest_books">
+            <h2 style=" border-bottom: 1px solid; width: 100%; border-color: rgb(206, 204, 204); padding-bottom: 10px;">
+              Hottest Books
+              <el-popover placement="right" :width="275" trigger="hover"
+                content="The Hottest Books list features the most popular and sought-after literary gems based on the number of times they have been collected by readers">
+                <template #reference>
+                  <el-icon style="font-size: 10pt;">
+                    <Warning />
+                  </el-icon>
+                </template>
+              </el-popover>
+            </h2>
+            <el-carousel height="600px" style="width: 570px;" direction="vertical" type="card" :autoplay="true">
+              <el-carousel-item style="border-radius: 15px;" v-for="item in hottest_books_info.slice(0, 6)"
+                :key="item.bookName">
+                <el-row class="carousel_container">
+                  <div class="carousel_left_container">
+                    <span class="carousel_left_title" @click="goBookInfo(item.bookId)">
+                      <b>{{ item.bookName }}</b>
+                    </span>
+                    <span style="font-size: 12pt;">{{ item.authorName }}</span>
+                    <span
+                      style="font-size: 10pt; margin-top: 10px; margin-right: 10px; display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 10;overflow: hidden;">{{
+                        item.bookDesc }}</span>
+                    <el-tag class="tag" effect="plain" :style="getItemColor(item.categoryName)">{{
+                      item.categoryName
+                    }}</el-tag>
+                    <span style="bottom: 10px;position: absolute;">
+                      {{ item.collectCount }} <el-icon>
+                        <UserFilled />
+                      </el-icon> Collected
+                    </span>
+                  </div>
+                  <div class="carousel_image_container">
+                    <img :src="item.picUrl" class="carousel_image" @click="goBookInfo(item.bookId)">
+                  </div>
+                  <div class="carousel_right_container">
+                    <div class="carousel_right_comments_container">
+                      <div class="carousel_right_comments">
+                        <div class="comment-text">comments</div>
+                      </div>
+                    </div>
+                    <div class="carousel_right_rates_container">
+                      <el-rate v-model="item.score" disabled show-score text-color="#ff9900" size="small"
+                        style="margin-left: -5px;" score-template="{value} points" />
+                    </div>
+                  </div>
+                </el-row>
+              </el-carousel-item>
+            </el-carousel>
+          </div>
+          <div class="best_books">
+            <h2 style="border-bottom: 1px solid; width: 100%; border-color: rgb(206, 204, 204);  padding-bottom: 10px;">
+              Best Books
+              <el-popover placement="right" :width="265" trigger="hover"
+                content="The Best Books list showcases the most highly-rated and acclaimed literary works based on their scores">
+                <template #reference>
+                  <el-icon style="font-size: 10pt;">
+                    <Warning />
+                  </el-icon>
+                </template>
+              </el-popover>
+            </h2>
+            <el-carousel height="600px" style="width: 570px;" direction="vertical" type="card" :autoplay="true">
+              <el-carousel-item style="border-radius: 15px;" v-for="item in best_books_info.slice(0, 6)"
+                :key="item.bookName">
+                <el-row class="carousel_container">
+                  <div class="carousel_left_container">
+                    <span class="carousel_left_title" @click="goBookInfo(item.bookId)">
+                      <b>{{ item.bookName }}</b>
+                    </span>
+                    <span style="font-size: 12pt;">{{ item.authorName }}</span>
+                    <span
+                      style="font-size: 10pt; margin-top: 10px; margin-right: 10px; display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 10;overflow: hidden;">{{
+                        item.bookDesc }}</span>
+                    <el-tag class="tag" effect="plain" :style="getItemColor(item.categoryName)">{{
+                      item.categoryName
+                    }}</el-tag>
+                    <span style="bottom: 10px;position: absolute;">
+                      {{ item.collectCount }} <el-icon>
+                        <UserFilled />
+                      </el-icon> Collected
+                    </span>
+                  </div>
+                  <div class="carousel_image_container">
+                    <img :src="item.picUrl" class="carousel_image" @click="goBookInfo(item.bookId)">
+                  </div>
+                  <div class="carousel_right_container">
+                    <div class="carousel_right_comments_container">
+                      <div class="carousel_right_comments">
+                        <div class="comment-text">comments</div>
+                      </div>
+                    </div>
+                    <div class="carousel_right_rates_container">
+                      <el-rate v-model="item.score" disabled show-score text-color="#ff9900" size="small"
+                        style="margin-left: -5px;" score-template="{value} points" />
+                    </div>
+                  </div>
+                </el-row>
+              </el-carousel-item>
+            </el-carousel>
+          </div>
+        </div>
+        <h2
+          style=" border-bottom: 1px solid; border-color: rgb(223, 223, 223); padding-bottom: 10px; margin-bottom: 22px; margin-top: 30px; width: 100%; text-align: center;">
+          Ranking of Books</h2>
+        <div class="rank_books_container">
+          <div class="rank_container">
+            <div style="display: flex;">
+              <div class="rank_name" @click="goClickRank">Click Rank</div>
+              <el-popover placement="right" :width="210" trigger="hover"
+                content="The Click Rank is a list based on the total number of clicks a novel receives. It showcases the most popular and highly-clicked novels at the moment.">
+                <template #reference>
+                  <el-icon style="margin-left: 10px;">
+                    <Warning />
+                  </el-icon>
+                </template>
+              </el-popover>
+            </div>
+            <div class="rank_items" v-for="(item, index) in click_rank_info.slice(0, 5)" :key="item.title">
+              <div class="rank_image">
+                <img style="height: 80px;" :src="item.picUrl" @click="goBookInfo(item.bookId)" />
               </div>
-              <div v-else class="collected_novel_user">
-                <el-empty :image-size="120" description="You don't have collect books"></el-empty>
+              <div class="rank_rank" :class="{ 'red': index === 0, 'orange': index === 1, 'green': index === 2 }">
+                0{{ index + 1 }}
+              </div>
+              <div class="rank_info">
+                <el-text truncated class="rank_title" @click="goBookInfo(item.bookId)">{{ item.bookName }}</el-text>
+                <br />
+                <el-text truncated style="font-size: 10pt;">{{ item.authorName }}</el-text>
+                <br />
+                <el-text truncated style="font-size: 10pt; width: 250px;"><el-rate v-model="item.score" disabled
+                    show-score text-color="#ff9900" size="small" score-template="{value} points" /></el-text>
               </div>
             </div>
           </div>
-          <h2></h2>
-          <div class="recomm_books_container">
-            <div class="hottest_books">
-              <h2 style=" border-bottom: 1px solid; width: 100%; border-color: rgb(206, 204, 204); padding-bottom: 10px;">
-                Hottest Books
-                <el-popover placement="right" :width="275" trigger="hover"
-                  content="The Hottest Books list features the most popular and sought-after literary gems based on the number of times they have been collected by readers">
-                  <template #reference>
-                    <el-icon style="font-size: 10pt;">
-                      <Warning />
-                    </el-icon>
-                  </template>
-                </el-popover>
-              </h2>
-              <el-carousel height="600px" style="width: 570px;" direction="vertical" type="card" :autoplay="true">
-                <el-carousel-item style="border-radius: 15px;" v-for="item in hottest_books_info.slice(0, 6)"
-                  :key="item.bookName">
-                  <el-row class="carousel_container">
-                    <div class="carousel_left_container">
-                      <span class="carousel_left_title" @click="goBookInfo(item.bookId)">
-                        <b>{{ item.bookName }}</b>
-                      </span>
-                      <span style="font-size: 12pt;">{{ item.authorName }}</span>
-                      <span
-                        style="font-size: 10pt; margin-top: 10px; margin-right: 10px; display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 10;overflow: hidden;">{{
-                          item.bookDesc }}</span>
-                      <el-tag class="tag" style="font-size: 10pt;" :color="getItemColor(item.categoryName)"
-                        effect="dark">{{
-                          item.categoryName
-                        }}</el-tag>
-                      <span style="bottom: 10px;position: absolute;">
-                        {{ item.collectCount }} <el-icon>
-                          <UserFilled />
-                        </el-icon> Collected
-                      </span>
-                    </div>
-                    <div class="carousel_image_container">
-                      <img :src="item.picUrl" class="carousel_image" @click="goBookInfo(item.bookId)">
-                    </div>
-                    <div class="carousel_right_container">
-                      <div class="carousel_right_comments_container">
-                        <div class="carousel_right_comments">
-                          <div class="comment-text">comments</div>
-                        </div>
-                      </div>
-                      <div class="carousel_right_rates_container">
-                        <el-rate v-model="item.score" disabled show-score text-color="#ff9900" size="small"
-                          style="margin-left: -5px;" score-template="{value} points" />
-                      </div>
-                    </div>
-                  </el-row>
-                </el-carousel-item>
-              </el-carousel>
+          <div class="rank_container">
+            <div style="display: flex;">
+              <div class="rank_name" @click="goNewestRank">Newest Rank</div>
+              <el-popover placement="right" :width="215" trigger="hover"
+                content="The Newest Rank is a list that features the latest releases of novels. It highlights the freshest in the NovelHub.">
+                <template #reference>
+                  <el-icon style="margin-left: 10px;">
+                    <Warning />
+                  </el-icon>
+                </template>
+              </el-popover>
             </div>
-            <div class="best_books">
-              <h2 style="border-bottom: 1px solid; width: 100%; border-color: rgb(206, 204, 204);  padding-bottom: 10px;">
-                Best Books
-                <el-popover placement="right" :width="265" trigger="hover"
-                  content="The Best Books list showcases the most highly-rated and acclaimed literary works based on their scores">
-                  <template #reference>
-                    <el-icon style="font-size: 10pt;">
-                      <Warning />
-                    </el-icon>
-                  </template>
-                </el-popover>
-              </h2>
-              <el-carousel height="600px" style="width: 570px;" direction="vertical" type="card" :autoplay="true">
-                <el-carousel-item style="border-radius: 15px;" v-for="item in best_books_info.slice(0, 6)"
-                  :key="item.bookName">
-                  <el-row class="carousel_container">
-                    <div class="carousel_left_container">
-                      <span class="carousel_left_title" @click="goBookInfo(item.bookId)">
-                        <b>{{ item.bookName }}</b>
-                      </span>
-                      <span style="font-size: 12pt;">{{ item.authorName }}</span>
-                      <span
-                        style="font-size: 10pt; margin-top: 10px; margin-right: 10px; display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 10;overflow: hidden;">{{
-                          item.bookDesc }}</span>
-                      <el-tag class="tag" style="font-size: 10pt;" :color="getItemColor(item.categoryName)"
-                        effect="dark">{{
-                          item.categoryName
-                        }}</el-tag>
-                      <span style="bottom: 10px;position: absolute;">
-                        {{ item.collectCount }} <el-icon>
-                          <UserFilled />
-                        </el-icon> Collected
-                      </span>
-                    </div>
-                    <div class="carousel_image_container">
-                      <img :src="item.picUrl" class="carousel_image" @click="goBookInfo(item.bookId)">
-                    </div>
-                    <div class="carousel_right_container">
-                      <div class="carousel_right_comments_container">
-                        <div class="carousel_right_comments">
-                          <div class="comment-text">comments</div>
-                        </div>
-                      </div>
-                      <div class="carousel_right_rates_container">
-                        <el-rate v-model="item.score" disabled show-score text-color="#ff9900" size="small"
-                          style="margin-left: -5px;" score-template="{value} points" />
-                      </div>
-                    </div>
-                  </el-row>
-                </el-carousel-item>
-              </el-carousel>
+            <div class="rank_items" v-for="(item, index) in newest_rank_info.slice(0, 5)" :key="item">
+              <div class="rank_image">
+                <img style="height: 80px;" :src="item.picUrl" @click="goBookInfo(item.bookId)" />
+              </div>
+              <div class="rank_rank" :class="{ 'red': index === 0, 'orange': index === 1, 'green': index === 2 }">
+                0{{ index + 1 }}
+              </div>
+              <div class="rank_info">
+                <el-text truncated class="rank_title" @click="goBookInfo(item.bookId)">{{ item.bookName }}</el-text>
+                <br />
+                <el-text truncated style="font-size: 10pt;">{{ item.authorName }}</el-text>
+                <br />
+                <el-text truncated style="font-size: 10pt; width: 250px;"><el-rate v-model="item.score" disabled
+                    show-score text-color="#ff9900" size="small" score-template="{value} points" /></el-text>
+              </div>
             </div>
           </div>
-          <h2
-            style=" border-bottom: 1px solid; border-color: rgb(223, 223, 223); padding-bottom: 10px; margin-bottom: 22px; margin-top: 30px; width: 100%; text-align: center;">
-            Ranking of Books</h2>
-          <div class="rank_books_container">
-            <div class="rank_container">
-              <div style="display: flex;">
-                <div class="rank_name" @click="goClickRank">Click Rank</div>
-                <el-popover placement="right" :width="210" trigger="hover"
-                  content="The Click Rank is a list based on the total number of clicks a novel receives. It showcases the most popular and highly-clicked novels at the moment.">
-                  <template #reference>
-                    <el-icon style="margin-left: 10px;">
-                      <Warning />
-                    </el-icon>
-                  </template>
-                </el-popover>
-              </div>
-              <div class="rank_items" v-for="(item, index) in click_rank_info.slice(0, 5)" :key="item.title">
-                <div class="rank_image">
-                  <img style="height: 80px;" :src="item.picUrl" @click="goBookInfo(item.bookId)" />
-                </div>
-                <div class="rank_rank" :class="{ 'red': index === 0, 'orange': index === 1, 'green': index === 2 }">
-                  0{{ index + 1 }}
-                </div>
-                <div class="rank_info">
-                  <el-text truncated class="rank_title" @click="goBookInfo(item.bookId)">{{ item.bookName }}</el-text>
-                  <br />
-                  <el-text truncated style="font-size: 10pt;">{{ item.authorName }}</el-text>
-                  <br />
-                  <el-text truncated style="font-size: 10pt; width: 250px;"><el-rate v-model="item.score" disabled
-                      show-score text-color="#ff9900" size="small" score-template="{value} points" /></el-text>
-                </div>
-              </div>
+          <div class="rank_container">
+            <div style="display: flex;">
+              <div class="rank_name" @click="goUpdateRank">Update Rank</div>
+              <el-popover placement="right" :width="240" trigger="hover"
+                content="The Update Rank is a dynamic list that showcases novels with recent updates. It presents novels that have been recently added chapters or undergone significant updates">
+                <template #reference>
+                  <el-icon style="margin-left: 10px;">
+                    <Warning />
+                  </el-icon>
+                </template>
+              </el-popover>
             </div>
-            <div class="rank_container">
-              <div style="display: flex;">
-                <div class="rank_name" @click="goNewestRank">Newest Rank</div>
-                <el-popover placement="right" :width="215" trigger="hover"
-                  content="The Newest Rank is a list that features the latest releases of novels. It highlights the freshest in the NovelHub.">
-                  <template #reference>
-                    <el-icon style="margin-left: 10px;">
-                      <Warning />
-                    </el-icon>
-                  </template>
-                </el-popover>
+            <div class="rank_items" v-for="(item, index) in update_rank_info.slice(0, 5)" :key="item">
+              <div class="rank_image">
+                <img style="height: 80px;" :src="item.picUrl" @click="goBookInfo(item.bookId)" />
               </div>
-              <div class="rank_items" v-for="(item, index) in newest_rank_info.slice(0, 5)" :key="item">
-                <div class="rank_image">
-                  <img style="height: 80px;" :src="item.picUrl" @click="goBookInfo(item.bookId)" />
-                </div>
-                <div class="rank_rank" :class="{ 'red': index === 0, 'orange': index === 1, 'green': index === 2 }">
-                  0{{ index + 1 }}
-                </div>
-                <div class="rank_info">
-                  <el-text truncated class="rank_title" @click="goBookInfo(item.bookId)">{{ item.bookName }}</el-text>
-                  <br />
-                  <el-text truncated style="font-size: 10pt;">{{ item.authorName }}</el-text>
-                  <br />
-                  <el-text truncated style="font-size: 10pt; width: 250px;"><el-rate v-model="item.score" disabled
-                      show-score text-color="#ff9900" size="small" score-template="{value} points" /></el-text>
-                </div>
+              <div class="rank_rank" :class="{ 'red': index === 0, 'orange': index === 1, 'green': index === 2 }">
+                0{{ index + 1 }}
               </div>
-            </div>
-            <div class="rank_container">
-              <div style="display: flex;">
-                <div class="rank_name" @click="goUpdateRank">Update Rank</div>
-                <el-popover placement="right" :width="240" trigger="hover"
-                  content="The Update Rank is a dynamic list that showcases novels with recent updates. It presents novels that have been recently added chapters or undergone significant updates">
-                  <template #reference>
-                    <el-icon style="margin-left: 10px;">
-                      <Warning />
-                    </el-icon>
-                  </template>
-                </el-popover>
-              </div>
-              <div class="rank_items" v-for="(item, index) in update_rank_info.slice(0, 5)" :key="item">
-                <div class="rank_image">
-                  <img style="height: 80px;" :src="item.picUrl" @click="goBookInfo(item.bookId)" />
-                </div>
-                <div class="rank_rank" :class="{ 'red': index === 0, 'orange': index === 1, 'green': index === 2 }">
-                  0{{ index + 1 }}
-                </div>
-                <div class="rank_info">
-                  <el-text truncated class="rank_title" @click="goBookInfo(item.bookId)">{{ item.bookName }}</el-text>
-                  <br />
-                  <el-text truncated style="font-size: 10pt;">{{ item.authorName }}</el-text>
-                  <br />
-                  <el-text truncated style="font-size: 10pt; width: 250px;"><el-rate v-model="item.score" disabled
-                      show-score text-color="#ff9900" size="small" score-template="{value} points" /></el-text>
-                </div>
+              <div class="rank_info">
+                <el-text truncated class="rank_title" @click="goBookInfo(item.bookId)">{{ item.bookName }}</el-text>
+                <br />
+                <el-text truncated style="font-size: 10pt;">{{ item.authorName }}</el-text>
+                <br />
+                <el-text truncated style="font-size: 10pt; width: 250px;"><el-rate v-model="item.score" disabled
+                    show-score text-color="#ff9900" size="small" score-template="{value} points" /></el-text>
               </div>
             </div>
           </div>
         </div>
       </div>
-      <Footer />
-      <!-- Go to top floating buttom -->
-      <el-backtop :bottom="100">
-        <div class="goTopButton">
-          <el-icon>
-            <CaretTop />
-          </el-icon>
-        </div>
-      </el-backtop>
     </div>
+    <!-- Go to top floating buttom -->
+    <el-backtop :bottom="100">
+      <div class="goTopButton">
+        <el-icon>
+          <CaretTop />
+        </el-icon>
+      </div>
+    </el-backtop>
+    <Global_Footer />
   </div>
-  <transition name="fade">
-    <div v-if="isLoginVisible" class="loginSection">
-      <Login class="login" :verImage="this.verImage" :sessionId="this.sessionId" @showLogin="showLogin"
-        @cancel="closeLoginBox" />
-    </div>
-  </transition>
 </template>
 
 <style>
@@ -465,21 +391,6 @@ export default {
   bottom: 30px;
   position: absolute;
   margin-top: 10px;
-}
-
-.fade-enter,
-.fade-leave-to {
-  opacity: 0;
-}
-
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.5s;
-}
-
-.blur {
-  filter: blur(5px);
-  pointer-events: none;
 }
 
 .homeBody {
@@ -502,7 +413,7 @@ export default {
   margin-right: 5px;
 }
 
-.weekly_books .el-carousel__button{
+.weekly_books .el-carousel__button {
   background-color: white;
 }
 
@@ -631,7 +542,7 @@ export default {
   background-color: #f3f3f3;
 }
 
-.recomm_books_container .el-carousel__button{
+.recomm_books_container .el-carousel__button {
   background-color: #676767;
 }
 
