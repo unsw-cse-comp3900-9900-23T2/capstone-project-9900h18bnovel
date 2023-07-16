@@ -132,9 +132,8 @@ export default {
           const data = await response.json();
           console.log(data);
           if (data.code === '00000') {
-            this.isEditing = false;
-            this.userSex = this.newGender;
-            localStorage.setItem('userSex', this.userSex);
+            this.CurrentPhoto = requestData.userPhoto;
+
           } else {
             console.log("User_Profile 169行有问题");
           }
