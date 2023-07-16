@@ -227,7 +227,6 @@ export default {
           });
           if (response.status == 200) {
             const data = await response.json();
-            console.log(data);
             if (data.code === "00000") {
               ElMessage({
                 message: 'Welcome ' + data.data.userName,
@@ -594,9 +593,11 @@ export default {
   border-radius: 50px;
   box-shadow: 0 10px 10px rgba(0, 0, 0, 0.4);
   padding: 20px;
+  background-color: white;
   background: url(../AuthBG.jpg);
   background-size: cover;
   background-position: 40% 60%;
+  margin: 0 auto;
 }
 
 

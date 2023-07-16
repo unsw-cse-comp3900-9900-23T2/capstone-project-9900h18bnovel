@@ -7,9 +7,13 @@ export default createStore({
       userName: null,
       uid: null,
       currentURL: null,
+<<<<<<< HEAD
       email: null,
       photo: null,
       sex: null,
+=======
+      searchInput: null,
+>>>>>>> 070be29e547c644de2e2872e2497b731ef100983
     };
   },
   mutations: {
@@ -55,6 +59,12 @@ export default createStore({
     clearCurrentURL(state) {
       state.currentURL = null;
     },
+    setSearchInput(state, input) {
+      state.searchInput = input;
+    },
+    clearSearchInput(state) {
+      state.searchInput = null;
+    },
   },
   actions: {
     login({ commit }, token) {
@@ -99,6 +109,12 @@ export default createStore({
     clearCurrentURL({ commit }) {
       commit('clearCurrentURL');
     },
+    setSearchInput({ commit }, input) {
+      commit('setSearchInput', input);
+    },
+    clearSearchInput({ commit }) {
+      commit('clearSearchInput');
+    }
   },
   getters: {
     isAuthenticated: (state) => {
@@ -107,6 +123,7 @@ export default createStore({
     getCurrentURL: (state) => {
       return state.currentURL;
     },
+<<<<<<< HEAD
     GetSex: (state) =>{
       return state.sex;
     },
@@ -121,6 +138,10 @@ export default createStore({
     },
     GetUID: (state) =>{
       return state.uid;
+=======
+    getSearchInput: (state) => {
+      return state.searchInput;
+>>>>>>> 070be29e547c644de2e2872e2497b731ef100983
     },
   },
 });

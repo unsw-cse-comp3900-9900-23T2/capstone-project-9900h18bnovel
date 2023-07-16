@@ -3,6 +3,7 @@ import {
   CaretTop,
   UserFilled,
   CaretBottom,
+  Warning,
 } from '@element-plus/icons-vue';
 import { ElMessage } from 'element-plus';
 const svg = `
@@ -47,10 +48,16 @@ export default {
       showNewestUpdatePage: false,
       count: 10,
       loadMore: false,
-
+      isClickRank: false,
+      isNewestRank: false,
+      isUpdateRank: false,
     }
   },
   mounted() {
+    const path = this.$route.path;
+    path === "/newestrank" ? this.isNewestRank = true : this.isNewestRank = false;
+    path === "/updaterank" ? this.isUpdateRank = true : this.isUpdateRank = false;
+    path === "/clickrank" ? this.isClickRank = true : this.isClickRank = false;
     this.getNewestUpdateBooks();
     setTimeout(() => {
       this.loading = false;
@@ -58,9 +65,13 @@ export default {
     }, 500);
   },
   methods: {
+    handleSearch() {
+      this.$router.push('/allnovels');
+    },
     async getNewestUpdateBooks() {
+      const whichrank = this.isNewestRank ? "newest_rank" : this.isClickRank ? "visit_rank" : this.isUpdateRank ? "update_rank" : null;
       try {
-        const response = await fetch("http://localhost:8888/api/front/book/update_rank ", {
+        const response = await fetch("http://localhost:8888/api/front/book/" + whichrank, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json'
@@ -69,9 +80,8 @@ export default {
         if (response.status == 200) {
           const data = await response.json();
           this.newestUpdateBooks = data.data;
-          console.log(this.newestUpdateBooks.length)
         } else {
-          console.log("Test");
+          console.log(response.status);
         }
       } catch (error) {
         console.error(error);
@@ -101,7 +111,7 @@ export default {
           this.verImage = "data:image/png;base64," + data.data.img;
           this.sessionId = data.data.sessionId;
         } else {
-          console.log("Test");
+          console.log(response.status);
         }
       } catch (error) {
         console.error(error);
@@ -122,12 +132,60 @@ export default {
       this.$store.dispatch('clearusername');
       this.$store.dispatch('clearuid');
     },
-
+    getItemColor(categoryName) {
+      switch (categoryName) {
+        case 'action':
+          return '#FF6F61';
+        case 'romance':
+          return '#FFC0CB';
+        case 'fantasy':
+          return '#91D18B';
+        case 'mystery':
+          return '#6B705C';
+        case 'horror':
+          return '#585481';
+        case 'thriller':
+          return '#333A56';
+        case 'drama':
+          return '#FFC09F';
+        default:
+          return null;
+      }
+    },
+    goBookInfo(bookId) {
+      this.$router.push(`/bookInfo/${bookId}`);
+    },
   },
   computed: {
     filteredBooks() {
       return this.newestUpdateBooks.slice(0, this.count);
     },
+  },
+  watch: {
+    '$route'(to) {
+      if (to.path === "/newestrank") {
+        this.isNewestRank = true;
+        this.isUpdateRank = false;
+        this.isClickRank = false;
+        this.getNewestUpdateBooks();
+      } else if (to.path === "/updaterank") {
+        this.isNewestRank = false;
+        this.isUpdateRank = true;
+        this.isClickRank = false;
+        this.getNewestUpdateBooks();
+      } else if (to.path === "/clickrank") {
+        this.isNewestRank = false;
+        this.isUpdateRank = false;
+        this.isClickRank = true;
+        this.getNewestUpdateBooks();
+      }
+      this.loading = true;
+      this.showNewestUpdatePage = false;
+      setTimeout(() => {
+        this.loading = false;
+        this.showNewestUpdatePage = true;
+      }, 500);
+    }
   },
   components: {
     Global_Footer,
@@ -139,7 +197,7 @@ export default {
 
 <template>
   <div :class="{ 'blur': isLoginVisible }">
-    <div v-infinite-scroll="load" class="infinite-body">
+    <div v-infinite-scroll="load">
       <el-backtop :bottom="100">
         <div class="goTopButton">
           <el-icon>
@@ -147,18 +205,28 @@ export default {
           </el-icon>
         </div>
       </el-backtop>
-      <Global_Header @logout="logout" @showLogin="showLogin" @closeLoginBox="closeLoginBox" />
+      <Global_Header @handleSearch="handleSearch" @logout="logout" @showLogin="showLogin"
+        @closeLoginBox="closeLoginBox" />
       <Global_Nav />
       <div v-loading.lock="loading" :element-loading-spinner="svg" element-loading-svg-view-box="0, 5, 30, 40"
         element-loading-background="rgba(255, 255, 255, 255)"
         style="top:50%; left: 50%; transform: translate(-50%,-50%); position: absolute;"></div>
       <div v-if="showNewestUpdatePage">
-        <div class="new_update_body">
-          <h1
-            style="border-bottom: 1px solid; border-color: rgb(223, 223, 223); padding-bottom: 10px; margin-bottom: 22px; margin-top: 30px; width: 60%; text-align: center;">
-            Newest Update</h1>
+        <div style="display: flex; flex-direction: column;  align-items: center;">
           <ul class="infinite-list">
-            <li v-for="(item, index) in filteredBooks" :key="item.id" class="infinite-list-item">
+            <h1
+              style="border-bottom: 1px solid; border-color: rgb(223, 223, 223); padding-bottom: 10px; margin-bottom: 22px; width: 100%; text-align: center;">
+              {{ isUpdateRank ? "Update Rank" : isClickRank ? "Click Rank" : isNewestRank ? "Newest Rank" : null }}
+              <el-popover placement="right" :width="240" trigger="hover"
+                :content="isUpdateRank ? 'The Update Rank is a dynamic list that showcases novels with recent updates. It presents novels that have been recently added chapters or undergone significant updates' : isNewestRank ? 'The Newest Rank is a list that features the latest releases of novels. It highlights the freshest in the NovelHub.' : isClickRank ? 'The Click Rank is a list based on the total number of clicks a novel receives. It showcases the most popular and highly-clicked novels at the moment.' : null">
+                <template #reference>
+                  <el-icon style="font-size: 10pt;">
+                    <Warning />
+                  </el-icon>
+                </template>
+              </el-popover>
+            </h1>
+            <li v-for="(item, index) in filteredBooks" :key="item.id" class="infinite-list-item" @click="goBookInfo(item.id)">
               <div style="font-size: 14pt; width:100px; text-align: center;">
                 {{ index < 9 ? '0' + (index + 1) : index + 1 }} </div>
                   <img :src="item.picUrl"
@@ -167,11 +235,15 @@ export default {
                     <div style="font-size: 18pt; overflow: hidden; text-overflow: ellipsis;">{{ item.bookName }}</div>
                     <div style="font-size: 12pt;">{{ item.authorName }}</div>
                     <div
-                      style="font-size: 10pt; margin-top: 10px; display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 6; overflow: hidden;">
+                      style="font-size: 10pt; margin-top: 5px; display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 5; overflow: hidden;">
                       {{ item.bookDesc }}</div>
+                    <el-tag style="bottom: 12px; position: absolute; font-size: 10pt;"
+                      :color="getItemColor(item.categoryName)" effect="dark">{{
+                        item.categoryName
+                      }}</el-tag>
                   </div>
                   <div class="update_book_reviews_container">
-                    <div>{{ item.lastChapterUpdateTime }}</div>
+                    <div>Last update:{{ item.lastChapterUpdateTime }}</div>
                     <div>{{ item.collectCount }} <el-icon>
                         <UserFilled />
                       </el-icon> Collected</div>
@@ -182,37 +254,36 @@ export default {
                       score-template="{value} points" />
                   </div>
             </li>
-          </ul>
-          <div style="height: 157px; width: 60%; display:flex; justify-content: center;" v-loading="loadMore"
-            :element-loading-spinner="svg" element-loading-svg-view-box="0, 5, 30, 40"
-            element-loading-background="rgba(255, 255, 255, 255)">
-            <div v-if="count >= newestUpdateBooks.length + 5" @click="scrollToTop"
-              style="width: 100%; text-align: center;">
-              <h3>
+            <div style="height: 100px; margin-top: 20px; width: 100%; display:flex; justify-content: center;"
+              v-loading="loadMore" :element-loading-spinner="svg" element-loading-svg-view-box="0, 5, 30, 40"
+              element-loading-background="rgba(255, 255, 255, 255)">
+              <div v-if="count >= newestUpdateBooks.length + 5" @click="scrollToTop"
+                style="text-align: center; width: 100%;">
+                <h3>
+                  <el-icon>
+                    <CaretTop />
+                  </el-icon>No more book behind<el-icon>
+                    <CaretTop />
+                  </el-icon>
+                </h3>
+                <el-divider />
+              </div>
+              <h3 v-else>
                 <el-icon>
-                  <CaretTop />
-                </el-icon>No more book behind<el-icon>
-                  <CaretTop />
+                  <CaretBottom />
+                </el-icon>
+                Scroll down to see more
+                <el-icon>
+                  <CaretBottom />
                 </el-icon>
               </h3>
-              <el-divider />
             </div>
-            <h3 v-else>
-              <el-icon>
-                <CaretBottom />
-              </el-icon>
-              Scroll down to see more
-              <el-icon>
-                <CaretBottom />
-              </el-icon>
-            </h3>
-          </div>
+          </ul>
         </div>
         <Global_Footer />
       </div>
     </div>
   </div>
-
   <transition name="fade">
     <div v-if="isLoginVisible" class="loginSection">
       <Login class="login" :verImage="this.verImage" :sessionId="this.sessionId" @showLogin="showLogin"
@@ -222,7 +293,7 @@ export default {
 </template>
 
 
-<style >
+<style>
 .fade-enter,
 .fade-leave-to {
   opacity: 0;
@@ -233,43 +304,26 @@ export default {
   transition: opacity 0.5s;
 }
 
-body {
-  margin: 0;
-  font-family: Arial, Helvetica, sans-serif;
-  font-size: 14px;
-  overflow: hidden;
-}
-
 .blur {
   filter: blur(5px);
   pointer-events: none;
 }
 
-.infinite-body {
-  max-height: 969px;
-  overflow: auto;
-}
-
-.new_update_body {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
 .infinite-list {
-  width: 60%;
-  margin-bottom: 10px;
-  overflow: auto
+  width: 1152px;
+  min-width: 1152px;
 }
 
 .infinite-list .infinite-list-item {
   display: flex;
   align-items: center;
-  padding: 10px;
+  justify-content: center;
+  padding-top: 10px;
+  padding-bottom: 10px;
   height: 157px;
   border: 1px solid;
   border-color: rgb(223, 223, 223);
-  margin: 10px;
+  margin-bottom: 10px;
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06);
   transform: translateY(0);
@@ -278,6 +332,7 @@ body {
 
 .infinite-list .infinite-list-item:hover {
   transform: translateY(-5px);
+  cursor: pointer;
 }
 
 .infinite-list .infinite-list-item+.list-item {

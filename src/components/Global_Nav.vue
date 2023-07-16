@@ -6,57 +6,64 @@ export default {
   },
   methods: {
     goAllNov() {
+      this.$emit('clearFilters');
       const currentURL = this.$store.getters.getCurrentURL;
       this.$router.push(`/allnovels/${currentURL}`);
     },
-    goNewUpdate() {
-      this.$router.push('/newupdate');
-    }
+    goNewestRank(){
+      this.$router.push('/newestrank');
+    },
+    goClickRank(){
+      this.$router.push('/clickrank');
+    },
+    goUpdateRank(){
+      this.$router.push('/updaterank');
+    },
   }
 }
 </script>
 <template>
-  <div class="nav_container">
+  <div class="nav_container" style="min-width: 1152px;">
     <el-menu class="el-menu-demo" mode="horizontal" background-color="#545c64" text-color="#fff"
-      active-text-color="#ffd04b">
-      <el-menu-item index="1" @click="goAllNov">All Novels</el-menu-item>
-      <el-sub-menu index="2">
+      active-text-color="#ffd04b" >
+      <el-menu-item index="1" @click="goAllNov">Browse Novels</el-menu-item>
+      <!-- <el-sub-menu index="2">
         <template #title>Browse</template>
         <el-sub-menu index="2-1">
-          <template #title>Novel Status</template>
-          <el-menu-item index="2-1-1">All</el-menu-item>
-          <el-menu-item index="2-1-2">Updating</el-menu-item>
-          <el-menu-item index="2-1-3">Finished</el-menu-item>
+          <template #title>Genres</template>
+          <el-menu-item index="2-1-1">Action</el-menu-item>
+          <el-menu-item index="2-1-2">Romance</el-menu-item>
+          <el-menu-item index="2-1-3">Fantasy</el-menu-item>
+          <el-menu-item index="2-1-4">Mystery</el-menu-item>
+          <el-menu-item index="2-1-5">Horror</el-menu-item>
+          <el-menu-item index="2-1-6">Thriller</el-menu-item>
+          <el-menu-item index="2-1-7">Drama</el-menu-item>
         </el-sub-menu>
-        <el-sub-menu index="2-2">
-          <template #title>Word Count</template>
-          <el-menu-item index="2-2-1">All</el-menu-item>
-          <el-menu-item index="2-2-2">&lt; 30000</el-menu-item>
-          <el-menu-item index="2-2-3">30000-50000</el-menu-item>
-          <el-menu-item index="2-2-4">&gt; 50000</el-menu-item>
+        <el-sub-menu index="2-1">
+          <template #title>Book Status</template>
+          <el-menu-item index="2-1-1">Ongoing</el-menu-item>
+          <el-menu-item index="2-1-2">Completed</el-menu-item>
         </el-sub-menu>
         <el-sub-menu index="2-3">
-          <template #title>Update in</template>
-          <el-menu-item index="2-3-1">All</el-menu-item>
-          <el-menu-item index="2-3-2">3 Days</el-menu-item>
-          <el-menu-item index="2-3-3">A Week</el-menu-item>
-          <el-menu-item index="2-3-4">A Month</el-menu-item>
+          <template #title>Update Time (&le;)</template>
+          <el-menu-item index="2-3-1">A week</el-menu-item>
+          <el-menu-item index="2-3-2">A month</el-menu-item>
+          <el-menu-item index="2-3-3">A year</el-menu-item>
         </el-sub-menu>
         <el-sub-menu index="2-4">
-          <template #title>Filter 4</template>
-          <el-menu-item index="2-4-1">1</el-menu-item>
-          <el-menu-item index="2-4-2">2</el-menu-item>
-          <el-menu-item index="2-4-3">3</el-menu-item>
+          <template #title>Book direction</template>
+          <el-menu-item index="2-4-1">Male Lead</el-menu-item>
+          <el-menu-item index="2-4-2">Female Lead</el-menu-item>
         </el-sub-menu>
       </el-sub-menu>
+    -->
       <el-sub-menu index="3">
         <template #title>Ranking</template>
-        <el-menu-item index="3-1">Click Rank</el-menu-item>
-        <el-menu-item index="3-2">Newest Rank</el-menu-item>
-        <el-menu-item index="3-3">Update Rank</el-menu-item>
+        <el-menu-item index="3-1" @click="goClickRank">Click Rank</el-menu-item>
+        <el-menu-item index="3-2" @click="goNewestRank">Newest Rank</el-menu-item>
+        <el-menu-item index="3-3" @click="goUpdateRank">Update Rank</el-menu-item>
       </el-sub-menu>
       <el-menu-item index="4">My Creation</el-menu-item>
-      <el-menu-item index="5" @click="goNewUpdate">Newest Update</el-menu-item>
     </el-menu>
   </div>
 </template>

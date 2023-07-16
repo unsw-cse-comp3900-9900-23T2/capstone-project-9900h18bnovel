@@ -1,13 +1,27 @@
+<!-- 1.回车搜索
+2.搜索清除键
+3.无限滚动条问题
+4.可选择日期
+5.homepage可点击rank进入排行榜页面
+6.homepage, rankspages加入tag
+7.tags加入可分辨颜色-->
 <script setup>
 import {
   Search,
-  User
+  User,
+  CircleCloseFilled,
 } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 </script >
 <script>
 import Login from './Auth_Page.vue';
 export default {
+  props: {
+    keyword: {
+      type: String,
+      default: ''
+    },
+  },
   emits: ['showLogin', 'closeLoginBox', 'logout'],
   data() {
     return {
@@ -46,8 +60,8 @@ export default {
       this.isSearchActive = true;
     },
     handleSearch() {
-      // Waiting for API
-      console.log(this.searchInput);
+      this.$store.dispatch("setSearchInput", this.searchInput);
+      this.$emit("handleSearch", this.searchInput);
     },
     searchGlobalClick() {
       if (this.isSearchActive == true) {
@@ -66,6 +80,7 @@ export default {
     logout() {
       this.$emit('logout');
     },
+
     async ShowUserProfile(){
       this.$router.push('/userprofile');
       const requestData = {
@@ -115,8 +130,12 @@ export default {
         }
       }
     },
+    clearSearch() {
+      this.searchInput = null;
+      this.$emit("clearSearch");
+    }
+  }
 
-}
 </script>
 <template>
   <div class="header_container">
@@ -130,9 +149,13 @@ export default {
           round>Search</el-button>
       </div>
       <div v-else @click.stop>
-        <el-input class="searchText" v-model="searchInput" placeholder="Please Enter Keyword">
+        <el-input class="searchText" v-model="searchInput"
+          :placeholder="keyword ? keyword : 'Please Enter Keyword'" @keyup.enter="handleSearch">
           <template #prepend>
             <el-button @click.stop="handleSearch" :icon="Search" />
+          </template>
+          <template #append>
+            <el-button :icon="CircleCloseFilled" @click="clearSearch" />
           </template>
         </el-input>
       </div>
@@ -184,16 +207,13 @@ export default {
 }
 
 .logo_container {
-  height: 200px;
-  width: 200px;
-  margin-top: -20px;
-  margin-left: -20px;
+  height: 100px;
+  margin-left: 20px;
+  object-fit: contain;
 }
 
 .logo {
   height: 100%;
-  width: 100%;
-  object-fit: contain;
 }
 
 .logo:hover {
@@ -202,13 +222,17 @@ export default {
 
 .search_container {
   display: block;
+  text-align: center;
+  width: 500px;
 }
 
 .searchButton {
-  width: 20vh;
+  width: 30vh;
+
 }
 
 .login_button {
+  margin-right: 20px;
   width: 100px;
 }
 
@@ -226,9 +250,8 @@ export default {
   justify-content: space-between;
   align-items: center;
   background-color: black;
-  padding: 20px;
-  padding-right: 30px;
-  height: 80px;
+  height: 100px;
+  min-width: 1152px;
 }
 
 @media (max-width: 500px) {
