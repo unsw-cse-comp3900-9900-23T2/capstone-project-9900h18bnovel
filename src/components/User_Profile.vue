@@ -153,103 +153,112 @@ export default {
   <div v-loading.lock="loading" :element-loading-spinner="svg" element-loading-svg-view-box="0, 5, 30, 40"
     element-loading-background="rgba(255, 255, 255, 255)"
     style="top:50%; left: 50%; transform: translate(-50%,-50%); position: absolute;"></div>
-  <div class="ProfileContainer">
-    <h1
-      style="border-bottom: 1px solid; border-color: rgb(223, 223, 223); padding-bottom: 10px; margin-bottom: 22px; margin-top: 30px; width: 60%; text-align: center;">
-      User Profile</h1>
-    <div class="BasicInfoContainer">
-      <div class="AvatarContainer">
-        <span class="el-avatar el-avatar--circle"
-          style="height: 200px; width: 200px; line-height: 200px; margin: 2em;"><img :src="CurrentPhoto"
-            style="object-fit: cover;"></span>
-        <input type="file" ref="fileInput" @change="CollectNewPhoto" style="display: none" />
-        <el-button class="UploadPhotoButton" circle @click="openPhotoInput">
-          <el-icon color="gray">
-            <Upload />
-          </el-icon>
-        </el-button>
-      </div>
+  <div class="ProfileBody">
+    <div class="ProfileContainer">
+      <h1
+        style="border-bottom: 1px solid; border-color: rgb(223, 223, 223); padding-bottom: 10px; margin-bottom: 22px; margin-top: 30px; text-align: center;">
+        User Profile</h1>
+      <div class="BasicInfoContainer">
+        <div class="AvatarContainer">
+          <span class="el-avatar el-avatar--circle"
+            style="height: 200px; width: 200px; line-height: 200px; margin: 2em;"><img :src="CurrentPhoto"
+              style="object-fit: cover;"></span>
+          <input type="file" ref="fileInput" @change="CollectNewPhoto" style="display: none" />
+          <el-button class="UploadPhotoButton" circle @click="openPhotoInput">
+            <el-icon color="gray">
+              <Upload />
+            </el-icon>
+          </el-button>
+        </div>
 
-      <div class="BasicInfo">
-        <h3>UserID: {{ uid }} </h3>
-        <div class="UserNameContainer">
-          <h3>Username: {{ userName }} </h3>
-          <el-button class="UpdateNameButton" @click="UpdateName" circle>
-            <el-icon color="gray">
-              <edit />
-            </el-icon>
-          </el-button>
-        </div>
-        <div class="EmailContainer">
-          <h3>Email: {{ email }}</h3>
-          <el-button class="UpdateGenderButton" @click="UpdateGender" circle>
-            <el-icon color="gray">
-              <edit />
-            </el-icon>
-          </el-button>
-        </div>
-        <div class="GenderContainer">
-          <div class="gender-row" v-if="!isEditing">
-            <h3>Gender:</h3>
-            <div class="gender-info">
-              <h3>{{ userSex }}</h3>
-              <el-button class="UpdateGenderButton" @click="StartEditGender" circle>
-                <el-icon color="gray">
-                  <edit />
-                </el-icon>
-              </el-button>
-            </div>
+        <div class="BasicInfo">
+          <h3>UserID: {{ uid }} </h3>
+          <div class="UserNameContainer">
+            <h3>Username: {{ userName }} </h3>
+            <el-button class="UpdateNameButton" @click="UpdateName" circle>
+              <el-icon color="gray">
+                <edit />
+              </el-icon>
+            </el-button>
           </div>
-          <div class="gender-row" v-else>
-            <h3>Gender:</h3>
-            <div class="input-container">
-              <input type="text" v-model="newGender" placeholder="Male / Female" />
-              <el-button class="SubmitGender" @click="UpdateGender" circle>
-                <el-icon color="lightgreen">
-                  <Check />
-                </el-icon>
-              </el-button>
+          <div class="EmailContainer">
+            <h3>Email: {{ email }}</h3>
+            <el-button class="UpdateGenderButton" @click="UpdateGender" circle>
+              <el-icon color="gray">
+                <edit />
+              </el-icon>
+            </el-button>
+          </div>
+          <div class="GenderContainer">
+            <div class="gender-row" v-if="!isEditing">
+              <h3>Gender:</h3>
+              <div class="gender-info">
+                <h3>{{ userSex }}</h3>
+                <el-button class="UpdateGenderButton" @click="StartEditGender" circle>
+                  <el-icon color="gray">
+                    <edit />
+                  </el-icon>
+                </el-button>
+              </div>
+            </div>
+            <div class="gender-row" v-else>
+              <h3>Gender:</h3>
+              <div class="input-container">
+                <input type="text" v-model="newGender" placeholder="Male / Female" />
+                <el-button class="SubmitGender" @click="UpdateGender" circle>
+                  <el-icon color="lightgreen">
+                    <Check />
+                  </el-icon>
+                </el-button>
+              </div>
             </div>
           </div>
         </div>
       </div>
+      <el-divider />
     </div>
-
-
-  </div>
-  <div class="OverviewContainer">
-    <h1
-      style="border-bottom: 1px solid; border-color: rgb(223, 223, 223); padding-bottom: 10px; margin-bottom: 22px; margin-top: 30px; width: 60%; text-align: center;">
-      Account Overview</h1>
-    <div class="AccountInfo">
-      <div class="IsVIPCont">
-        <h3>VIP Status:</h3>
-        <el-icon :size="20" color="gray" style="margin: auto; ">
-          <shopping-cart />
-        </el-icon>
-      </div>
-      <div class="VIPLevelCont">
-        <h3>VIP Level:</h3>
-        <el-icon :size="20" color="gray" style="margin: auto; ">
-          <GoldMedal />
-        </el-icon>
-      </div>
-      <div class="BalanceCont">
-        <h3>Balance:</h3>
-        <el-icon :size="20" color="gray" style="margin: auto; ">
-          <coin />
-        </el-icon>
-      </div>
-      <div class="CreateTimeCont">
-        <h3>Time of Account Creating:</h3>
+    <div class="OverviewContainer">
+      <h1 style="text-align: center;">
+        Account Overview</h1>
+      <el-divider />
+      <div class="AccountInfo">
+        <div class="IsVIPCont">
+          <h3>VIP Status:</h3>
+          <el-icon :size="20" color="gray" style="margin: auto; ">
+            <shopping-cart />
+          </el-icon>
+        </div>
+        <div class="VIPLevelCont">
+          <h3>VIP Level:</h3>
+          <el-icon :size="20" color="gray" style="margin: auto; ">
+            <GoldMedal />
+          </el-icon>
+        </div>
+        <div class="BalanceCont">
+          <h3>Balance:</h3>
+          <el-icon :size="20" color="gray" style="margin: auto; ">
+            <coin />
+          </el-icon>
+        </div>
+        <div class="CreateTimeCont">
+          <h3>Time of Account Creating:</h3>
+        </div>
       </div>
     </div>
   </div>
   <Global_Footer />
 </template>
 
-<style scoped></style>
 <style>
+.ProfileBody {
+  width: 1152px;
+  min-width: 1152px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: auto;
+}
+
 .IsVIPCont,
 .VIPLevelCont,
 .BalanceCont {
@@ -282,8 +291,7 @@ export default {
 .OverviewContainer {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  width: 100%;
 }
 
 .AccountInfo {
@@ -295,12 +303,9 @@ export default {
 
 .BasicInfoContainer {
   display: flex;
-  border-bottom: 1px solid;
-  border-color: rgb(223, 223, 223);
   padding-bottom: 10px;
   margin-bottom: 22px;
   margin-top: 30px;
-  width: 60%;
   text-align: center;
   flex-direction: row;
 }
