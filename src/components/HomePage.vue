@@ -20,7 +20,7 @@ import Header from './Global_Header.vue';
 import Nav from './Global_Nav.vue';
 import Footer from './Global_Footer.vue';
 import Login from './Auth_Page.vue';
-// import Profile from './User_Profile.vue';
+import Profile from './User_Profile.vue';
 export default {
   emits: ['showLogin', 'closeLoginBox', 'logout'],
   data() {
@@ -67,13 +67,14 @@ export default {
       sessionId: '',
       loading: true,
       showHomePage: false,
+      showProfile: false,
     }
   },
   components: {
     Header,
     Nav,
     Footer,
-    // Profile,
+    Profile,
   },
   mounted() {
     this.getHomeBooks();
@@ -424,6 +425,9 @@ export default {
             </div>
           </div>
         </div>
+      </div>
+      <div v-if = "showProfile">
+        <Profile />
       </div>
       <!-- Go to top floating buttom -->
       <el-backtop :bottom="100">

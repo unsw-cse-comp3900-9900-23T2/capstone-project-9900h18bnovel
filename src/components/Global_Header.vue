@@ -3,7 +3,7 @@ import {
   Search,
   User
 } from '@element-plus/icons-vue'
-
+import { ElMessage } from 'element-plus'
 </script >
 <script>
 import Login from './Auth_Page.vue';
@@ -16,8 +16,16 @@ export default {
       login_button: 'Sign in',
       isSearchActive: false,
       searchInput: '',
-      username: '',
       isLoginVisible: false,
+      // ------------
+      uid : localStorage.getItem('uid') || '',
+      email: localStorage.getItem('email') || '',
+      userName: localStorage.getItem('username') || '',
+      userPhoto : '',
+      userSex : '',
+      gender : '',
+      // -------------
+      DefaultPhoto: 'https://img-qn.51miz.com/Element/00/88/60/42/ea5b40df_E886042_1992a532.png!/quality/90/unsharp/true/compress/true/format/png/fw/300',
     }
   },
   components: {
@@ -57,8 +65,57 @@ export default {
     },
     logout() {
       this.$emit('logout');
-    }
-  }
+    },
+    async ShowUserProfile(){
+      this.$router.push('/userprofile');
+      const requestData = {
+        userId: this.uid
+      }
+      console.log(requestData);
+      try {
+        const response = await fetch("http://localhost:8888/api/front/user/get_userInfo", {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(requestData)
+        });
+        if (response.status == 200) {
+          const data = await response.json();
+          console.log(data);
+          if (data.code === "00000") {
+            if (data.data.userPhoto){
+              const userPh = localStorage.setItem('userPhoto',data.userPhoto);
+              this.userPhoto = userPh;
+              this.$store.dispatch('photo', data.data.userPhoto);
+            } else{
+              this.userPhoto = this.DefaultPhoto;
+            }
+            if (data.data.userSex){
+              localStorage.setItem('userSex',data.userSex);
+              const userS = data.userSex;
+              this.userSex = userS;
+              this.$store.dispatch('sex', data.data.userSex);
+              console.log(userS);
+              if (userS === '0'){//这里目前还不能确定是'0'还是0，先这样吧
+                this.gender = 'Male';
+              } else {
+                this.gender = 'Female';
+              }
+            } else{
+              this.userSex = '';
+            }
+
+          }
+        } else {
+          console.log("Global_Header.vue 的78行附近有问题");
+        }
+      } catch(error){
+          ElMessage.error(error);
+        }
+      }
+    },
+
 }
 </script>
 <template>
@@ -102,10 +159,10 @@ export default {
         </el-icon>{{ login_button }}</el-button>
     </div>
     <div v-else style="color: white; display: flex; align-items: center; justify-content: space-between; width: 200px;">
-      <div style="display: flex; flex-direction: column; align-items: center;">
+      <div style="display: flex; flex-direction: column; align-items: center;" @click = "ShowUserProfile()">
         <el-avatar :size="70"
-          :src="img ? img : 'https://img-qn.51miz.com/Element/00/88/60/42/ea5b40df_E886042_1992a532.png!/quality/90/unsharp/true/compress/true/format/png/fw/300'" />
-        <div>{{ this.$store.state.userName ? this.$store.state.userName : username }}</div>
+          :src="img ? img : this.DefaultPhoto" />
+        <div>{{ this.$store.state.userName ? this.$store.state.userName : userName }}</div>
       </div>
       <el-button class="logout_button" type="primary" @click="logout"><el-icon>
           <User />

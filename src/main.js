@@ -4,7 +4,7 @@ import App from './App.vue';
 import HomePage from './components/HomePage.vue';
 import All_Novels from './components/All_Novels.vue';
 import new_update from './components/new_update.vue';
-import Profile from './components/User_Profile.vue'
+import Profile from './components/User_Profile.vue';
 import store from './store';
 import ElementPlus from 'element-plus';
 import 'element-plus/theme-chalk/index.css';
@@ -30,7 +30,7 @@ const routes = [
     },
   },
   { path: '/newupdate', component: new_update },
-  { path: '/Profile', component: Profile},
+  { path: '/userprofile', component: Profile},
 ];
 
 const router = createRouter({

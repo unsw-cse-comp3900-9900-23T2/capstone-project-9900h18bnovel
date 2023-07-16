@@ -1,29 +1,330 @@
 <script setup>
+import {
+  CaretTop,
+  Edit,
+  ShoppingCart,
+  GoldMedal,
+  Coin,
+  Upload,
+    Check
+} from '@element-plus/icons-vue';
+import { ElIcon } from 'element-plus'
+const svg = `
+<path class="path" d="
+          M 10 40
+          L 10 15
+          L 30 40
+          L 30 15
+import { Linter } from 'eslint';
+        " style="stroke-width: 5px; fill: rgba(0, 0, 0, 0); animation: none;"/>
+      `
 
 </script>
-<script>
-  import Header from './Global_Header.vue';
-  import Nav from './Global_Nav.vue';
-  import Footer from './Global_Footer.vue';
-  import Login from './Auth_Page.vue';
-  export default {
-    data(){},
-    components: {
-      Header,
-      Nav,
-      Footer
-    },
 
+<script >
+  import Global_Header from './Global_Header.vue';
+  import Global_Footer from './Global_Footer.vue';
+  import Global_Nav from './Global_Nav.vue';
+  import {ElMessage} from "element-plus";
+  // import Login from './Auth_Page.vue';
+  export default {
+    emits: ['showLogin', 'closeLoginBox', 'logout'],
+    data() {
+      return {
+        isLoginVisible: false,
+        userName: localStorage.getItem('username') || '',
+        uid: localStorage.getItem('uid') || '',
+        email: localStorage.getItem('email') || '',
+        userPhoto : localStorage.getItem('userPhoto') || '',
+        userSex : localStorage.getItem('userSex') ||'',
+        VIPLevel: 0,
+        gender : '',
+        isEditing: false,
+        newGender: '',
+        DefaultPhoto: 'https://img-qn.51miz.com/Element/00/88/60/42/ea5b40df_E886042_1992a532.png!/quality/90/unsharp/true/compress/true/format/png/fw/300',
+      }
+    },
+    components:{
+      Global_Footer,
+      Global_Header,
+      Global_Nav,
+    },
+    methods: {
+      async showLogin() {
+        this.isLoginVisible = true;
+        try {
+          const response = await fetch("http://localhost:8888/api/front/user/img_verify_code", {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+          });
+          if (response.status == 200) {
+            const data = await response.json();
+            this.verImage = "data:image/png;base64," + data.data.img;
+            this.sessionId = data.data.sessionId;
+          } else {
+            console.log("Test");
+          }
+        } catch (error) {
+          console.error(error);
+        }
+      },
+      closeLoginBox() {
+        this.isLoginVisible = false;
+      },
+      async UpdateGender(){
+        if (this.newGender.toLowerCase() === 'male'){
+          this.userSex = 0;
+        } else if(this.newGender.toLowerCase() === 'female'){
+          this.userSex = 1;
+        } else{
+          ElMessage.error('Please choose a provided gender!');
+          this.userSex = '';
+          this.isEditing = false;
+          return;
+        }
+        if (!this.userPhoto || this.userPhoto === 'undefined'){
+          this.userPhoto = this.DefaultPhoto;
+        }
+        const requestData = {
+          userId : parseInt(this.uid),
+          username : this.userName,
+          userPhoto : this.userPhoto,
+          userSex : parseInt(this.userSex)
+        }
+        console.log(requestData);
+        try {
+          const response = await fetch("http://localhost:8888/api/front/user/modify_userInfo", {
+            method: 'PUT',
+            headers:{
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(requestData)
+          });
+          if (response.status === 200) {
+            const data = await response.json();
+            console.log(data);
+            this.isEditing = false;
+            // 先这样，还没试过，但肯定有问题
+          }
+        } catch (error){
+          console.error(error);
+        }
+      },
+      logout() {
+        ElMessage({
+          message: "Log out successful",
+          type: 'success',
+        });
+        localStorage.removeItem('userName');
+        localStorage.removeItem('token');
+        localStorage.removeItem('uid');
+        this.$store.dispatch('logout');
+        this.$store.dispatch('clearusername');
+        this.$store.dispatch('clearuid');
+      },
+      StartEditGender(){
+        this.isEditing = true;
+        this.newGender = this.userSex;
+      }
+    }
   }
 </script>
 <template>
-  <div>
-    <Header />
-    <Nav />
-  </div>
-  <Footer />
+  <div :class="{ 'blur': isLoginVisible }">
+    <el-backtop :bottom="100">
+      <div class="goTopButton">
+        <el-icon>
+          <CaretTop />
+        </el-icon>
+      </div>
+    </el-backtop>
+    <Global_Header @logout="logout" @showLogin="showLogin" @closeLoginBox="closeLoginBox" />
+    <Global_Nav />
+    <div v-loading.lock="loading" :element-loading-spinner="svg" element-loading-svg-view-box="0, 5, 30, 40"
+         element-loading-background="rgba(255, 255, 255, 255)"
+         style="top:50%; left: 50%; transform: translate(-50%,-50%); position: absolute;"></div>
+    <div class = "ProfileContainer">
+      <h1 style="border-bottom: 1px solid; border-color: rgb(223, 223, 223); padding-bottom: 10px; margin-bottom: 22px; margin-top: 30px; width: 60%; text-align: center;"
+      >User Profile</h1>
+      <div class = "BasicInfoContainer">
+        <div class ="AvatarContainer">
+          <span class="el-avatar el-avatar--circle" style="height: 200px; width: 200px; line-height: 200px; margin: 2em;"><img src="https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png" style="object-fit: cover;"></span>
+          <el-button class = "UploadPhotoButton" circle>
+            <el-icon color="gray" >
+              <Upload />
+            </el-icon>
+          </el-button>
+        </div>
+        <div class = "BasicInfo">
+          <h3>UserID:  {{uid}}  </h3>
+          <div class="UserNameContainer" >
+            <h3 >Username:  {{userName}}  </h3>
+            <el-button class = "UpdateNameButton" @click = "UpdateName" circle>
+              <el-icon color="gray">
+                <edit />
+              </el-icon>
+            </el-button>
+          </div>
+          <div class="EmailContainer">
+            <h3>Email:  {{email}}</h3>
+            <el-button class = "UpdateGenderButton" @click = "UpdateGender" circle>
+              <el-icon color="gray">
+                <edit />
+              </el-icon>
+            </el-button>
+          </div>
+          <div class="GenderContainer">
+            <h3>Gender:</h3>
+            <div v-if="!isEditing">
+              <span>{{ userSex }}</span>
+              <el-button class = "UpdateGenderButton" @click = "StartEditGender" circle>
+                <el-icon color="gray">
+                  <edit />
+                </el-icon>
+              </el-button>
+            </div>
+            <div v-else class = "GenderInputCont">
+              <input type="text" v-model="newGender" placeholder="Male / Female" style="width: 70%"/>
+              <el-button class = "SubmitGender" @click="UpdateGender" circle>
+                <el-icon color="lightgreen" >
+                  <Check />
+                </el-icon>
+              </el-button>
+            </div>
+
+
+          </div>
+
+        </div>
+      </div>
+
+
+    </div>
+    <div class = "OverviewContainer">
+      <h1 style="border-bottom: 1px solid; border-color: rgb(223, 223, 223); padding-bottom: 10px; margin-bottom: 22px; margin-top: 30px; width: 60%; text-align: center;"
+      >Account Overview</h1>
+      <div class="AccountInfo" >
+        <div class="IsVIPCont">
+          <h3>VIP Status:</h3>
+          <el-icon :size = "20" color="gray" style = "margin: auto; ">
+            <shopping-cart />
+          </el-icon>
+        </div>
+        <div class="VIPLevelCont">
+          <h3>VIP Level:</h3>
+          <el-icon :size = "20" color="gray" style = "margin: auto; ">
+            <GoldMedal />
+          </el-icon>
+        </div>
+        <div class="BalanceCont">
+          <h3>Balance:</h3>
+          <el-icon :size = "20" color="gray" style = "margin: auto; ">
+            <coin />
+          </el-icon>
+        </div>
+        <div class="CreateTimeCont">
+          <h3>Time of Account Creating:</h3>
+        </div>
+      </div>
+    </div>
+    <Global_Footer />
+    </div>
+
 </template>
 
 <style scoped>
 
+</style>
+<style>
+  .fade-enter,
+  .fade-leave-to {
+    opacity: 0;
+  }
+
+  .fade-enter-active,
+  .fade-leave-active {
+    transition: opacity 0.5s;
+  }
+  .IsVIPCont, .VIPLevelCont, .BalanceCont{
+    display: flex;
+    flex-direction: row;
+  }
+  body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 14px;
+    overflow: hidden;
+  }
+  .AvatarContainer{
+    position: relative;
+  }
+  .UploadPhotoButton{
+    position: absolute;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    bottom: 3em;
+    right: 3em;
+  }
+  .UpdateGenderButton{
+    margin: auto 1em;
+  }
+  .GenderInputCont{
+    display: flex;
+    flex-direction: row;
+    padding: 8px;
+  }
+  .ProfileContainer, .OverviewContainer{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  .AccountInfo{
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: 10px;
+  }
+  .blur {
+    filter: blur(5px);
+    pointer-events: none;
+  }
+
+  .BasicInfoContainer{
+    display: flex;
+    border-bottom: 1px solid;
+    border-color: rgb(223, 223, 223);
+    padding-bottom: 10px;
+    margin-bottom: 22px;
+    margin-top: 30px;
+    width: 60%;
+    text-align: center;
+    flex-direction: row;
+  }
+  .BasicInfo{
+    display: flex;
+    flex-direction: column;
+    margin-left: 5em;
+    text-align: left;
+  }
+
+  .UserNameContainer, .EmailContainer, .GenderContainer{
+    display: flex;
+    flex-direction: row;
+    margin: auto 0px;
+    text-align: left;
+    justify-content: space-between;
+  }
+  .goTopButton {
+    height: 100%;
+    width: 100%;
+    background-color: var(--el-bg-color-overlay);
+    box-shadow: var(--el-box-shadow-lighter);
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    line-height: 40px;
+    color: #1989fa;
+  }
 </style>
