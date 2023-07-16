@@ -445,13 +445,11 @@ export default {
           </div>
         </div>
       </div>
-<<<<<<< HEAD
+
       <div v-if = "showProfile">
         <Profile />
       </div>
-=======
       <Footer />
->>>>>>> 070be29e547c644de2e2872e2497b731ef100983
       <!-- Go to top floating buttom -->
       <el-backtop :bottom="100">
         <div class="goTopButton">
