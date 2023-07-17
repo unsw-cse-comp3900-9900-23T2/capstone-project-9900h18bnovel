@@ -106,11 +106,12 @@ export default {
         }
         this.clickedLoading();
         this.isEditComment = false;
-        ElMessage.success("Update successful");
+        this.userComment = null;
+        ElMessage.success("Comment Updated");
       }
     },
 
-    async deleteUserProfile() {
+    async deleteUserComment() {
       try {
         await fetch(`http://localhost:8888/api/front/book/comment/${this.userCommented.id}`, {
           method: 'DELETE',
@@ -121,8 +122,10 @@ export default {
       } catch (error) {
         console.error(error);
       }
+      this.isEditComment = false;
       this.userComment = null;
       this.clickedLoading();
+      ElMessage.success("Comment Deleted");
     },
 
     async getUserComment() {
@@ -146,7 +149,9 @@ export default {
     },
 
     async postUserComment() {
-      if (!this.userComment || this.userComment.trim() === '') {
+      if (!this.$store.getters.isAuthenticated) {
+        ElMessage.error("Please log in to leave a comment");
+      } else if (!this.userComment || this.userComment.trim() === '') {
         ElMessage.error("Comment cannot be empty");
       } else {
         this.requestBody.commentContent = this.userComment;
@@ -162,6 +167,8 @@ export default {
           console.error(error);
         }
         this.clickedLoading();
+        this.isEditComment = false;
+        this.userComment = null;
         ElMessage.success("Submit successful");
       }
     },
@@ -328,57 +335,60 @@ export default {
         <div v-loading.fullscreen.lock="clickedLoad" :element-loading-spinner="svg"
           element-loading-svg-view-box="0, 5, 30, 40"></div>
         <div v-if="isShowComments">
-          <div v-if="this.$store.state.token || (typeof localStorage !== 'undefined' && localStorage.getItem('token'))">
-            <div v-if="userCommented">
-              <el-card>
-                <div style="font-size: 16pt; display: flex; justify-content: space-between; align-items: center;">
-                  <b>My Comment</b>
-                  <div class="editSwitch">
-                    <el-switch size="large" inline-prompt v-model="this.isEditComment" active-text="Editing"
-                      inactive-text="Edit" />
-                  </div>
+          <div v-if="userCommented">
+            <el-card>
+              <div style="font-size: 16pt; display: flex; justify-content: space-between; align-items: center;">
+                <b>My Comment</b>
+                <div class="editSwitch">
+                  <el-switch size="large" inline-prompt v-model="this.isEditComment" active-text="Editing"
+                    inactive-text="Edit" />
                 </div>
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                  <el-rate disabled v-model="userCommented.score" allow-half show-score />
+              </div>
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <el-rate disabled v-model="userCommented.score" allow-half show-score />
+                <div>
+                  {{ userCommented.updateTime ? userCommented.updateTime.replace('T', " ") : null }}
+                </div>
+              </div>
+              <div>
+                {{ userCommented.commentContent }}
+              </div>
+              <div v-if="isEditComment" style="margin-top: 20px;">
+                <el-input v-model="userComment" :rows="4" type="textarea" :placeholder=userCommented.commentContent>
+                </el-input>
+                <div style="display: flex; justify-content: space-between;  margin-top: 10px;">
+                  <div class="userScoreInput">
+                    <span style="font-size: 12pt;">How would you rate this book?</span>&nbsp;<el-rate
+                      v-model="requestBody.score" allow-half show-score />
+                  </div>
                   <div>
-                    {{ userCommented.updateTime ? userCommented.updateTime.replace('T', " ") : null }}
+                    <el-button type="success" :icon="Check" round @click="updateUserComment"
+                      :disabled="!userComment">Update</el-button>
+                    <el-button @click="clearUserComment" :disabled="!userComment" :icon="MagicStick"
+                      round>Clear</el-button>
+                    <el-popconfirm title="Are you sure to delete your comment?" width="190" @confirm="deleteUserComment">
+                      <template #reference>
+                        <el-button type="danger" :icon="Delete" round>Delete</el-button>
+                      </template>
+                    </el-popconfirm>
+
                   </div>
                 </div>
-                <div>
-                  {{ userCommented.commentContent }}
-                </div>
-                <div v-if="isEditComment" style="margin-top: 20px;">
-                  <el-input v-model="userComment" :rows="4" type="textarea" :placeholder=userCommented.commentContent>
-                  </el-input>
-                  <div style="display: flex; justify-content: space-between;  margin-top: 10px;">
-                    <div class="userScoreInput">
-                      <span style="font-size: 12pt;">How would you rate this book?</span>&nbsp;<el-rate
-                        v-model="requestBody.score" allow-half show-score />
-                    </div>
-                    <div>
-                      <el-button type="success" :icon="Check" round @click="updateUserComment"
-                        :disabled="!userComment">Update</el-button>
-                      <el-button @click="clearUserComment" :disabled="!userComment" :icon="MagicStick"
-                        round>Clear</el-button>
-                      <el-button type="danger" :icon="Delete" round @click="deleteUserProfile">Delete</el-button>
-                    </div>
-                  </div>
-                </div>
-              </el-card>
-            </div>
-            <div v-else>
-              <el-input v-model="userComment" :rows="4" type="textarea"
-                placeholder="Have something to say about this book? Write your comment!">
-              </el-input>
-              <div style="display: flex; justify-content: space-between;  margin-top: 10px;">
-                <div class="userScoreInput">
-                  <span style="font-size: 12pt;">How would you rate this book?</span>&nbsp;<el-rate
-                    v-model="requestBody.score" allow-half show-score />
-                </div>
-                <div>
-                  <el-button type="primary" @click="postUserComment" :disabled="!userComment">Submit</el-button>
-                  <el-button @click="clearUserComment" :disabled="!userComment">Clear</el-button>
-                </div>
+              </div>
+            </el-card>
+          </div>
+          <div v-else>
+            <el-input v-model="userComment" :rows="4" type="textarea"
+              placeholder="Have something to say about this book? Write your comment!">
+            </el-input>
+            <div style="display: flex; justify-content: space-between;  margin-top: 10px;">
+              <div class="userScoreInput">
+                <span style="font-size: 12pt;">How would you rate this book?</span>&nbsp;<el-rate
+                  v-model="requestBody.score" allow-half show-score />
+              </div>
+              <div>
+                <el-button type="primary" @click="postUserComment" :disabled="!userComment">Submit</el-button>
+                <el-button @click="clearUserComment" :disabled="!userComment">Clear</el-button>
               </div>
             </div>
           </div>
@@ -408,6 +418,7 @@ export default {
                 :page-size="50" :disabled="disabled" :background="background" layout="prev, pager, next"
                 :total="totalComments * 10" style="width: 100%; display: flex; justify-content: center;" />
         </div>
+
         <div v-if="isShowChapters">
           <div v-if="chapters.length > 0" style="display: flex; flex-wrap: wrap; justify-content: space-between;">
             <div v-for="(item, index) in chapters" :key="index" class="chapters">

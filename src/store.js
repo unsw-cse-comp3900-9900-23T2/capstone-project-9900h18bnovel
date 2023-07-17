@@ -3,6 +3,7 @@ import { createStore } from 'vuex';
 export default createStore({
   state() {
     return {
+      isLoginVisible: false,
       token: null,
       userName: null,
       uid: null,
@@ -14,6 +15,9 @@ export default createStore({
     };
   },
   mutations: {
+    isLoginVisible(state, bool) {
+      state.isLoginVisible = bool;
+    },
     setToken(state, token) {
       state.token = token;
     },
@@ -32,10 +36,10 @@ export default createStore({
     clearPhoto(state) {
       state.photo = null;
     },
-    setEmail(state, email){
+    setEmail(state, email) {
       state.email = email;
     },
-    clearEmail(state){
+    clearEmail(state) {
       state.email = null;
     },
     setUserName(state, userName) {
@@ -64,6 +68,9 @@ export default createStore({
     },
   },
   actions: {
+    isLoginVisible({ commit }, bool) {
+      commit('isLoginVisible', bool);
+    },
     login({ commit }, token) {
       commit('setToken', token);
     },
@@ -120,19 +127,19 @@ export default createStore({
     getCurrentURL: (state) => {
       return state.currentURL;
     },
-    GetSex: (state) =>{
+    GetSex: (state) => {
       return state.sex;
     },
-    GetEmail: (state) =>{
+    GetEmail: (state) => {
       return state.email;
     },
-    GetPhoto: (state) =>{
+    GetPhoto: (state) => {
       return state.photo;
     },
-    GetUsername: (state) =>{
+    GetUsername: (state) => {
       return state.userName;
     },
-    GetUID: (state) =>{
+    GetUID: (state) => {
       return state.uid;
     },
     getSearchInput: (state) => {

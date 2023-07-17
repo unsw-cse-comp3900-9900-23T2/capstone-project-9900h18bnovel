@@ -282,7 +282,7 @@ export default {
         if (response.status == 200) {
           const data = await response.json();
           this.novels = data.data;
-          this.totalNum = data.data[0].totalNum;
+          this.totalNum = data.data[0] ? data.data[0].totalNum : 0;
           this.$store.dispatch('setCurrentURL', url.substring(url.indexOf('books')));
         } else {
           console.log(response.status);
@@ -472,7 +472,7 @@ export default {
               </div>
               <div style="margin-top: -2px; font-size: 14pt; width: 110px; text-align: right;">
                 <b>{{
-                  this.totalNum }} {{ novels.length === 0 ? "book" : (novels.length === 1 ? "book" : "books") }}
+                  this.totalNum }} {{ novels.length <= 1 ? "book" : "books"}}
                 </b>
               </div>
             </div>
