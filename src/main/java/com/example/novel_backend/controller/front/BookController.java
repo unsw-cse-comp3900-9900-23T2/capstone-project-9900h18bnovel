@@ -4,9 +4,7 @@ import com.example.novel_backend.core.common.constant.ApiRouterConsts;
 import com.example.novel_backend.core.common.resp.PageRespDto;
 import com.example.novel_backend.core.common.resp.RestResp;
 import com.example.novel_backend.dao.entity.BookComment;
-import com.example.novel_backend.dto.req.BookSearchReqDto;
-import com.example.novel_backend.dto.req.UserCollectReqDto;
-import com.example.novel_backend.dto.req.UserCommentReqDto;
+import com.example.novel_backend.dto.req.*;
 import com.example.novel_backend.dto.resp.*;
 import com.example.novel_backend.service.BookService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -95,9 +93,9 @@ public class BookController {
      */
     @Operation(summary = "Book Chapter list Query Interface")
     @GetMapping("chapter/list")
-    public RestResp<List<BookChapterRespDto>> listChapters(
-            @Parameter(description = "Book ID") Long bookId) {
-        return bookService.listChapters(bookId);
+    public RestResp<PageRespDto<BookChapterRespDto>> listChapters(
+            @ParameterObject BookChapterReqDto dto) {
+        return bookService.listChapters(dto);
     }
 
     /**
@@ -161,5 +159,44 @@ public class BookController {
     @PostMapping("cancel_collect")
     public RestResp<Void> cancelCollect(@Valid @RequestBody UserCollectReqDto dto) {
         return bookService.cancelCollect(dto);
+    }
+
+    /**
+     * Add book visit count interface
+     */
+    @Operation(summary = "Add book visit count interface")
+    @GetMapping("add_visit")
+    public RestResp<Void> addVisitCount(@Parameter(description = "book ID") Long bookId) {
+        return bookService.addVisitCount(bookId);
+    }
+
+    /**
+     * Book content interface
+     */
+    @Operation(summary = "Book content interface")
+    @GetMapping("get_content")
+    public RestResp<BookContentRespDto> getBookContentAbout(
+            @ParameterObject BookContentReqDto dto) {
+        return bookService.getBookContent(dto);
+    }
+
+    /**
+     * Get Previous Chapter id interface
+     */
+    @Operation(summary = "Get Previous Chapter id interface")
+    @GetMapping("pre_chapter_id/{chapterId}")
+    public RestResp<Long> getPreChapterId(
+            @Parameter(description = " Chapter ID") @PathVariable("chapterId") Long chapterId) {
+        return bookService.getPreChapterId(chapterId);
+    }
+
+    /**
+     * Get Next Chapter id interface
+     */
+    @Operation(summary = "Get Next Chapter id interface")
+    @GetMapping("next_chapter_id/{chapterId}")
+    public RestResp<Long> getNextChapterId(
+            @Parameter(description = "Chapter ID") @PathVariable("chapterId") Long chapterId) {
+        return bookService.getNextChapterId(chapterId);
     }
 }

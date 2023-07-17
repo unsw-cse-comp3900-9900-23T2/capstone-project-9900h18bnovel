@@ -11,7 +11,6 @@ import lombok.Data;
  * @create 2023/7/16 16:30
  */
 @Data
-@Builder
 public class UserCollectBookRespDto {
 
     /**
@@ -97,4 +96,10 @@ public class UserCollectBookRespDto {
      */
     @Schema(description = "Collect count")
     private Long collectCount;
+
+    /**
+     * Last read chapter id
+     */
+    @Schema(description = "Last read chapter id")
+    private Long preChapterId;
 }

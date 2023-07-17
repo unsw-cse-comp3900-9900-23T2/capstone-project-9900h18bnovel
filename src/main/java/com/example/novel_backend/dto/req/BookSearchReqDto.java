@@ -9,6 +9,8 @@ import org.springframework.format.annotation.DateTimeFormat;
 import java.util.Date;
 
 /**
+ * Book Search request dto
+ *
  * @author :Contanstin
  * @create 2023/7/8 14:25
  */

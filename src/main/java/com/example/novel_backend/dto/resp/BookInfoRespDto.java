@@ -1,6 +1,7 @@
 package com.example.novel_backend.dto.resp;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -47,6 +48,12 @@ public class BookInfoRespDto {
      */
     @Schema(description = "Category name")
     private String categoryName;
+
+    /**
+     * Book Direction
+     */
+    @Parameter(description = "Book Direction")
+    private Integer workDirection;
 
     /**
      * Book url

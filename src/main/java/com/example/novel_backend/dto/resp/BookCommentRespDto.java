@@ -10,13 +10,14 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 /**
+ * Book comment response dto
+ *
  * @author :Contanstin
  * @create 2023/7/15 14:48
  */
 @Data
 @Builder
-public class
-BookCommentRespDto {
+public class BookCommentRespDto {
 
     @Schema(description = "Comment ID")
     private Long id;

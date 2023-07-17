@@ -7,12 +7,8 @@ import com.example.novel_backend.core.common.constant.SystemConfigConsts;
 import com.example.novel_backend.core.common.exception.BusinessException;
 import com.example.novel_backend.core.common.resp.RestResp;
 import com.example.novel_backend.core.util.JwtUtils;
-import com.example.novel_backend.dao.entity.BookCollect;
-import com.example.novel_backend.dao.entity.BookInfo;
-import com.example.novel_backend.dao.entity.UserInfo;
-import com.example.novel_backend.dao.mapper.BookCollectMapper;
-import com.example.novel_backend.dao.mapper.BookInfoMapper;
-import com.example.novel_backend.dao.mapper.UserInfoMapper;
+import com.example.novel_backend.dao.entity.*;
+import com.example.novel_backend.dao.mapper.*;
 import com.example.novel_backend.dto.req.*;
 import com.example.novel_backend.dto.resp.*;
 import com.example.novel_backend.manager.redis.VerifyCodeManager;
@@ -25,9 +21,9 @@ import org.springframework.util.DigestUtils;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
-import java.util.Base64;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * User module - Service Implementation Classes
@@ -47,6 +43,10 @@ public class UserServiceImpl implements UserService {
     private final BookCollectMapper bookCollectMapper;
 
     private final BookInfoMapper bookInfoMapper;
+
+    private final UserReadHistoryMapper userReadHistoryMapper;
+
+    private final BookChapterMapper bookChapterMapper;
 
     private final JwtUtils jwtUtils;
 
@@ -195,22 +195,40 @@ public class UserServiceImpl implements UserService {
         QueryWrapper<BookInfo> bookInfoQueryWrapper = new QueryWrapper<>();
         bookInfoQueryWrapper.in("id", bookIds);
         List<BookInfo> bookInfos = bookInfoMapper.selectList(bookInfoQueryWrapper);
-        return RestResp.ok(bookInfos.stream().map(bookInfo ->
-                UserCollectBookRespDto.builder()
-                        .bookId(bookInfo.getId())
-                        .categoryId(bookInfo.getCategoryId())
-                        .categoryName(bookInfo.getCategoryName())
-                        .picUrl(bookInfo.getPicUrl())
-                        .bookName(bookInfo.getBookName())
-                        .authorId(bookInfo.getAuthorId())
-                        .authorName(bookInfo.getAuthorName())
-                        .score(bookInfo.getScore())
-                        .bookDesc(bookInfo.getBookDesc())
-                        .bookStatus(bookInfo.getBookStatus())
-                        .visitCount(bookInfo.getVisitCount())
-                        .wordCount(bookInfo.getWordCount())
-                        .commentCount(bookInfo.getCommentCount())
-                        .collectCount(bookInfo.getCollectCount()).build()).toList());
+        QueryWrapper<UserReadHistory> userReadHistoryQueryWrapper = new QueryWrapper<>();
+        userReadHistoryQueryWrapper.eq("user_id", userId)
+                .in("book_id", bookIds);
+        List<UserReadHistory> userReadHistories = userReadHistoryMapper.selectList(userReadHistoryQueryWrapper);
+        Map<Long, UserReadHistory> userReadHistoryMap = userReadHistories.stream()
+                .collect(Collectors.toMap(UserReadHistory::getBookId, Function.identity()));
+        return RestResp.ok(bookInfos.stream().map(bookInfo ->{
+            UserCollectBookRespDto userCollectBookRespDto = new UserCollectBookRespDto();
+            userCollectBookRespDto.setBookId(bookInfo.getId());
+            userCollectBookRespDto.setCategoryId(bookInfo.getCategoryId());
+            userCollectBookRespDto.setCategoryName(bookInfo.getCategoryName());
+            userCollectBookRespDto.setPicUrl(bookInfo.getPicUrl());
+            userCollectBookRespDto.setBookName(bookInfo.getBookName());
+            userCollectBookRespDto.setAuthorId(bookInfo.getAuthorId());
+            userCollectBookRespDto.setAuthorName(bookInfo.getAuthorName());
+            userCollectBookRespDto.setScore(bookInfo.getScore());
+            userCollectBookRespDto.setBookDesc(bookInfo.getBookDesc());
+            userCollectBookRespDto.setBookStatus(bookInfo.getBookStatus());
+            userCollectBookRespDto.setVisitCount(bookInfo.getVisitCount());
+            userCollectBookRespDto.setWordCount(bookInfo.getWordCount());
+            userCollectBookRespDto.setCommentCount(bookInfo.getCommentCount());
+            userCollectBookRespDto.setCollectCount(bookInfo.getCollectCount());
+            if(userReadHistoryMap.containsKey(bookInfo.getId())){
+                userCollectBookRespDto.setPreChapterId(userReadHistoryMap
+                        .get(bookInfo.getId()).getPreChapterId());
+            } else {
+                QueryWrapper<BookChapter> bookChapterQueryWrapper = new QueryWrapper<>();
+                bookChapterQueryWrapper.eq("book_id", bookInfo.getId())
+                        .orderByAsc("chapter_num").last("limit 1");
+                BookChapter firstBookChapter = bookChapterMapper.selectOne(bookChapterQueryWrapper);
+                userCollectBookRespDto.setPreChapterId(firstBookChapter.getId());
+            }
+            return userCollectBookRespDto;
+                }).toList());
     }
 
 

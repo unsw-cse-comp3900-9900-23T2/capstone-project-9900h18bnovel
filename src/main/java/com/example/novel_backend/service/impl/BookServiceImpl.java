@@ -7,15 +7,12 @@ import com.example.novel_backend.core.common.constant.ErrorCodeEnum;
 import com.example.novel_backend.core.common.resp.PageRespDto;
 import com.example.novel_backend.core.common.resp.RestResp;
 import com.example.novel_backend.dao.entity.*;
-import com.example.novel_backend.dao.mapper.BookCollectMapper;
-import com.example.novel_backend.dao.mapper.BookCommentMapper;
-import com.example.novel_backend.dao.mapper.BookInfoMapper;
-import com.example.novel_backend.dao.mapper.UserInfoMapper;
-import com.example.novel_backend.dto.req.BookSearchReqDto;
-import com.example.novel_backend.dto.req.UserCollectReqDto;
-import com.example.novel_backend.dto.req.UserCommentReqDto;
+import com.example.novel_backend.dao.mapper.*;
+import com.example.novel_backend.dto.req.*;
 import com.example.novel_backend.dto.resp.*;
 import com.example.novel_backend.manager.cache.BookCategoryCacheManager;
+import com.example.novel_backend.manager.cache.BookChapterCacheManager;
+import com.example.novel_backend.manager.cache.BookInfoCacheManager;
 import com.example.novel_backend.manager.cache.BookRankCacheManager;
 import com.example.novel_backend.service.BookService;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +22,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -50,6 +48,16 @@ public class BookServiceImpl implements BookService {
     private final UserInfoMapper userInfoMapper;
 
     private final BookCollectMapper bookCollectMapper;
+
+    private final BookChapterMapper bookChapterMapper;
+
+    private final BookChapterCacheManager bookChapterCacheManager;
+
+    private final BookInfoCacheManager bookInfoCacheManager;
+
+    private final BookContentMapper bookContentMapper;
+
+    private final UserReadHistoryMapper userReadHistoryMapper;
 
     @Override
     public RestResp<List<BookRankRespDto>> listUpdateRankBooks() {
@@ -112,6 +120,7 @@ public class BookServiceImpl implements BookService {
                 .bookDesc(bookInfo.getBookDesc())
                 .bookStatus(bookInfo.getBookStatus())
                 .visitCount(bookInfo.getVisitCount())
+                .workDirection(bookInfo.getWorkDirection())
                 .wordCount(bookInfo.getWordCount())
                 .commentCount(bookInfo.getCommentCount())
                 .collectCount(bookInfo.getCollectCount())
@@ -120,13 +129,18 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public RestResp<List<BookChapterRespDto>> listChapters(Long bookId) {
-        List<BookChapter> bookChapters = bookInfoMapper.listChapters(bookId);
-        return RestResp.ok(bookChapters.stream().map(bookChapter ->
+    public RestResp<PageRespDto<BookChapterRespDto>> listChapters(BookChapterReqDto dto) {
+        IPage<BookChapter> page = new Page<>();
+        page.setCurrent(dto.getPageNum());
+        page.setSize(dto.getPageSize());
+        List<BookChapter> bookChapters = bookChapterMapper.listChapters(page, dto.getBookId());
+        return RestResp.ok(
+                PageRespDto.of(dto.getPageNum(), dto.getPageSize(), page.getTotal(),
+                bookChapters.stream().map(bookChapter ->
                 BookChapterRespDto.builder()
                         .id(bookChapter.getId())
                         .chapterName(bookChapter.getChapterName())
-                        .chapterWordCount(bookChapter.getWordCount()).build()).toList());
+                        .chapterWordCount(bookChapter.getWordCount()).build()).toList()));
     }
 
     @Override
@@ -203,6 +217,7 @@ public class BookServiceImpl implements BookService {
                 .eq("book_id", dto.getBookId()).last("LIMIT 1");
         BookComment bookComment = new BookComment();
         bookComment.setCommentContent(dto.getCommentContent());
+        bookComment.setScore(dto.getScore());
         bookComment.setUpdateTime(LocalDateTime.now());
         bookCommentMapper.update(bookComment, queryWrapper);
         // update book information
@@ -248,6 +263,84 @@ public class BookServiceImpl implements BookService {
         bookInfo.setCollectCount(bookInfo.getCollectCount() - 1);
         bookInfoMapper.updateById(bookInfo);
         return null;
+    }
+
+    @Override
+    public RestResp<Void> addVisitCount(Long bookId) {
+        BookInfo bookInfo = bookInfoMapper.selectById(bookId);
+        bookInfo.setVisitCount(bookInfo.getVisitCount() + 1);
+        bookInfoMapper.updateById(bookInfo);
+        return RestResp.ok();
+    }
+
+    @Override
+    public RestResp<BookContentRespDto> getBookContent(BookContentReqDto dto) {
+        BookChapterRespDto bookChapterRespDto = bookChapterCacheManager.getChapter(dto.getChapterId());
+        BookInfoRespDto bookInfoRespDto = bookInfoCacheManager.getBookInfo(bookChapterRespDto.getBookId());
+        QueryWrapper<BookContent> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("chapter_id", dto.getChapterId()).last("limit 1");
+        BookContent bookContent = bookContentMapper.selectOne(queryWrapper);
+        String content = bookContent.getContent();
+        if(dto.getUserId()!=null){
+            QueryWrapper<UserReadHistory> userReadHistoryQueryWrapper = new QueryWrapper<>();
+            userReadHistoryQueryWrapper.eq("user_id", dto.getUserId())
+                    .eq("book_id", bookChapterRespDto.getBookId()).last("LIMIT 1");
+            UserReadHistory userReadHistory = userReadHistoryMapper.selectOne(userReadHistoryQueryWrapper);
+            if(userReadHistoryMapper.selectCount(userReadHistoryQueryWrapper) > 0){
+                userReadHistory.setPreChapterId(dto.getChapterId());
+                userReadHistoryMapper.updateById(userReadHistory);
+            }else {
+                UserReadHistory userReadHistory1 = new UserReadHistory();
+                userReadHistory1.setUserId(dto.getUserId());
+                userReadHistory1.setBookId(bookChapterRespDto.getBookId());
+                userReadHistory1.setPreChapterId(dto.getChapterId());
+                userReadHistory1.setCreateTime(LocalDateTime.now());
+                userReadHistory1.setUpdateTime(LocalDateTime.now());
+                userReadHistoryMapper.insert(userReadHistory1);
+            }
+        }
+        return RestResp.ok(BookContentRespDto.builder()
+                .bookInfo(bookInfoRespDto)
+                .chapterInfo(bookChapterRespDto)
+                .bookContent(content).build());
+    }
+
+    @Override
+    public RestResp<Long> getPreChapterId(Long chapterId) {
+        BookChapterRespDto chapter = bookChapterCacheManager.getChapter(chapterId);
+        Long bookId = chapter.getBookId();
+        Integer chapterNum = chapter.getChapterNum();
+
+        // Get Previous Chapter id
+        QueryWrapper<BookChapter> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("book_id", bookId)
+                .lt("chapter_num", chapterNum)
+                .orderByDesc("chapter_num")
+                .last("limit 1");
+        return RestResp.ok(
+                Optional.ofNullable(bookChapterMapper.selectOne(queryWrapper))
+                        .map(BookChapter::getId)
+                        .orElse(null)
+        );
+    }
+
+    @Override
+    public RestResp<Long> getNextChapterId(Long chapterId) {
+        BookChapterRespDto chapter = bookChapterCacheManager.getChapter(chapterId);
+        Long bookId = chapter.getBookId();
+        Integer chapterNum = chapter.getChapterNum();
+
+        // Get Last Chapter id
+        QueryWrapper<BookChapter> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("book_id", bookId)
+                .gt("chapter_num", chapterNum)
+                .orderByAsc("chapter_num")
+                .last("limit 1");
+        return RestResp.ok(
+                Optional.ofNullable(bookChapterMapper.selectOne(queryWrapper))
+                        .map(BookChapter::getId)
+                        .orElse(null)
+        );
     }
 
 }

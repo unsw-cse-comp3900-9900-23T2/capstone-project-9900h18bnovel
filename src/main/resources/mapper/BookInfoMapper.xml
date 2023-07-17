@@ -72,11 +72,4 @@
         </if>
     </select>
 
-
-    <select id="listChapters" resultType="com.example.novel_backend.dao.entity.BookChapter">
-        select id, chapter_name, word_count
-        from book_chapter
-        where book_id = #{bookId}
-        order by chapter_num
-    </select>
 </mapper>

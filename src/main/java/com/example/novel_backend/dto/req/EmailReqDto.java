@@ -7,6 +7,7 @@ import lombok.Data;
 
 /**
  * Email Request DTO
+ *
  * @author :Contanstin
  * @create 2023/6/12 19:32
  */

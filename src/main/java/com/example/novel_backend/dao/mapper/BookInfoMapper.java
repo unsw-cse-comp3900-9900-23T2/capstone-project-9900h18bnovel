@@ -31,10 +31,4 @@ public interface BookInfoMapper extends BaseMapper<BookInfo> {
      */
     List<BookInfo> searchBooks(BookSearchReqDto dto);
 
-    /**
-     * Book chapter list
-     * @param bookId book id
-     * @return Book chapter list
-     */
-    List<BookChapter> listChapters(Long bookId);
 }

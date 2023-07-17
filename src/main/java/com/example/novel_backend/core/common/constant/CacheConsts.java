@@ -64,6 +64,16 @@ public class CacheConsts {
     public static final String BOOK_CATEGORY_LIST_CACHE_NAME = "bookCategoryListCache";
 
     /**
+     * Book chapter cache
+     */
+    public static final String BOOK_CHAPTER_CACHE_NAME = "bookChapterCache";
+
+    /**
+     * Book information cache
+     */
+    public static final String BOOK_INFO_CACHE_NAME = "bookInfoCache";
+
+    /**
      * Cache configuration constants
      */
     @Getter
@@ -78,6 +88,10 @@ public class CacheConsts {
         BOOK_UPDATE_RANK_CACHE(0, BOOK_UPDATE_RANK_CACHE_NAME, 60, 1),
 
         BOOK_CATEGORY_LIST_CACHE(0, BOOK_CATEGORY_LIST_CACHE_NAME, 0, 2),
+
+        BOOK_CHAPTER_CACHE(2, BOOK_CHAPTER_CACHE_NAME, 60 * 60 * 6, 10),
+
+        BOOK_INFO_CACHE(0, BOOK_INFO_CACHE_NAME, 60 * 60 * 12, 1000),
 
         USER_INFO_CACHE(2, EMAIL_VERIFY_CODE_CACHE_KEY, 60 * 60 * 24, 10000);
         /**

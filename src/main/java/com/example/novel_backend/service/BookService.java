@@ -3,9 +3,7 @@ package com.example.novel_backend.service;
 import com.example.novel_backend.core.common.resp.PageRespDto;
 import com.example.novel_backend.core.common.resp.RestResp;
 import com.example.novel_backend.dao.entity.BookComment;
-import com.example.novel_backend.dto.req.BookSearchReqDto;
-import com.example.novel_backend.dto.req.UserCollectReqDto;
-import com.example.novel_backend.dto.req.UserCommentReqDto;
+import com.example.novel_backend.dto.req.*;
 import com.example.novel_backend.dto.resp.*;
 
 import java.util.List;
@@ -59,10 +57,10 @@ public interface BookService {
 
     /**
      * Book chapter list
-     * @param bookId book id
+     * @param dto Book chapter dto
      * @return Book chapter list
      */
-    RestResp<List<BookChapterRespDto>> listChapters(Long bookId);
+    RestResp<PageRespDto<BookChapterRespDto>> listChapters(BookChapterReqDto dto);
 
     /**
      * Get comment
@@ -112,5 +110,36 @@ public interface BookService {
      * @return void
      */
     RestResp<Void> cancelCollect(UserCollectReqDto dto);
-    
+
+    /**
+     * Add visit count
+     *
+     * @param bookId 小说ID
+     * @return 成功状态
+     */
+    RestResp<Void> addVisitCount(Long bookId);
+
+    /**
+     * Book content information
+     * @param dto book content dto
+     * @return Book content information
+     */
+    RestResp<BookContentRespDto> getBookContent(BookContentReqDto dto);
+
+    /**
+     * Get Previous Chapter id
+     *
+     * @param chapterId chapter ID
+     * @return Previous Chapter id
+     */
+    RestResp<Long> getPreChapterId(Long chapterId);
+
+    /**
+     * Get next chapter id
+     *
+     * @param chapterId chapter ID
+     * @return Next chapter id
+     */
+    RestResp<Long> getNextChapterId(Long chapterId);
+
 }
