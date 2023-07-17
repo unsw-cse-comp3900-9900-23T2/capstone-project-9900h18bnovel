@@ -174,7 +174,7 @@ export default {
         </el-icon>{{ login_button }}</el-button>
     </div>
     <div v-else style="color: white; display: flex; align-items: center; justify-content: space-between; width: 200px;">
-      <div style="display: flex; flex-direction: column; align-items: center;" @click="ShowUserProfile()">
+      <div style="display: flex; flex-direction: column; align-items: center; margin-right: 20px;" @click="ShowUserProfile()">
         <el-avatar :size="70" :src="img ? img : this.DefaultPhoto" />
         <div>{{ this.$store.state.userName ? this.$store.state.userName : userName }}</div>
       </div>
@@ -217,6 +217,7 @@ export default {
 }
 
 .logout_button {
+  margin-right: 20px;
   width: 100px;
 }
 

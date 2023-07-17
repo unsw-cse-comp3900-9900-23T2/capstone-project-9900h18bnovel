@@ -37,6 +37,7 @@ export default {
     if (localStorage.getItem("token")) {
       this.$store.dispatch('login', localStorage.getItem("token"));
       this.$store.dispatch('username', localStorage.getItem("username"));
+      this.$store.dispatch('uid', localStorage.getItem("uid"));
     }
     this.searchInput = this.$store.getters.getSearchInput ? this.$store.getters.getSearchInput : null;
     setTimeout(() => {
@@ -103,11 +104,9 @@ export default {
       </div>
     </el-backtop>
   </div>
-  <transition name="fade">
-    <div v-if="isLoginVisible" class="loginSection">
-      <Login class="login" :verImage="this.verImage" :sessionId="this.sessionId" @closeLoginBox="closeLoginBox" />
-    </div>
-  </transition>
+  <div v-if="isLoginVisible" class="loginSection">
+    <Login class="login" :verImage="this.verImage" :sessionId="this.sessionId" @closeLoginBox="closeLoginBox" />
+  </div>
 </template>
 
 <style>

@@ -493,7 +493,7 @@ export default {
                     </span>
                     <span style="font-size: 11pt;">{{ item.authorName }}</span>
                     <span
-                      style="font-size: 10pt; margin-top: 10px; margin-right: 10px; display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 3;overflow: hidden;">{{
+                      style="font-size: 10pt; margin-top: 10px; margin-right: 10px; display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 4;overflow: hidden;">{{
                         item.bookDesc }}</span>
                     <div style="bottom: 40px; position: absolute;">
                       <el-tag effect="plain" :style="getItemColor(item.categoryName)">{{
