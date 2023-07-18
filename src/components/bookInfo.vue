@@ -40,6 +40,8 @@ export default {
       clickedLoad: false,
       book: {},
       chapters: [],
+      totalChapters: null,
+      chapterPageNum: 1,
       requestBody: {
         pageNum: 1,
         pageSize: 5,
@@ -54,9 +56,19 @@ export default {
       totalComments: null,
       userCommented: {},
       isEditComment: false,
+      drawer: false,
+      chapterName: null,
+      chapterContent: null,
+
     }
   },
   watch: {
+    'chapterPageNum': {
+      handler() {
+        this.chooseChapters();
+      },
+      deep: true
+    },
     'requestBody.pageNum': {
       handler() {
         this.clickedLoad = true;
@@ -79,13 +91,111 @@ export default {
   mounted() {
     setTimeout(() => {
       this.getBookInfo();
+      this.getChapters();
       this.getAllComments();
       this.getUserComment();
       this.loading = false;
       this.showBookInfo = true;
     }, 500);
   },
+
   methods: {
+    async addVisit() {
+      try {
+        await fetch(`http://localhost:8888/api/front/book/add_visit?bookId=${this.$route.params.bookId}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+        this.getBookInfo();
+      } catch (error) {
+        console.error(error);
+      }
+    },
+
+    async goToContent(chapterId, chapterName) {
+      if (!this.$store.getters.isAuthenticated) {
+        ElMessage.error("Please log in to read the book");
+      } else {
+        if (chapterId) {
+          this.chapterName = chapterName;
+          this.drawer = true;
+          this.addVisit();
+          try {
+            const response = await fetch(`http://localhost:8888/api/front/book/get_content?chapterId=${chapterId}&userId=${this.$store.getters.GetUID}`, {
+              method: 'GET',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+            });
+            if (response.status == 200) {
+              const data = await response.json();
+              this.chapterContent = data.data.bookContent;
+
+            } else {
+              console.log(response.status);
+            }
+          } catch (error) {
+            console.error(error);
+          }
+        } else {
+          ElMessage.error("There is no chapter in this book");
+        }
+      }
+    },
+
+    async cancel_collect() {
+      const reqbody = {
+        userId: this.$store.getters.GetUID,
+        bookId: this.$route.params.bookId,
+      };
+      try {
+        const response = await fetch('http://localhost:8888/api/front/book/cancel_collect', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(reqbody),
+        });
+        if (response.status == 200) {
+          this.clickedLoading();
+          ElMessage.success("Collection Removed");
+        } else {
+          console.log(response.status);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    },
+
+    async collect() {
+      const reqbody = {
+        userId: this.$store.getters.GetUID,
+        bookId: this.$route.params.bookId,
+      };
+      try {
+        const response = await fetch('http://localhost:8888/api/front/book/collect', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(reqbody),
+        });
+        if (response.status == 200) {
+          const data = await response.json();
+          if (data.code === "00000") {
+            ElMessage.success("Book Collected");
+            this.clickedLoading();
+          }
+        } else {
+          console.log(response.status);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    },
+
     async updateUserComment() {
       if (!this.userComment) {
         ElMessage.error("Comment cannot be empty");
@@ -125,6 +235,7 @@ export default {
       this.isEditComment = false;
       this.userComment = null;
       this.clickedLoading();
+
       ElMessage.success("Comment Deleted");
     },
 
@@ -227,24 +338,28 @@ export default {
       setTimeout(async () => {
         this.isShowComments = false;
         this.isShowChapters = true;
-        try {
-          const response = await fetch(`http://localhost:8888/api/front/book/chapter/list?bookId=${this.$route.params.bookId}`, {
-            method: 'GET',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-          });
-          if (response.status == 200) {
-            const data = await response.json();
-            this.chapters = data.data;
-          } else {
-            console.log(response.status);
-          }
-        } catch (error) {
-          console.error(error);
-        }
         this.clickedLoad = false;
       }, 500);
+    },
+
+    async getChapters() {
+      try {
+        const response = await fetch(`http://localhost:8888/api/front/book/chapter/list?bookId=${this.$route.params.bookId}&pageNum=${this.chapterPageNum}&pageSize=20`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+        });
+        if (response.status == 200) {
+          const data = await response.json();
+          this.chapters = data.data.list;
+          this.totalChapters = data.data.total;
+        } else {
+          console.log(response.status);
+        }
+      } catch (error) {
+        console.error(error);
+      }
     },
 
     clickedLoading() {
@@ -252,6 +367,7 @@ export default {
       setTimeout(() => {
         this.getUserComment();
         this.getAllComments();
+        this.getBookInfo();
         this.clickedLoad = false;
       }, 500);
     },
@@ -313,14 +429,17 @@ export default {
               &nbsp;&nbsp;&nbsp;
             </div>
             <div style="margin-top: 10px;">
-              <el-button style="font-size: 14pt;" size="large" type="primary" round><el-icon>
-                  <Reading />
-                </el-icon>
-                &nbsp;READ</el-button>
-              <el-button style="font-size: 14pt;" size="large" type="primary" round><el-icon>
-                  <Plus />
-                </el-icon>
-                &nbsp;ADD TO COLLECTIONS</el-button>
+              <el-button style="font-size: 14pt;" size="large" type="primary" round :icon="Reading"
+                @click="goToContent(chapters[0] ? chapters[0].id : null, chapters[0] ? chapters[0].chapterName : null)">
+                READ
+              </el-button>
+              <el-button style="font-size: 14pt;" size="large" type="primary" round :icon="Plus" @click="collect">
+                ADD TO COLLECTIONS
+              </el-button>
+              <el-button style="font-size: 14pt;" size="large" type="primary" round :icon="Delete"
+                @click="cancel_collect">
+                REMOVE FROM COLLECTIONS
+              </el-button>
             </div>
           </div>
         </div>
@@ -371,7 +490,6 @@ export default {
                         <el-button type="danger" :icon="Delete" round>Delete</el-button>
                       </template>
                     </el-popconfirm>
-
                   </div>
                 </div>
               </div>
@@ -420,23 +538,34 @@ export default {
         </div>
 
         <div v-if="isShowChapters">
-          <div v-if="chapters.length > 0" style="display: flex; flex-wrap: wrap; justify-content: space-between;">
-            <div v-for="(item, index) in chapters" :key="index" class="chapters">
-              <div style="overflow: hidden; text-overflow: ellipsis; width: 70%; ">
-                {{ item.chapterName }}
+          <div v-if="chapters.length > 0">
+            <h1>{{ totalChapters }} Total</h1>
+            <div style="display: flex; flex-wrap: wrap; justify-content: space-between;">
+              <div v-for="(item, index) in chapters" :key="index" class="chapters"
+                @click="goToContent(item.id, item.chapterName)">
+                <div style="overflow: hidden; text-overflow: ellipsis; width: 70%; ">
+                  {{ item.chapterName }}
+                </div>
+                <div
+                  style="right: 20px; position: absolute; display: flex; justify-content: right; align-items: center; width: 25%;">
+                  <el-icon>
+                    <Document />
+                  </el-icon>
+                  {{ item.chapterWordCount }}
+                </div>
               </div>
-              <div
-                style="right: 20px; position: absolute; display: flex; justify-content: right; align-items: center; width: 25%;">
-                <el-icon>
-                  <Document />
-                </el-icon>
-                {{ item.chapterWordCount }}
-              </div>
+              <el-pagination :hide-on-single-page="totalChapters <= 20" v-model:current-page="chapterPageNum"
+                :page-size="200" :disabled="disabled" :background="background" layout="prev, pager, next"
+                :total="totalChapters * 10" style="width: 100%; display: flex; justify-content: center;" />
             </div>
           </div>
           <div v-else>
             There is no chapter in this book
           </div>
+        </div>
+        <div class="drawerContainer">
+          <el-drawer size="100%" :title="chapterName" v-model="drawer" direction="ttb"> {{ chapterContent
+          }}</el-drawer>
         </div>
       </div>
     </div>
@@ -446,6 +575,20 @@ export default {
 
 
 <style>
+.drawerContainer .el-drawer.ttb {
+  width: 1152px;
+  min-width: 1152px;
+  margin: auto;
+}
+
+.drawerContainer .el-drawer__title {
+  font-size: 20pt;
+}
+
+.drawerContainer .el-drawer {
+  --el-drawer-padding-primary: 50px
+}
+
 .editSwitch .el-switch__core .el-switch__inner .is-text {
   font-size: 16pt;
 }
