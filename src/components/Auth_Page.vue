@@ -585,6 +585,7 @@ export default {
 
 <style >
 .auth_form {
+  display: block;
   display: flex;
   flex-direction: column;
   justify-content: center;
