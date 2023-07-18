@@ -78,7 +78,7 @@ export default createStore({
       commit('clearToken');
     },
     sex({ commit }, sex) {
-      commit('setSex', sex);
+      commit('Sex', sex);
     },
     clearSex({ commit }) {
       commit('clearSex');
@@ -90,7 +90,7 @@ export default createStore({
       commit('clearEmail');
     },
     photo({ commit }, photo) {
-      commit('setEmail', photo);
+      commit('setPhoto', photo);
     },
     clearPhoto({ commit }) {
       commit('clearPhoto');

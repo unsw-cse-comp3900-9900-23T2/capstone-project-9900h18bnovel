@@ -32,21 +32,25 @@ export default {
       uid: localStorage.getItem('uid') || '',
       email: localStorage.getItem('email') || '',
       userPhoto: localStorage.getItem('userPhoto') || '',
-      userSex: localStorage.getItem('userSex') || '',
+      userSex: localStorage.getItem('userSex')? localStorage.getItem('userSex'):"",
       VIPLevel: 0,
       gender: '',
-      isEditing: false,
+      isGenderEditing: false,
+      isNameEditing: false,
       newGender: '',
       SubmitSex: '',
+      newUserName: '',
       CurrentPhoto: '',
       DefaultPhoto: 'https://img-qn.51miz.com/Element/00/88/60/42/ea5b40df_E886042_1992a532.png!/quality/90/unsharp/true/compress/true/format/png/fw/300',
-      //https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png
     }
   },
   mounted() {
     if (localStorage.getItem('userPhoto') === 'undefined' || !localStorage.getItem('userPhoto')) {
       this.CurrentPhoto = this.DefaultPhoto;
+    } else{
+      this.CurrentPhoto = this.userPhoto;
     }
+    console.log("@#$@#$"+this.userSex);
   },
   components: {
     Global_Footer,
@@ -59,11 +63,13 @@ export default {
         this.userSex = 1;
       } else {
         ElMessage.error('Please choose a provided gender!');
-        this.userSex = '';
-        this.isEditing = false;
+        if(this.userSex === 'undefined' || !localStorage.getItem('userSex')){
+          this.userSex = '';
+        }
+        this.isGenderEditing = false;
         return;
       }
-      if (!this.userPhoto || this.userPhoto === 'undefined') {
+      if (!this.userPhoto || this.userPhoto === 'undefined'|| !localStorage.getItem('userPhoto')) {
         this.userPhoto = '';
       }
       const requestData = {
@@ -81,12 +87,14 @@ export default {
           body: JSON.stringify(requestData)
         });
         if (response.status === 200) {
-          const data = await response.json();
+         const data = await response.json();
           console.log(data);
           if (data.code === '00000') {
-            this.isEditing = false;
-            this.userSex = this.newGender;
+            this.isGenderEditing = false;
+            console.log("-*/-*/"+this.userSex);
+            // this.userSex = this.newGender;
             localStorage.setItem('userSex', this.userSex);
+            this.$store.dispatch('sex',this.userSex);
           }
         }
       } catch (error) {
@@ -99,24 +107,23 @@ export default {
     async CollectNewPhoto(event) {
       const file = event.target.files[0];
       const reader = new FileReader();
-      if (this.userSex.toLowerCase() === "male") {
+      /*if (this.userSex.toLowerCase() === "male") {
         this.SubmitSex = 0;
       } else {
         this.SubmitSex = 1;
-      }
+      }*/
       reader.onload = () => {
         const requestData = {
           userId: parseInt(this.uid),
           username: this.userName,
           userPhoto: reader.result,
-          userSex: parseInt(this.SubmitSex)
+          userSex: parseInt(this.userSex)
         }
         this.SubmitPhoto(requestData);
       };
       if (file) {
         reader.readAsDataURL(file);
       }
-
     },
     async SubmitPhoto(requestData) {
       try {
@@ -132,9 +139,9 @@ export default {
           const data = await response.json();
           console.log(data);
           if (data.code === '00000') {
-            this.isEditing = false;
-            this.userSex = this.newGender;
-            localStorage.setItem('userSex', this.userSex);
+            this.CurrentPhoto = requestData.userPhoto;
+            localStorage.setItem('userPhoto',requestData.userPhoto);
+            this.$store.dispatch('photo',requestData.userPhoto);
           } else {
             console.log("User_Profile 169行有问题");
           }
@@ -143,9 +150,49 @@ export default {
         console.error(error);
       }
     },
+    async UpdateNewName(){
+      if (this.newUserName === ''){
+        ElMessage.error('Please input a valid username!');
+        this.isNameEditing = false;
+        return;
+      }
+
+      const requestData = {
+        userId: parseInt(this.uid),
+        username: this.newUserName,
+        userPhoto: this.userPhoto,
+        userSex: parseInt(this.userSex)
+      }
+      console.log(requestData);
+      try {
+        const response = await fetch("http://localhost:8888/api/front/user/modify_userInfo", {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(requestData)
+        });
+        if (response.status === 200) {
+          const data = await response.json();
+          console.log(data);
+          if (data.code === '00000') {
+            this.isNameEditing = false;
+            this.userName = this.newUserName;
+            localStorage.setItem('username', this.newUserName);
+            this.$store.dispatch('username', this.newUserName);
+          }
+        }
+      } catch (error) {
+        console.error(error);
+      }
+
+    },
     StartEditGender() {
-      this.isEditing = true;
-      this.newGender = this.userSex;
+      this.isGenderEditing = true;
+      // this.newGender = this.userSex;
+    },
+    StartEditName(){
+      this.isNameEditing = true;
     }
   }
 }
@@ -162,8 +209,8 @@ export default {
       <div class="BasicInfoContainer">
         <div class="AvatarContainer">
           <span class="el-avatar el-avatar--circle"
-            style="height: 200px; width: 200px; line-height: 200px; margin: 2em;"><img :src="CurrentPhoto"
-              style="object-fit: cover;"></span>
+            style="height: 200px; width: 200px; line-height: 200px; margin: 2em;"><img :src="this.$store.state.photo? this.$store.state.photo : CurrentPhoto"
+              style="object-fit: contain;"></span>
           <input type="file" ref="fileInput" @change="CollectNewPhoto" style="display: none" />
           <el-button class="UploadPhotoButton" circle @click="openPhotoInput">
             <el-icon color="gray">
@@ -175,26 +222,38 @@ export default {
         <div class="BasicInfo">
           <h3>UserID: {{ uid }} </h3>
           <div class="UserNameContainer">
-            <h3>Username: {{ userName }} </h3>
-            <el-button class="UpdateNameButton" @click="UpdateName" circle>
-              <el-icon color="gray">
-                <edit />
-              </el-icon>
-            </el-button>
+            <div class="name-row" v-if="!isNameEditing">
+              <h3>Username:</h3>
+              <div class="name-info">
+                <h3>{{ userName }}</h3>
+                <el-button class="UpdateNameButton" @click="StartEditName" circle>
+                  <el-icon color="gray">
+                    <edit />
+                  </el-icon>
+                </el-button>
+              </div>
+            </div>
+            <div class="name-row" v-else>
+              <h3>Username:</h3>
+              <div class="input-name-container">
+                <input type="text" v-model="newUserName" :placeholder="userName" />
+                <el-button class="SubmitNewName" @click="UpdateNewName" circle>
+                  <el-icon color="lightgreen">
+                    <Check />
+                  </el-icon>
+                </el-button>
+              </div>
+            </div>
           </div>
           <div class="EmailContainer">
-            <h3>Email: {{ email }}</h3>
-            <el-button class="UpdateGenderButton" @click="UpdateGender" circle>
-              <el-icon color="gray">
-                <edit />
-              </el-icon>
-            </el-button>
+            <h3>Email: </h3>
+            <h3>{{ email }}</h3>
           </div>
           <div class="GenderContainer">
-            <div class="gender-row" v-if="!isEditing">
+            <div class="gender-row" v-if="!isGenderEditing">
               <h3>Gender:</h3>
               <div class="gender-info">
-                <h3>{{ userSex }}</h3>
+                <h3>{{this.$store.state.sex == 0 ? 'Male' : 'Female'}}</h3><!-- -->
                 <el-button class="UpdateGenderButton" @click="StartEditGender" circle>
                   <el-icon color="gray">
                     <edit />
@@ -204,7 +263,7 @@ export default {
             </div>
             <div class="gender-row" v-else>
               <h3>Gender:</h3>
-              <div class="input-container">
+              <div class="input-gender-container">
                 <input type="text" v-model="newGender" placeholder="Male / Female" />
                 <el-button class="SubmitGender" @click="UpdateGender" circle>
                   <el-icon color="lightgreen">
@@ -269,6 +328,7 @@ export default {
 
 .AvatarContainer {
   position: relative;
+  margin-right: 5em;
 }
 
 .UploadPhotoButton {
@@ -305,8 +365,7 @@ export default {
 .BasicInfoContainer {
   display: flex;
   padding-bottom: 10px;
-  margin-bottom: 22px;
-  margin-top: 30px;
+  margin: auto;
   text-align: center;
   flex-direction: row;
 }
@@ -318,38 +377,40 @@ export default {
   text-align: left;
 }
 
-.UserNameContainer,
+
 .EmailContainer {
   display: flex;
   flex-direction: row;
-  margin: auto 0px;
+  margin: auto;
   text-align: left;
   justify-content: space-between;
 }
 
-.GenderContainer {
+.GenderContainer, .UserNameContainer{
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
+  text-align: left;
 }
 
-.gender-row {
+.gender-row, .name-row {
   display: flex;
   align-items: center;
 }
 
-.gender-info {
+.gender-info, .name-info {
   display: flex;
   justify-content: space-between;
   align-items: center;
   flex-grow: 1;
 }
 
-.input-container {
+.input-gender-container, .input-name-container {
   display: flex;
   align-items: center;
 }
 
-.gender-row h3:first-child {
+.gender-row h3:first-child, .name-row h3:first-child {
   margin-right: 10px;
 }
 </style>
