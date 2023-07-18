@@ -177,7 +177,7 @@ export default {
     </div>
     <div v-else style="color: white; display: flex; align-items: center; justify-content: space-between; width: 200px;">
       <div style="display: flex; flex-direction: column; align-items: center;" @click="ShowUserProfile()">
-        <el-avatar :size="70" :src="CurrentPhoto" style="object-fit: cover;"/>
+        <el-avatar :size="70" :src="this.$store.state.photo? this.$store.state.photo : CurrentPhoto" style="object-fit: cover;"/>
         <div>{{ this.$store.state.userName ? this.$store.state.userName : userName }}</div>
       </div>
       <el-button class="logout_button" type="primary" @click="logout(this.$router.currentRoute.value.path.includes('userprofile'))"><el-icon>

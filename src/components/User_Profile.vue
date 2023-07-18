@@ -107,24 +107,23 @@ export default {
     async CollectNewPhoto(event) {
       const file = event.target.files[0];
       const reader = new FileReader();
-      if (this.userSex.toLowerCase() === "male") {
+      /*if (this.userSex.toLowerCase() === "male") {
         this.SubmitSex = 0;
       } else {
         this.SubmitSex = 1;
-      }
+      }*/
       reader.onload = () => {
         const requestData = {
           userId: parseInt(this.uid),
           username: this.userName,
           userPhoto: reader.result,
-          userSex: parseInt(this.SubmitSex)
+          userSex: parseInt(this.userSex)
         }
         this.SubmitPhoto(requestData);
       };
       if (file) {
         reader.readAsDataURL(file);
       }
-
     },
     async SubmitPhoto(requestData) {
       try {
@@ -210,7 +209,7 @@ export default {
       <div class="BasicInfoContainer">
         <div class="AvatarContainer">
           <span class="el-avatar el-avatar--circle"
-            style="height: 200px; width: 200px; line-height: 200px; margin: 2em;"><img :src="CurrentPhoto"
+            style="height: 200px; width: 200px; line-height: 200px; margin: 2em;"><img :src="this.$store.state.photo? this.$store.state.photo : CurrentPhoto"
               style="object-fit: contain;"></span>
           <input type="file" ref="fileInput" @change="CollectNewPhoto" style="display: none" />
           <el-button class="UploadPhotoButton" circle @click="openPhotoInput">
