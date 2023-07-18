@@ -1,5 +1,6 @@
 import { ElMessage } from 'element-plus';
 import store from './store';
+import { router } from './main';
 
 export function getItemColor(categoryName) {
     switch (categoryName) {
@@ -68,7 +69,7 @@ export function logout(if_in_userprofile) {
     store.dispatch('clearUserName');
     store.dispatch('clearPhoto');
     store.dispatch('logout');
-    if(if_in_userprofile){
-        window.location.href = '/home';
+    if (if_in_userprofile) {
+        router.push('/home');
     }
 }

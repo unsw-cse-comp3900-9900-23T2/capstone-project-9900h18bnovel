@@ -38,7 +38,7 @@ const routes = [
   { path: '/bookInfo/:bookId', component: bookInfo }
 ];
 
-const router = createRouter({
+export const router = createRouter({
   history: createWebHistory(),
   routes
 });
