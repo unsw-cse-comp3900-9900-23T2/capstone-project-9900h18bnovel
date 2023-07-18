@@ -51,15 +51,24 @@ export function darkenColor(color) {
     }
 }
 
-export function logout() {
+export function logout(if_in_userprofile) {
     ElMessage({
         message: "Log out successful",
         type: 'success',
     });
-    localStorage.removeItem('userName');
-    localStorage.removeItem('token');
+    localStorage.removeItem('userSex');
     localStorage.removeItem('uid');
-    store.dispatch('logout');
-    store.dispatch('clearusername');
+    localStorage.removeItem('email');
+    localStorage.removeItem('username');
+    localStorage.removeItem('userPhoto');
+    localStorage.removeItem('token');
+    store.dispatch('clearSex');
     store.dispatch('clearuid');
+    store.dispatch('clearEmail');
+    store.dispatch('clearUserName');
+    store.dispatch('clearPhoto');
+    store.dispatch('logout');
+    if(if_in_userprofile){
+        window.location.href = '/home';
+    }
 }
