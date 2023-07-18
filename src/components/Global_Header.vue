@@ -219,6 +219,7 @@ export default {
 }
 
 .logout_button {
+  margin-right: 20px;
   width: 100px;
 }
 

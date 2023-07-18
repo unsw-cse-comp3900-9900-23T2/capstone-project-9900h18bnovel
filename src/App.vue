@@ -21,7 +21,6 @@ export default {
   data() {
     return {
       searchInput: null,
-      isLoginVisible: false,
       verImage: null,
       sessionId: null,
       loading: true,
@@ -37,6 +36,7 @@ export default {
     if (localStorage.getItem("token")) {
       this.$store.dispatch('login', localStorage.getItem("token"));
       this.$store.dispatch('username', localStorage.getItem("username"));
+      this.$store.dispatch('uid', localStorage.getItem("uid"));
     }
     this.searchInput = this.$store.getters.getSearchInput ? this.$store.getters.getSearchInput : null;
     setTimeout(() => {
@@ -57,7 +57,7 @@ export default {
     },
 
     async showLogin() {
-      this.isLoginVisible = true;
+      this.$store.dispatch("isLoginVisible", true);
       try {
         const response = await fetch("http://localhost:8888/api/front/user/img_verify_code", {
           method: 'GET',
@@ -77,9 +77,9 @@ export default {
       }
     },
     closeLoginBox() {
-      this.isLoginVisible = false;
+      this.$store.dispatch("isLoginVisible", false);
     },
-  }
+  },
 }
 </script>
 
@@ -87,10 +87,10 @@ export default {
   <div v-loading.fullscreen.lock="loading" element-loading-text="Welcome to NovelHub, novels will ready for you ASAP"
     :element-loading-spinner="svg" element-loading-svg-view-box="0, 5, 30, 40"
     element-loading-background="rgba(255, 255, 255, 255)"></div>
-  <div v-if="isLoadFinished" :class="{ 'blur': isLoginVisible }">
+  <div v-if="isLoadFinished" :class="{ 'blur': this.$store.state.isLoginVisible }">
     <Global_Header @clearSearch="clearSearch" @handleSearch="handleSearch" @showLogin="showLogin"
-      @closeLoginBox="closeLoginBox" :searchInput="this.searchInput" :isLoginVisible="this.isLoginVisible"
-      :verImage="this.verImage" :sessionId="this.sessionId" />
+      @closeLoginBox="closeLoginBox" :searchInput="this.searchInput" :verImage="this.verImage"
+      :sessionId="this.sessionId" />
     <Global_Nav />
     <router-view>
     </router-view>
@@ -103,11 +103,9 @@ export default {
       </div>
     </el-backtop>
   </div>
-  <transition name="fade">
-    <div v-if="isLoginVisible" class="loginSection">
-      <Login class="login" :verImage="this.verImage" :sessionId="this.sessionId" @closeLoginBox="closeLoginBox" />
-    </div>
-  </transition>
+  <div v-if="this.$store.state.isLoginVisible" class="loginSection">
+    <Login class="login" :verImage="this.verImage" :sessionId="this.sessionId" @closeLoginBox="closeLoginBox" />
+  </div>
 </template>
 
 <style>

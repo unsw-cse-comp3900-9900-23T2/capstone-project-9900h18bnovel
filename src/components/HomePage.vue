@@ -1,7 +1,6 @@
 <script setup>
 import {
   UserFilled,
-  User,
   Warning,
 } from '@element-plus/icons-vue';
 import { getItemColor } from '../utils'
@@ -19,7 +18,6 @@ const svg = `
 import Global_Footer from './Global_Footer.vue';
 import Profile from './User_Profile.vue';
 export default {
-  emits: ['showLogin', 'closeLoginBox'],
   data() {
     return {
       weekly_books_info: '',
@@ -163,9 +161,6 @@ export default {
             </h2>
             <div v-if="!this.$store.state.token" class="collected_novel_na_user">
               <el-empty :image-size="120" description="Please sign in to see more informations">
-                <el-button class="login_button" type="primary" @click="showLogin" @showLogin="showLogin"><el-icon>
-                    <User />
-                  </el-icon>{{ login_button }}</el-button>
               </el-empty>
             </div>
             <div v-else class="collected_novel_user">
@@ -710,6 +705,4 @@ export default {
   cursor: pointer;
   text-decoration: underline;
 }
-
-
 </style>
