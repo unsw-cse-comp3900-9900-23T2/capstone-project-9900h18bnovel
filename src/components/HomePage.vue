@@ -1,11 +1,10 @@
 <script setup>
 import {
-  CaretTop,
   UserFilled,
-  User,
   Warning,
 } from '@element-plus/icons-vue';
-import { ElMessage } from 'element-plus';
+import { getItemColor } from '../utils'
+// import { ElMessage } from 'element-plus';
 const svg = `
 <path class="path" d="
           M 10 40
@@ -16,41 +15,10 @@ const svg = `
       `
 </script>
 <script>
-import Header from './Global_Header.vue';
-import Nav from './Global_Nav.vue';
-import Footer from './Global_Footer.vue';
-import Login from './Auth_Page.vue';
+import Global_Footer from './Global_Footer.vue';
+import Profile from './User_Profile.vue';
 export default {
-  emits: ['showLogin', 'closeLoginBox', 'logout'],
   data() {
-    // const weekly_books_info = [
-    //   { title: 'Memory', image: 'https://d1csarkz8obe9u.cloudfront.net/posterpreviews/contemporary-fiction-night-time-book-cover-design-template-1be47835c3058eb42211574e0c4ed8bf_screen.jpg?ts=1637012564', author: 'Ajax Mother', des: "I wandered lonely as a cloud that floats on high o'er vales and hills when all at once I saw a crowd, a host, of golden daffodils." },
-    //   { title: 'Our Last Summer', image: 'https://marketplace.canva.com/EAFFEs6P168/1/0/1003w/canva-orange-green-watercolor-soft-cute-cartoon-love-romance-book-cover-5Zk2VM0-EAc.jpg', author: "Bob Fucker", des: 'Through this wide and troubled world I roam, alone and without a home, seeking solace in the depths of my soul' },
-    //   { title: 'The Past is Rising', image: 'https://i.pinimg.com/474x/a7/91/62/a7916230aedcdce47a4dfbff5247f0ce.jpg', author: "Charles Joker", des: 'Amidst the chaos and confusion, she remained calm and composed, a beacon of hope in the midst of darkness' }
-    // ]
-    // const hottest_books_info = [
-    //   { title: 'The Black Universe', image: 'https://marketplace.canva.com/EAFEbtlNK2Q/1/0/1003w/canva-double-exposure-artistic-background-novel-book-cover-sTAyOpO_rTI.jpg', author: 'Jesus Criss', des: "I wandered lonely as a cloud that floats on high o'er vales and hills when all at once I saw a crowd, a host, of golden daffodils." },
-    //   { title: 'Shadow of Evil', image: 'https://i.etsystatic.com/19280387/r/il/63ad6f/2350960458/il_fullxfull.2350960458_sj9e.jpg', author: "Tommas Tu", des: 'Through this wide and troubled world I roam, alone and without a home, seeking solace in the depths of my soul' },
-    //   { title: 'The Hypocrite World', image: 'https://marketplace.canva.com/EAD7WuSVrt0/1/0/1003w/canva-colorful-illustration-young-adult-book-cover-LVthABb24ik.jpg', author: "Siant Diygo", des: 'Amidst the chaos and confusion, she remained calm and composed, a beacon of hope in the midst of darkness' }
-    // ]
-    // const comments_black_universe = [
-    //   { comment: 'This novel is a captivating masterpiece that kept me hooked from beginning to end. The characters are so well-developed, and the plot twists had me on the edge of my seat!', commenter: 'Reviewer1' },
-    //   { comment: "I couldn't put this book down! The author's writing style is incredibly engaging, and the story had me completely immersed in its world. Highly recommended for any avid reader!", commenter: 'Reviewer2' },
-    //   { comment: "An absolute page-turner! The author has a gift for creating vivid imagery and evoking strong emotions. I laughed, I cried, and I couldn't get enough of this compelling story", commenter: 'Reviewer3' },
-    //   { comment: "This novel is a true gem. The narrative is beautifully crafted, and the themes explored are thought-provoking. It's a literary work that will stay with me long after I've turned the last page", commenter: 'Reviewer4' },
-    //   { comment: "I'm completely blown away by the depth and complexity of the characters in this novel. The author has created a rich and believable world that I didn't want to leave. A must-read for anyone seeking an immersive literary experience", commenter: 'Reviewer5' },
-    //   { comment: "If you're looking for a novel that will take you on an unforgettable journey, look no further. The writing is exquisite, and the plot twists are cleverly executed. I was captivated by every word and eagerly await the author's next masterpiece", commenter: 'Reviewer6' },
-
-    // ]
-    // const newest_books_images = ['https://miblart.com/wp-content/uploads/2020/01/crime-and-mystery-cover-scaled-1.jpeg', 'https://s26162.pcdn.co/wp-content/uploads/2020/01/Sin-Eater-by-Megan-Campisi.jpg', 'https://s26162.pcdn.co/wp-content/uploads/2019/12/46301955-668x1024.jpg']
-
-    // const click_rank_info = [
-    //   { value: 5, title: "Crack The Code", image: "https://www.adobe.com/express/create/cover/media_181e3d2c78f153ae7bf0e19a2faeb9a76e234da30.jpeg?width=400&format=jpeg&optimize=medium", author: "Patrick C.Harless", des: "In a small coastal town, a mysterious stranger arrives, bringing with him an air of intrigue and secrets. As the townspeople become entranced by his enigmatic presence, they soon discover that he holds the key to their deepest desires and darkest fears." },
-    //   { value: 4.7, title: "Pattingson's Curse", image: "https://www.designbookcover.pt/uploads/media/photos/cache/pattinsons_curse_72_media_huge_thumbnail.jpg", author: "Graeme Arnold", des: "Set in a dystopian future, where technology rules every aspect of life, a group of rebels embarks on a perilous journey to dismantle the oppressive regime. Along the way, they uncover shocking truths about the world they thought they knew, testing their resolve and challenging their beliefs." },
-    //   { value: 4.5, title: "Only Words", image: "https://www.designbookcover.pt/uploads/media/photos/cache/b1_only_words_72_media_huge_thumbnail.jpg", author: "Shane Ashby Trilogy", des: "In the heart of a bustling metropolis, two star-crossed lovers find themselves caught in a web of forbidden love. As they navigate the complexities of their social divide and societal expectations, they must confront the consequences of their actions and make choices that could change their lives forever." },
-    //   { value: 4.0, title: "Invisible Man", image: "https://news.harvard.edu/wp-content/uploads/2022/07/20220727_books_invisibleman_2500-655x1024.jpg", author: "Ralph Ellison", des: "In a realm of magic and mythical creatures, a young hero emerges from humble beginnings. With an ancient prophecy guiding their path, they embark on a quest to save their kingdom from an impending darkness. Along the way, they face formidable challenges, forge unlikely alliances, and discover the true power within themselves" },
-    //   { value: 3.6, title: "When Blood Meets Earth", image: "https://www.nairaland.com/attachments/16975928_octoberillustration6768x1152_jpeg7ab7fc0d22a2a942cf8632fae8e2295b", author: "E.A.NOBLE", des: "Against the backdrop of war-torn lands, a group of unlikely companions bands together to reclaim their homeland from the clutches of evil. As they navigate treacherous landscapes and face unimaginable dangers, they learn the true meaning of sacrifice, loyalty, and the enduring strength of friendship." }
-    // ]
     return {
       weekly_books_info: '',
       hottest_books_info: '',
@@ -64,28 +32,31 @@ export default {
       isLoginVisible: false,
       VerImage: '',
       sessionId: '',
-      loading: true,
       showHomePage: false,
+      loading: true,
+      showProfile: false,
     }
   },
   components: {
-    Header,
-    Nav,
-    Footer
+    Global_Footer,
+    Profile,
   },
   mounted() {
-    if (localStorage.getItem("token")) {
-      this.$store.dispatch('login', localStorage.getItem("token"));
-    }
+    this.getHomeBooks();
     setTimeout(() => {
-      this.getHomeBooks();
       this.loading = false;
       this.showHomePage = true;
     }, 500);
   },
   methods: {
-    handleSearch() {
-      this.$router.push('/allnovels');
+    goNewestRank() {
+      this.$router.push('/newestrank');
+    },
+    goClickRank() {
+      this.$router.push('/clickrank');
+    },
+    goUpdateRank() {
+      this.$router.push('/updaterank');
     },
 
     testFlag() {
@@ -98,26 +69,6 @@ export default {
       };
     },
 
-    async showLogin() {
-      this.isLoginVisible = true;
-      try {
-        const response = await fetch("http://localhost:8888/api/front/user/img_verify_code", {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-        });
-        if (response.status == 200) {
-          const data = await response.json();
-          this.verImage = "data:image/png;base64," + data.data.img;
-          this.sessionId = data.data.sessionId;
-        } else {
-          console.log("Test");
-        }
-      } catch (error) {
-        console.error(error);
-      }
-    },
     async getHomeBooks() {
       try {
         const response = await fetch("http://localhost:8888/api/front/home/books", {
@@ -128,7 +79,6 @@ export default {
         });
         if (response.status == 200) {
           const data = await response.json();
-          console.log(data);
           this.weekly_books_info = data.data.filter(item => item.type === '0');
           this.hottest_books_info = data.data.filter(item => item.type === '1');
           this.best_books_info = data.data.filter(item => item.type === '2');
@@ -136,27 +86,16 @@ export default {
           this.newest_rank_info = data.data.filter(item => item.type === '4');
           this.update_rank_info = data.data.filter(item => item.type === '5');
         } else {
-          console.log("Test");
+          console.log(response.status);
         }
       } catch (error) {
         console.error(error);
       }
     },
-    closeLoginBox() {
-      this.isLoginVisible = false;
+
+    goBookInfo(bookId) {
+      this.$router.push(`/bookInfo/${bookId}`);
     },
-    logout() {
-      ElMessage({
-        message: "Log out successful",
-        type: 'success',
-      });
-      localStorage.removeItem('userName');
-      localStorage.removeItem('token');
-      localStorage.removeItem('uid');
-      this.$store.dispatch('logout');
-      this.$store.dispatch('clearusername');
-      this.$store.dispatch('clearuid');
-    }
   },
   computed: {
     filteredComments() {
@@ -167,298 +106,280 @@ export default {
 </script>
 
 <template>
-  <div v-loading.fullscreen.lock="loading" element-loading-text="Welcome to NovelHub, novels will ready for you ASAP"
-    :element-loading-spinner="svg" element-loading-svg-view-box="0, 5, 30, 40"
-    element-loading-background="rgba(255, 255, 255, 255)"></div>
+  <div v-loading.lock="loading" :element-loading-spinner="svg" element-loading-svg-view-box="0, 5, 30, 40"
+    element-loading-background="rgba(255, 255, 255, 255)"
+    style="top:50%; left: 50%; transform: translate(-50%,-50%); position: absolute;"></div>
   <div v-if="showHomePage">
-    <div :class="{ 'blur': isLoginVisible }">
-      <Header @handleSearch="handleSearch" @showLogin="showLogin" @closeLoginBox="closeLoginBox" @logout="logout" />
-      <Nav />
-      <div style="display: flex; justify-content: center;">
-        <div class="homeBody">
-          <div class="weekly_collect_books_container">
-            <div class="weekly_books">
-              <h2>
-                Weekly Books
-                <el-popover placement="right" :width="230" trigger="hover"
-                  content="The Weekly Books features the highest-rated and most-viewed books of the week.">
-                  <template #reference>
-                    <el-icon style="font-size: 10pt;">
-                      <Warning />
-                    </el-icon>
-                  </template>
-                </el-popover>
-              </h2>
-              <el-carousel :interval="4000" height="300px">
-                <el-carousel-item v-for="item in weekly_books_info.slice(0, 3)" :key="item.title">
-                  <div class="carousel_weekly_background" :style="getBackgroundStyle(item.picUrl)"></div>
-                  <el-row>
-                    <el-column class="carousel_weekly_image_container">
-                      <img :src="item.picUrl" class="carousel_weekly_image">
-                    </el-column>
-                    <el-column class="carousel_weekly_text_container">
-                      <div class="carousel_weekly_text">
-                        <span class="carousel_weekly_text_title">{{ item.bookName }}</span>
-                        <span class="carousel_weekly_text_author">{{ item.authorName }}</span>
-                        <span class="carousel_weekly_text_descr">{{ item.bookDesc }}</span>
-                      </div>
-                    </el-column>
-                  </el-row>
-                </el-carousel-item>
-              </el-carousel>
+    <div style="display: flex; justify-content: center;">
+      <div class="homeBody">
+        <div class="weekly_collect_books_container">
+          <div class="weekly_books">
+            <h2>
+              Weekly Books
+              <el-popover placement="right" :width="230" trigger="hover"
+                content="The Weekly Books features the highest-rated and most-viewed books of the week.">
+                <template #reference>
+                  <el-icon style="font-size: 10pt;">
+                    <Warning />
+                  </el-icon>
+                </template>
+              </el-popover>
+            </h2>
+            <el-carousel :interval="4000" height="300px">
+              <el-carousel-item v-for="item in weekly_books_info.slice(0, 3)" :key="item.title">
+                <div class="carousel_weekly_background" :style="getBackgroundStyle(item.picUrl)"></div>
+                <el-row>
+                  <el-column class="carousel_weekly_image_container">
+                    <img :src="item.picUrl" class="carousel_weekly_image" @click="goBookInfo(item.bookId)">
+                  </el-column>
+                  <el-column class="carousel_weekly_text_container">
+                    <div class="carousel_weekly_text">
+                      <span class="carousel_weekly_text_title" @click="goBookInfo(item.bookId)">{{ item.bookName
+                      }}</span>
+                      <span class="carousel_weekly_text_author">{{ item.authorName }}</span>
+                      <span class="carousel_weekly_text_descr">{{ item.bookDesc }}</span>
+                      <el-tag class="tag" effect="plain" :style="getItemColor(item.categoryName)">{{
+                        item.categoryName
+                      }}</el-tag>
+                    </div>
+                  </el-column>
+                </el-row>
+              </el-carousel-item>
+            </el-carousel>
+          </div>
+          <div class="collected_novel_container">
+            <h2>
+              Collected Books
+              <el-popover placement="right" :width="250" trigger="hover"
+                content="The Collected Books determined by readers' personal collections, must signed in to view the section">
+                <template #reference>
+                  <el-icon style="font-size: 10pt;">
+                    <Warning />
+                  </el-icon>
+                </template>
+              </el-popover>
+            </h2>
+            <div v-if="!this.$store.state.token" class="collected_novel_na_user">
+              <el-empty :image-size="120" description="Please sign in to see more informations">
+              </el-empty>
             </div>
-            <div class="collected_novel_container">
-              <h2>
-                Collected Books
-                <el-popover placement="right" :width="250" trigger="hover"
-                  content="The Collected Books determined by readers' personal collections, must signed in to view the section">
-                  <template #reference>
-                    <el-icon style="font-size: 10pt;">
-                      <Warning />
-                    </el-icon>
-                  </template>
-                </el-popover>
-              </h2>
-              <div v-if="!this.$store.state.token" class="collected_novel_na_user">
-                <el-empty :image-size="120" description="Please sign in to see more informations">
-                  <el-button class="login_button" type="primary" @click="showLogin" @showLogin="showLogin"><el-icon>
-                      <User />
-                    </el-icon>{{ login_button }}</el-button>
-                </el-empty>
+            <div v-else class="collected_novel_user">
+              <el-empty :image-size="120" description="You don't have collect books"></el-empty>
+            </div>
+          </div>
+        </div>
+        <h2></h2>
+        <div class="recomm_books_container">
+          <div class="hottest_books">
+            <h2 style=" border-bottom: 1px solid; width: 100%; border-color: rgb(206, 204, 204); padding-bottom: 10px;">
+              Hottest Books
+              <el-popover placement="right" :width="275" trigger="hover"
+                content="The Hottest Books list features the most popular and sought-after literary gems based on the number of times they have been collected by readers">
+                <template #reference>
+                  <el-icon style="font-size: 10pt;">
+                    <Warning />
+                  </el-icon>
+                </template>
+              </el-popover>
+            </h2>
+            <el-carousel height="600px" style="width: 570px;" direction="vertical" type="card" :autoplay="true">
+              <el-carousel-item style="border-radius: 15px;" v-for="item in hottest_books_info.slice(0, 6)"
+                :key="item.bookName">
+                <el-row class="carousel_container">
+                  <div class="carousel_left_container">
+                    <span class="carousel_left_title" @click="goBookInfo(item.bookId)">
+                      <b>{{ item.bookName }}</b>
+                    </span>
+                    <span style="font-size: 12pt;">{{ item.authorName }}</span>
+                    <span
+                      style="font-size: 10pt; margin-top: 10px; margin-right: 10px; display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 10;overflow: hidden;">{{
+                        item.bookDesc }}</span>
+                    <el-tag class="tag" effect="plain" :style="getItemColor(item.categoryName)">{{
+                      item.categoryName
+                    }}</el-tag>
+                    <span style="bottom: 10px;position: absolute;">
+                      {{ item.collectCount }} <el-icon>
+                        <UserFilled />
+                      </el-icon> Collected
+                    </span>
+                  </div>
+                  <div class="carousel_image_container">
+                    <img :src="item.picUrl" class="carousel_image" @click="goBookInfo(item.bookId)">
+                  </div>
+                  <div class="carousel_right_container">
+                    <div class="carousel_right_comments_container">
+                      <div class="carousel_right_comments">
+                        <div class="comment-text">comments</div>
+                      </div>
+                    </div>
+                    <div class="carousel_right_rates_container">
+                      <el-rate v-model="item.score" disabled show-score text-color="#ff9900" size="small"
+                        style="margin-left: -5px;" score-template="{value} points" />
+                    </div>
+                  </div>
+                </el-row>
+              </el-carousel-item>
+            </el-carousel>
+          </div>
+          <div class="best_books">
+            <h2 style="border-bottom: 1px solid; width: 100%; border-color: rgb(206, 204, 204);  padding-bottom: 10px;">
+              Best Books
+              <el-popover placement="right" :width="265" trigger="hover"
+                content="The Best Books list showcases the most highly-rated and acclaimed literary works based on their scores">
+                <template #reference>
+                  <el-icon style="font-size: 10pt;">
+                    <Warning />
+                  </el-icon>
+                </template>
+              </el-popover>
+            </h2>
+            <el-carousel height="600px" style="width: 570px;" direction="vertical" type="card" :autoplay="true">
+              <el-carousel-item style="border-radius: 15px;" v-for="item in best_books_info.slice(0, 6)"
+                :key="item.bookName">
+                <el-row class="carousel_container">
+                  <div class="carousel_left_container">
+                    <span class="carousel_left_title" @click="goBookInfo(item.bookId)">
+                      <b>{{ item.bookName }}</b>
+                    </span>
+                    <span style="font-size: 12pt;">{{ item.authorName }}</span>
+                    <span
+                      style="font-size: 10pt; margin-top: 10px; margin-right: 10px; display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 10;overflow: hidden;">{{
+                        item.bookDesc }}</span>
+                    <el-tag class="tag" effect="plain" :style="getItemColor(item.categoryName)">{{
+                      item.categoryName
+                    }}</el-tag>
+                    <span style="bottom: 10px;position: absolute;">
+                      {{ item.collectCount }} <el-icon>
+                        <UserFilled />
+                      </el-icon> Collected
+                    </span>
+                  </div>
+                  <div class="carousel_image_container">
+                    <img :src="item.picUrl" class="carousel_image" @click="goBookInfo(item.bookId)">
+                  </div>
+                  <div class="carousel_right_container">
+                    <div class="carousel_right_comments_container">
+                      <div class="carousel_right_comments">
+                        <div class="comment-text">comments</div>
+                      </div>
+                    </div>
+                    <div class="carousel_right_rates_container">
+                      <el-rate v-model="item.score" disabled show-score text-color="#ff9900" size="small"
+                        style="margin-left: -5px;" score-template="{value} points" />
+                    </div>
+                  </div>
+                </el-row>
+              </el-carousel-item>
+            </el-carousel>
+          </div>
+        </div>
+        <h2
+          style=" border-bottom: 1px solid; border-color: rgb(223, 223, 223); padding-bottom: 10px; margin-bottom: 22px; margin-top: 30px; width: 100%; text-align: center;">
+          Ranking of Books</h2>
+        <div class="rank_books_container">
+          <div class="rank_container">
+            <div style="display: flex;">
+              <div class="rank_name" @click="goClickRank">Click Rank</div>
+              <el-popover placement="right" :width="210" trigger="hover"
+                content="The Click Rank is a list based on the total number of clicks a novel receives. It showcases the most popular and highly-clicked novels at the moment.">
+                <template #reference>
+                  <el-icon style="margin-left: 10px;">
+                    <Warning />
+                  </el-icon>
+                </template>
+              </el-popover>
+            </div>
+            <div class="rank_items" v-for="(item, index) in click_rank_info.slice(0, 5)" :key="item.title">
+              <div class="rank_image">
+                <img style="height: 80px;" :src="item.picUrl" @click="goBookInfo(item.bookId)" />
               </div>
-              <div v-else class="collected_novel_user">
-                <el-empty :image-size="120" description="You don't have collect books"></el-empty>
+              <div class="rank_rank" :class="{ 'red': index === 0, 'orange': index === 1, 'green': index === 2 }">
+                0{{ index + 1 }}
+              </div>
+              <div class="rank_info">
+                <el-text truncated class="rank_title" @click="goBookInfo(item.bookId)">{{ item.bookName }}</el-text>
+                <br />
+                <el-text truncated style="font-size: 10pt;">{{ item.authorName }}</el-text>
+                <br />
+                <el-text truncated style="font-size: 10pt; width: 250px;"><el-rate v-model="item.score" disabled
+                    show-score text-color="#ff9900" size="small" score-template="{value} points" /></el-text>
               </div>
             </div>
           </div>
-          <h2></h2>
-          <div class="recomm_books_container">
-            <div class="hottest_books">
-              <h2 style=" border-bottom: 1px solid; width: 100%; border-color: rgb(206, 204, 204); padding-bottom: 10px;">
-                Hottest Books
-                <el-popover placement="right" :width="275" trigger="hover"
-                  content="The Hottest Books list features the most popular and sought-after literary gems based on the number of times they have been collected by readers">
-                  <template #reference>
-                    <el-icon style="font-size: 10pt;">
-                      <Warning />
-                    </el-icon>
-                  </template>
-                </el-popover>
-              </h2>
-              <el-carousel height="600px" style="width: 570px;" direction="vertical" type="card" :autoplay="true">
-                <el-carousel-item style="border-radius: 15px;" v-for="item in hottest_books_info.slice(0, 6)"
-                  :key="item.bookName">
-                  <el-row class="carousel_container">
-                    <div class="carousel_left_container">
-                      <span
-                        style="font-size: 12pt; display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 2;overflow: hidden; margin-bottom: 5px;">
-                        <b>{{ item.bookName }}</b>
-                      </span>
-                      <span style="font-size: 12pt;">{{ item.authorName }}</span>
-                      <span
-                        style="font-size: 10pt; margin-top: 10px; margin-right: 10px; display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 11;overflow: hidden;">{{
-                          item.bookDesc }}</span>
-                      <span style="bottom: 10px;position: absolute;">
-                        {{ item.collectCount }} <el-icon>
-                          <UserFilled />
-                        </el-icon> Collected
-                      </span>
-                    </div>
-                    <div class="carousel_image_container">
-                      <img :src="item.picUrl" class="carousel_image">
-                    </div>
-                    <div class="carousel_right_container">
-                      <div class="carousel_right_comments_container">
-                        <div class="carousel_right_comments">
-                          <div class="comment-text">comments</div>
-                        </div>
-                      </div>
-                      <div class="carousel_right_rates_container">
-                        <el-rate v-model="item.score" disabled show-score text-color="#ff9900" size="small"
-                          style="margin-left: -5px;" score-template="{value} points" />
-                      </div>
-                    </div>
-                  </el-row>
-                </el-carousel-item>
-              </el-carousel>
+          <div class="rank_container">
+            <div style="display: flex;">
+              <div class="rank_name" @click="goNewestRank">Newest Rank</div>
+              <el-popover placement="right" :width="215" trigger="hover"
+                content="The Newest Rank is a list that features the latest releases of novels. It highlights the freshest in the NovelHub.">
+                <template #reference>
+                  <el-icon style="margin-left: 10px;">
+                    <Warning />
+                  </el-icon>
+                </template>
+              </el-popover>
             </div>
-            <div class="best_books">
-              <h2 style="border-bottom: 1px solid; width: 100%; border-color: rgb(206, 204, 204);  padding-bottom: 10px;">
-                Best Books
-                <el-popover placement="right" :width="265" trigger="hover"
-                  content="The Best Books list showcases the most highly-rated and acclaimed literary works based on their scores">
-                  <template #reference>
-                    <el-icon style="font-size: 10pt;">
-                      <Warning />
-                    </el-icon>
-                  </template>
-                </el-popover>
-              </h2>
-              <el-carousel height="600px" style="width: 570px;" direction="vertical" type="card" :autoplay="true">
-                <el-carousel-item style="border-radius: 15px;" v-for="item in best_books_info.slice(0, 6)"
-                  :key="item.bookName">
-                  <el-row class="carousel_container">
-                    <div class="carousel_left_container">
-                      <span
-                        style="font-size: 12pt; display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 2;overflow: hidden; margin-bottom: 5px;">
-                        <b>{{ item.bookName }}</b>
-                      </span>
-                      <span style="font-size: 12pt;">{{ item.authorName }}</span>
-                      <span
-                        style="font-size: 10pt; margin-top: 10px; margin-right: 10px; display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 11;overflow: hidden;">{{
-                          item.bookDesc }}</span>
-                      <span style="bottom: 10px;position: absolute;">
-                        {{ item.collectCount }} <el-icon>
-                          <UserFilled />
-                        </el-icon> Collected
-                      </span>
-                    </div>
-                    <div class="carousel_image_container">
-                      <img :src="item.picUrl" class="carousel_image">
-                    </div>
-                    <div class="carousel_right_container">
-                      <div class="carousel_right_comments_container">
-                        <div class="carousel_right_comments">
-                          <div class="comment-text">comments</div>
-                        </div>
-                      </div>
-                      <div class="carousel_right_rates_container">
-                        <el-rate v-model="item.score" disabled show-score text-color="#ff9900" size="small"
-                          style="margin-left: -5px;" score-template="{value} points" />
-                      </div>
-                    </div>
-                  </el-row>
-                </el-carousel-item>
-              </el-carousel>
+            <div class="rank_items" v-for="(item, index) in newest_rank_info.slice(0, 5)" :key="item">
+              <div class="rank_image">
+                <img style="height: 80px;" :src="item.picUrl" @click="goBookInfo(item.bookId)" />
+              </div>
+              <div class="rank_rank" :class="{ 'red': index === 0, 'orange': index === 1, 'green': index === 2 }">
+                0{{ index + 1 }}
+              </div>
+              <div class="rank_info">
+                <el-text truncated class="rank_title" @click="goBookInfo(item.bookId)">{{ item.bookName }}</el-text>
+                <br />
+                <el-text truncated style="font-size: 10pt;">{{ item.authorName }}</el-text>
+                <br />
+                <el-text truncated style="font-size: 10pt; width: 250px;"><el-rate v-model="item.score" disabled
+                    show-score text-color="#ff9900" size="small" score-template="{value} points" /></el-text>
+              </div>
             </div>
           </div>
-          <h2
-            style=" border-bottom: 1px solid; border-color: rgb(223, 223, 223); padding-bottom: 10px; margin-bottom: 22px; margin-top: 30px; width: 100%; text-align: center;">
-            Ranking of Books</h2>
-          <div class="rank_books_container">
-            <div class="rank_container">
-              <div style="display: flex;">
-                <div class="rank_name">Click Rank</div>
-                <el-popover placement="right" :width="210" trigger="hover"
-                  content="The Click Rank is a list based on the total number of clicks a novel receives. It showcases the most popular and highly-clicked novels at the moment. ">
-                  <template #reference>
-                    <el-icon style="margin-left: 10px;">
-                      <Warning />
-                    </el-icon>
-                  </template>
-                </el-popover>
-              </div>
-              <div class="rank_items" v-for="(item, index) in click_rank_info.slice(0, 5)" :key="item.title">
-                <div class="rank_image">
-                  <img style="height: 80px;" :src="item.picUrl" />
-                </div>
-                <div class="rank_rank" :class="{ 'red': index === 0, 'orange': index === 1, 'green': index === 2 }">
-                  0{{ index + 1 }}
-                </div>
-                <div class="rank_info">
-                  <el-text truncated style="font-size: 14pt; color: black; width: 250px;">{{ item.bookName }}</el-text>
-                  <br />
-                  <el-text truncated style="font-size: 10pt;">{{ item.authorName }}</el-text>
-                  <br />
-                  <el-text truncated style="font-size: 10pt; width: 250px;"><el-rate v-model="item.score" disabled
-                      show-score text-color="#ff9900" size="small" score-template="{value} points" /></el-text>
-                </div>
-              </div>
+          <div class="rank_container">
+            <div style="display: flex;">
+              <div class="rank_name" @click="goUpdateRank">Update Rank</div>
+              <el-popover placement="right" :width="240" trigger="hover"
+                content="The Update Rank is a dynamic list that showcases novels with recent updates. It presents novels that have been recently added chapters or undergone significant updates">
+                <template #reference>
+                  <el-icon style="margin-left: 10px;">
+                    <Warning />
+                  </el-icon>
+                </template>
+              </el-popover>
             </div>
-            <div class="rank_container">
-              <div style="display: flex;">
-                <div class="rank_name">Newest Rank</div>
-                <el-popover placement="right" :width="215" trigger="hover"
-                  content="The Newest Rank is a list that features the latest releases of novels. It highlights the freshest in the NovelHub.">
-                  <template #reference>
-                    <el-icon style="margin-left: 10px;">
-                      <Warning />
-                    </el-icon>
-                  </template>
-                </el-popover>
+            <div class="rank_items" v-for="(item, index) in update_rank_info.slice(0, 5)" :key="item">
+              <div class="rank_image">
+                <img style="height: 80px;" :src="item.picUrl" @click="goBookInfo(item.bookId)" />
               </div>
-              <div class="rank_items" v-for="(item, index) in newest_rank_info.slice(0, 5)" :key="item">
-                <div class="rank_image">
-                  <img style="height: 80px;" :src="item.picUrl" />
-                </div>
-                <div class="rank_rank" :class="{ 'red': index === 0, 'orange': index === 1, 'green': index === 2 }">
-                  0{{ index + 1 }}
-                </div>
-                <div class="rank_info">
-                  <el-text truncated style="font-size: 14pt; color: black; width: 250px;">{{ item.bookName }}</el-text>
-                  <br />
-                  <el-text truncated style="font-size: 10pt;">{{ item.authorName }}</el-text>
-                  <br />
-                  <el-text truncated style="font-size: 10pt; width: 250px;"><el-rate v-model="item.score" disabled
-                      show-score text-color="#ff9900" size="small" score-template="{value} points" /></el-text>
-                </div>
+              <div class="rank_rank" :class="{ 'red': index === 0, 'orange': index === 1, 'green': index === 2 }">
+                0{{ index + 1 }}
               </div>
-            </div>
-            <div class="rank_container">
-              <div style="display: flex;">
-                <div class="rank_name">Update Rank</div>
-                <el-popover placement="right" :width="240" trigger="hover"
-                  content="The Update Rank is a dynamic list that showcases novels with recent updates. It presents novels that have been recently added chapters or undergone significant updates">
-                  <template #reference>
-                    <el-icon style="margin-left: 10px;">
-                      <Warning />
-                    </el-icon>
-                  </template>
-                </el-popover>
-              </div>
-              <div class="rank_items" v-for="(item, index) in update_rank_info.slice(0, 5)" :key="item">
-                <div class="rank_image">
-                  <img style="height: 80px;" :src="item.picUrl" />
-                </div>
-                <div class="rank_rank" :class="{ 'red': index === 0, 'orange': index === 1, 'green': index === 2 }">
-                  0{{ index + 1 }}
-                </div>
-                <div class="rank_info">
-                  <el-text truncated style="font-size: 14pt; color: black; width: 250px;">{{ item.bookName }}</el-text>
-                  <br />
-                  <el-text truncated style="font-size: 10pt;">{{ item.authorName }}</el-text>
-                  <br />
-                  <el-text truncated style="font-size: 10pt; width: 250px;"><el-rate v-model="item.score" disabled
-                      show-score text-color="#ff9900" size="small" score-template="{value} points" /></el-text>
-                </div>
+              <div class="rank_info">
+                <el-text truncated class="rank_title" @click="goBookInfo(item.bookId)">{{ item.bookName }}</el-text>
+                <br />
+                <el-text truncated style="font-size: 10pt;">{{ item.authorName }}</el-text>
+                <br />
+                <el-text truncated style="font-size: 10pt; width: 250px;"><el-rate v-model="item.score" disabled
+                    show-score text-color="#ff9900" size="small" score-template="{value} points" /></el-text>
               </div>
             </div>
           </div>
         </div>
       </div>
-      <Footer />
-      <!-- Go to top floating buttom -->
-      <el-backtop :bottom="100">
-        <div class="goTopButton">
-          <el-icon>
-            <CaretTop />
-          </el-icon>
-        </div>
-      </el-backtop>
     </div>
+    <div v-if="showProfile">
+      <Profile />
+    </div>
+
+    <Global_Footer />
   </div>
-  <transition name="fade">
-    <div v-if="isLoginVisible" class="loginSection">
-      <Login class="login" :verImage="this.verImage" :sessionId="this.sessionId" @showLogin="showLogin"
-        @cancel="closeLoginBox" />
-    </div>
-  </transition>
 </template>
 
 <style>
-.fade-enter,
-.fade-leave-to {
-  opacity: 0;
-}
-
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.5s;
-}
-
-.blur {
-  filter: blur(5px);
-  pointer-events: none;
+.tag {
+  bottom: 30px;
+  position: absolute;
+  margin-top: 10px;
 }
 
 .homeBody {
@@ -479,6 +400,10 @@ export default {
 .weekly_books {
   width: 50%;
   margin-right: 5px;
+}
+
+.weekly_books .el-carousel__button {
+  background-color: white;
 }
 
 .carousel_weekly_background {
@@ -507,6 +432,7 @@ export default {
 
 .carousel_weekly_image:hover {
   transform: translateY(-4px);
+  cursor: pointer;
 }
 
 .carousel_weekly_text_container {
@@ -526,6 +452,11 @@ export default {
   margin-bottom: 5px;
 }
 
+.carousel_weekly_text_title:hover {
+  cursor: pointer;
+  text-decoration: underline;
+}
+
 .carousel_weekly_text_author {
   font-size: 18pt;
   margin-bottom: 20px;
@@ -536,7 +467,7 @@ export default {
   padding-right: 50px;
   display: -webkit-box;
   -webkit-box-orient: vertical;
-  -webkit-line-clamp: 8;
+  -webkit-line-clamp: 7;
   overflow: hidden;
 }
 
@@ -597,17 +528,21 @@ export default {
 }
 
 .el-carousel__item:nth-child(n) {
-  background-color: rgb(231, 231, 231);
+  background-color: #f3f3f3;
+}
+
+.recomm_books_container .el-carousel__button {
+  background-color: #676767;
 }
 
 .carousel_container {
   height: 300px;
-  transform: scale(1);
-  transition: transform 0.3s ease;
+
 }
 
 .carousel_container:hover {
-  transform: scale(1.03);
+
+  cursor: default;
 }
 
 
@@ -620,9 +555,29 @@ export default {
   flex-direction: column;
 }
 
+.carousel_left_title {
+  font-size: 12pt;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  margin-bottom: 5px;
+}
+
+.carousel_left_title:hover {
+  cursor: pointer;
+  text-decoration: underline;
+}
+
 .carousel_image_container {
   height: 100%;
+  transform: scale(1);
+  transition: transform 0.3s ease;
+}
 
+.carousel_image_container:hover {
+  cursor: pointer;
+  transform: scale(1.03);
 }
 
 .carousel_image {
@@ -695,6 +650,10 @@ export default {
   padding: 2px;
 }
 
+.rank_name:hover {
+  cursor: pointer;
+}
+
 .rank_items {
   display: flex;
   margin-top: 8px;
@@ -709,6 +668,7 @@ export default {
 
 .rank_image img:hover {
   transform: translateY(-4px);
+  cursor: pointer;
 }
 
 .rank_rank {
@@ -735,15 +695,14 @@ export default {
   font-size: 14pt;
 }
 
-.goTopButton {
-  height: 100%;
-  width: 100%;
-  background-color: var(--el-bg-color-overlay);
-  box-shadow: var(--el-box-shadow-lighter);
-  align-items: center;
-  display: flex;
-  justify-content: center;
-  line-height: 40px;
-  color: #1989fa;
+.rank_info .rank_title {
+  font-size: 14pt;
+  color: black;
+  width: 250px;
+}
+
+.rank_title:hover {
+  cursor: pointer;
+  text-decoration: underline;
 }
 </style>

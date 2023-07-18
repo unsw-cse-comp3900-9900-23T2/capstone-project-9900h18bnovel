@@ -15,7 +15,7 @@
       <div class="footer-top-blocks">
         <h2>ABOUT</h2>
         <el-popover placement="right" :width="215" trigger="click"
-          content="Front-end: Vue2 + Vue3 + VueX + Element-UI. Back-end: sprint boot + redis + mysql.">
+          content="Front-end: Vue3 + VueX + Element-UI. Back-end: Spring Boot + Redis + Mysql.">
           <template #reference>
             <span class="footer-elements">How</span>
           </template>

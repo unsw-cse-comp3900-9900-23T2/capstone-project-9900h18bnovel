@@ -49,7 +49,7 @@ export default {
       }
     },
     closeLoginBox() {
-      this.$emit('cancel');
+      this.$emit('closeLoginBox');
     },
     showLogin() {
       this.$emit('showLogin');
@@ -210,6 +210,7 @@ export default {
       } else if (this.verCodeIsNumbers === false) {
         this.alertBox("verCodeIsNotNumbers")
       } else {
+
         const requestData = {
           email: this.email,
           password: this.password,
@@ -226,15 +227,16 @@ export default {
           });
           if (response.status == 200) {
             const data = await response.json();
-            console.log(data);
             if (data.code === "00000") {
               ElMessage({
                 message: 'Welcome ' + data.data.userName,
                 type: 'success',
               });
+              localStorage.setItem('email', this.email);
               localStorage.setItem('token', data.data.token);
               localStorage.setItem('uid', data.data.uid);
               localStorage.setItem('username', data.data.userName);
+              this.$store.dispatch('email', data.data.email);
               this.$store.dispatch('login', data.data.token);
               this.$store.dispatch('uid', data.data.uid);
               this.$store.dispatch('username', data.data.userName);
@@ -591,11 +593,13 @@ export default {
   border-radius: 50px;
   box-shadow: 0 10px 10px rgba(0, 0, 0, 0.4);
   padding: 20px;
+  background-color: white;
   background: url(../AuthBG.jpg);
   background-size: cover;
   background-position: 40% 60%;
   margin: 0 auto;
 }
+
 
 
 .each_input_container {

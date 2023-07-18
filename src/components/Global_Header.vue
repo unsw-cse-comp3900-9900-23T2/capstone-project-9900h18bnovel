@@ -1,14 +1,33 @@
 <script setup>
 import {
   Search,
-  User
+  User,
+  CircleCloseFilled,
 } from '@element-plus/icons-vue'
 
+import { ElMessage } from 'element-plus'
 </script >
 <script>
-import Login from './Auth_Page.vue';
+import { logout } from '../utils';
 export default {
-  emits: ['showLogin', 'closeLoginBox', 'logout'],
+  props: {
+    keyword: {
+      type: String,
+      default: ''
+    },
+    isLoginVisible: {
+      type: Boolean,
+      default: false
+    },
+    verImage: {
+      type: String,
+      default: ''
+    },
+    sessionId: {
+      type: String,
+      default: ''
+    },
+  },
   data() {
     return {
       header_left: 'header_left',
@@ -16,20 +35,30 @@ export default {
       login_button: 'Sign in',
       isSearchActive: false,
       searchInput: '',
-      username: '',
-      isLoginVisible: false,
+      uid: localStorage.getItem('uid')?localStorage.getItem('uid'):'',
+      email: localStorage.getItem('email') || '',
+      userName: localStorage.getItem('username') || '',
+      userPhoto: '',
+      userSex: '',
+      CurrentPhoto:'',
+      DefaultPhoto: 'https://img-qn.51miz.com/Element/00/88/60/42/ea5b40df_E886042_1992a532.png!/quality/90/unsharp/true/compress/true/format/png/fw/300',
     }
   },
-  components: {
-    Login,
-  },
+
   mounted() {
     document.addEventListener('click', this.searchGlobalClick);
-    if (localStorage.getItem("token")) {
-      this.$store.dispatch('login', localStorage.getItem("token"));
-      this.$store.dispatch('username', localStorage.getItem("username"));
+    if (localStorage.getItem('userPhoto') === 'undefined' || !localStorage.getItem('userPhoto')) {
+      this.CurrentPhoto = this.DefaultPhoto;
+    } else{
+      this.CurrentPhoto = localStorage.getItem('userPhoto');
     }
   },
+  /*watch(){
+    '$store.state.userName'(newValue, oldValue) {
+      // 在 userName 发生变化时执行的逻辑
+      console.log('userName 发生变化:', newValue);
+    }
+  },*/
   beforeUnmount() {
     document.removeEventListener('click', this.searchGlobalClick);
   },
@@ -38,7 +67,6 @@ export default {
       this.isSearchActive = true;
     },
     handleSearch() {
-      this.$store.dispatch("setSearchInput", this.searchInput);
       this.$emit("handleSearch", this.searchInput);
     },
     searchGlobalClick() {
@@ -49,17 +77,59 @@ export default {
     goHome() {
       this.$router.push('/home');
     },
-    closeLoginBox() {
-      this.$emit('closeLoginBox');
-    },
     showLogin() {
       this.$emit('showLogin');
     },
-    logout() {
-      this.$emit('logout');
+    closeLoginBox() {
+      this.$emit('closeLoginBox');
+    },
+    async ShowUserProfile() {
+      this.$router.push('/userprofile');
+      const requestData = {
+        userId: localStorage.getItem('uid')?localStorage.getItem('uid'):''
+      }
+      try {
+        const response = await fetch("http://localhost:8888/api/front/user/get_userInfo", {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(requestData)
+        });
+        if (response.status == 200) {
+          const data = await response.json();
+          if (data.code === "00000") {
+            if (data.data.userPhoto) {
+              localStorage.setItem('userPhoto', data.data.userPhoto);
+              console.log(data.data.userPhoto);
+              this.$store.dispatch('photo', data.data.userPhoto);
+            } else {
+              this.userPhoto = this.DefaultPhoto;
+            }
+            if (data.data.userSex) {
+              console.log(data.data.userSex);
+              localStorage.setItem('userSex', data.data.userSex);
+              this.userSex  = data.data.userSex;
+              this.$store.dispatch('sex', data.data.userSex);
+            } else {
+              this.userSex = '';
+            }
+          }
+        } else {
+          console.log("Global_Header.vue 的78行附近有问题");
+        }
+      } catch (error) {
+        ElMessage.error(error);
+      }
+    },
+    clearSearch() {
+      this.searchInput = null;
+      this.$emit("clearSearch");
     }
-  }
+  },
+
 }
+
 </script>
 <template>
   <div class="header_container">
@@ -73,9 +143,13 @@ export default {
           round>Search</el-button>
       </div>
       <div v-else @click.stop>
-        <el-input class="searchText" v-model="searchInput" placeholder="Please Enter Keyword">
+        <el-input class="searchText" v-model="searchInput" :placeholder="keyword ? keyword : 'Please Enter Keyword'"
+          @keyup.enter="handleSearch">
           <template #prepend>
             <el-button @click.stop="handleSearch" :icon="Search" />
+          </template>
+          <template #append>
+            <el-button :icon="CircleCloseFilled" @click="clearSearch" />
           </template>
         </el-input>
       </div>
@@ -102,30 +176,18 @@ export default {
         </el-icon>{{ login_button }}</el-button>
     </div>
     <div v-else style="color: white; display: flex; align-items: center; justify-content: space-between; width: 200px;">
-      <div style="display: flex; flex-direction: column; align-items: center;">
-        <el-avatar :size="70"
-          :src="img ? img : 'https://img-qn.51miz.com/Element/00/88/60/42/ea5b40df_E886042_1992a532.png!/quality/90/unsharp/true/compress/true/format/png/fw/300'" />
-        <div>{{ this.$store.state.userName ? this.$store.state.userName : username }}</div>
+      <div style="display: flex; flex-direction: column; align-items: center;" @click="ShowUserProfile()">
+        <el-avatar :size="70" :src="this.$store.state.photo? this.$store.state.photo : CurrentPhoto" style="object-fit: cover;"/>
+        <div>{{ this.$store.state.userName ? this.$store.state.userName : userName }}</div>
       </div>
-      <el-button class="logout_button" type="primary" @click="logout"><el-icon>
+      <el-button class="logout_button" type="primary" @click="logout(this.$router.currentRoute.value.path.includes('userprofile'))"><el-icon>
           <User />
         </el-icon> Sign out </el-button>
     </div>
   </div>
-  <div v-if="isLoginVisible" class="loginSection">
-    <Login @showLogin="showLogin" @cancel="closeLoginBox" />
-  </div>
 </template>
 
 <style >
-.loginSection {
-  position: absolute;
-  z-index: 100;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-}
-
 .logo_container {
   height: 100px;
   margin-left: 20px;
@@ -142,10 +204,13 @@ export default {
 
 .search_container {
   display: block;
+  text-align: center;
+  width: 500px;
 }
 
 .searchButton {
-  width: 20vh;
+  width: 30vh;
+
 }
 
 .login_button {
@@ -154,6 +219,7 @@ export default {
 }
 
 .logout_button {
+  margin-right: 20px;
   width: 100px;
 }
 

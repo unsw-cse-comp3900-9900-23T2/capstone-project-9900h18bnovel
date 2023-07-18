@@ -3,19 +3,44 @@ import { createStore } from 'vuex';
 export default createStore({
   state() {
     return {
+      isLoginVisible: false,
       token: null,
       userName: null,
       uid: null,
       currentURL: null,
+      email: null,
+      photo: null,
+      sex: null,
       searchInput: null,
     };
   },
   mutations: {
+    isLoginVisible(state, bool) {
+      state.isLoginVisible = bool;
+    },
     setToken(state, token) {
       state.token = token;
     },
     clearToken(state) {
       state.token = null;
+    },
+    Sex(state, sex) {
+      state.sex = sex;
+    },
+    clearSex(state) {
+      state.sex = null;
+    },
+    setPhoto(state, photo) {
+      state.photo = photo;
+    },
+    clearPhoto(state) {
+      state.photo = null;
+    },
+    setEmail(state, email) {
+      state.email = email;
+    },
+    clearEmail(state) {
+      state.email = null;
     },
     setUserName(state, userName) {
       state.userName = userName;
@@ -43,11 +68,32 @@ export default createStore({
     },
   },
   actions: {
+    isLoginVisible({ commit }, bool) {
+      commit('isLoginVisible', bool);
+    },
     login({ commit }, token) {
       commit('setToken', token);
     },
     logout({ commit }) {
       commit('clearToken');
+    },
+    sex({ commit }, sex) {
+      commit('Sex', sex);
+    },
+    clearSex({ commit }) {
+      commit('clearSex');
+    },
+    email({ commit }, email) {
+      commit('setEmail', email);
+    },
+    clearEmail({ commit }) {
+      commit('clearEmail');
+    },
+    photo({ commit }, photo) {
+      commit('setPhoto', photo);
+    },
+    clearPhoto({ commit }) {
+      commit('clearPhoto');
     },
     username({ commit }, userName) {
       commit('setUserName', userName);
@@ -61,7 +107,7 @@ export default createStore({
     clearuid({ commit }) {
       commit('clearUid');
     },
-    updateCurrentURL({ commit }, url) {
+    setCurrentURL({ commit }, url) {
       commit('setCurrentURL', url);
     },
     clearCurrentURL({ commit }) {
@@ -80,6 +126,21 @@ export default createStore({
     },
     getCurrentURL: (state) => {
       return state.currentURL;
+    },
+    GetSex: (state) => {
+      return state.sex;
+    },
+    GetEmail: (state) => {
+      return state.email;
+    },
+    GetPhoto: (state) => {
+      return state.photo;
+    },
+    GetUsername: (state) => {
+      return state.userName;
+    },
+    GetUID: (state) => {
+      return state.uid;
     },
     getSearchInput: (state) => {
       return state.searchInput;
