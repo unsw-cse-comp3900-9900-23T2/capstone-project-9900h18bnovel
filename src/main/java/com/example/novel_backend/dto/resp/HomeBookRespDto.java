@@ -4,14 +4,20 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Data;
 
+import java.io.Serial;
+import java.io.Serializable;
+import java.util.List;
+
 /**
  * Home Page Recommendations Responding to DTO
  * @author :Contanstin
  * @create 2023/6/23 21:25
  */
 @Data
-public class HomeBookRespDto {
+public class HomeBookRespDto implements Serializable {
 
+    @Serial
+    private static final long serialVersionUID = 1L;
     /**
      * Type;0-Rotary 1-Top bar 2-This week's top picks 3-Popular picks 4-Best picks
      */
@@ -69,6 +75,10 @@ public class HomeBookRespDto {
     /**
      * Category Name
      */
+    @Schema(description = "Category name")
     private String categoryName;
+
+    @Schema(description = "Book comment")
+    private List<BookCommentRespDto> bookComments;
 
 }

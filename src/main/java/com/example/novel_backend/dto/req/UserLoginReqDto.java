@@ -37,4 +37,5 @@ public class UserLoginReqDto {
     @NotBlank
     @Length(min = 32,max = 32)
     private String sessionId;
+
 }

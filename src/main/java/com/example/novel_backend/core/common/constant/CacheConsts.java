@@ -79,7 +79,7 @@ public class CacheConsts {
     @Getter
     @AllArgsConstructor
     public enum CacheEnum {
-        HOME_BOOK_CACHE(0, HOME_BOOK_CACHE_NAME, 60 * 60 * 24, 1),
+        HOME_BOOK_CACHE(2, HOME_BOOK_CACHE_NAME, 60 * 60 * 24, 1000),
 
         BOOK_VISIT_RANK_CACHE(2, BOOK_VISIT_RANK_CACHE_NAME, 60 * 60 * 6, 10),
 

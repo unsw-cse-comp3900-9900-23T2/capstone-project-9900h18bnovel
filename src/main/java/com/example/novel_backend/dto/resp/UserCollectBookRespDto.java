@@ -102,4 +102,10 @@ public class UserCollectBookRespDto {
      */
     @Schema(description = "Last read chapter id")
     private Long preChapterId;
+
+    /**
+     * Last read chapter name
+     */
+    @Schema(description = "Last read chapter name")
+    private String preChapterName;
 }

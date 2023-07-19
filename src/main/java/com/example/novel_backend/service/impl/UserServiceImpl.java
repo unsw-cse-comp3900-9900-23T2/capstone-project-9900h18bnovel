@@ -135,6 +135,7 @@ public class UserServiceImpl implements UserService {
                         .token(jwtUtils.generateToken(userInfo.getId(), SystemConfigConsts.NOVEL_FRONT_KEY))
                         .uid(userInfo.getId())
                         .userName(userInfo.getUsername())
+                        .userPhoto(userInfo.getUserPhoto())
                         .build()
         );
     }
@@ -192,6 +193,9 @@ public class UserServiceImpl implements UserService {
         queryWrapper.eq("user_id", userId);
         List<BookCollect> bookCollects = bookCollectMapper.selectList(queryWrapper);
         List<Long> bookIds = bookCollects.stream().map(BookCollect::getBookId).toList();
+        if(bookIds.isEmpty()){
+            return RestResp.ok(new ArrayList<>());
+        }
         QueryWrapper<BookInfo> bookInfoQueryWrapper = new QueryWrapper<>();
         bookInfoQueryWrapper.in("id", bookIds);
         List<BookInfo> bookInfos = bookInfoMapper.selectList(bookInfoQueryWrapper);
@@ -220,12 +224,17 @@ public class UserServiceImpl implements UserService {
             if(userReadHistoryMap.containsKey(bookInfo.getId())){
                 userCollectBookRespDto.setPreChapterId(userReadHistoryMap
                         .get(bookInfo.getId()).getPreChapterId());
+                BookChapter bookChapter = bookChapterMapper.selectById(userReadHistoryMap
+                        .get(bookInfo.getId()).getPreChapterId());
+                userCollectBookRespDto.setPreChapterName(bookChapter.getChapterName());
             } else {
                 QueryWrapper<BookChapter> bookChapterQueryWrapper = new QueryWrapper<>();
                 bookChapterQueryWrapper.eq("book_id", bookInfo.getId())
                         .orderByAsc("chapter_num").last("limit 1");
                 BookChapter firstBookChapter = bookChapterMapper.selectOne(bookChapterQueryWrapper);
                 userCollectBookRespDto.setPreChapterId(firstBookChapter.getId());
+                BookChapter bookChapter = bookChapterMapper.selectById(firstBookChapter.getId());
+                userCollectBookRespDto.setPreChapterName(bookChapter.getChapterName());
             }
             return userCollectBookRespDto;
                 }).toList());

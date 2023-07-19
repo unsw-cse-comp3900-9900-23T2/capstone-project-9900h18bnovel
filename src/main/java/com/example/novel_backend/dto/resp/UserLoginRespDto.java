@@ -21,4 +21,10 @@ public class UserLoginRespDto {
 
     @Schema(description = "User token")
     private String token;
+
+    /**
+     * User Photo
+     * */
+    @Schema(description = "User Photo")
+    private String userPhoto;
 }
