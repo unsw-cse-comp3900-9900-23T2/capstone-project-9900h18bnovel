@@ -50,11 +50,14 @@ export default {
       isShowComments: true,
       isShowChapters: false,
       clickedLoad: false,
+      isCollected: false,
+      collectedBooksId: [],
       book: {},
-      chapters: [],
-      totalChapters: null,
+      chapters: null,
+      totalChapters: 0,
       chapterPageNum: 1,
       chapterNum: 0,
+      prevChapterId: null,
       requestBody: {
         pageNum: 1,
         pageSize: 5,
@@ -109,14 +112,39 @@ export default {
       this.getChapters();
       this.getAllComments();
       this.getUserComment();
+      this.getUserCollect();
       this.loading = false;
       this.showBookInfo = true;
     }, 500);
   },
 
   methods: {
+    async getUserCollect() {
+      try {
+        const response = await fetch(`http://localhost:8888/api/front/user/user_collect?userId=${this.$store.getters.GetUID}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+        });
+        if (response.status == 200) {
+          const data = await response.json();
+          this.collectedBooksId = data.data.map(item => item.bookId);
+          this.isCollected = this.collectedBooksId.includes(this.$route.params.bookId) ? true : false;
+          const thisBook = data.data.find(item => item.bookId === this.$route.params.bookId);
+          console.log(thisBook)
+          this.prevChapterId = thisBook ? thisBook.preChapterId : null;
+          console.log(this.prevChapterId)
+        } else {
+          console.log(response.status);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    },
+
     async prevChapter() {
-      if (this.chapterNum === 1) {
+      if (this.chapterNum === "1") {
         ElMessage.error("There is no previous chapter");
       } else {
         try {
@@ -129,7 +157,6 @@ export default {
           if (response.status == 200) {
             const data = await response.json();
             this.chapterId = data.data;
-            this.chapterNum -= 1;
             this.getContent();
           } else {
             console.log(response.status);
@@ -141,7 +168,7 @@ export default {
     },
 
     async nextChapter() {
-      if (this.chapterNum >= this.totalChapters) {
+      if (this.chapterNum === this.totalChapters) {
         ElMessage.error("There is no next chapter");
       } else {
         try {
@@ -154,7 +181,6 @@ export default {
           if (response.status == 200) {
             const data = await response.json();
             this.chapterId = data.data;
-            this.chapterNum += 1;
             this.getContent();
           } else {
             console.log(response.status);
@@ -179,23 +205,6 @@ export default {
       }
     },
 
-    async goToContent(chapterId, chapterName, index) {
-      if (!this.$store.getters.isAuthenticated) {
-        ElMessage.error("Please log in to read the book");
-      } else {
-        if (chapterId) {
-          this.chapterId = chapterId;
-          this.chapterName = chapterName;
-          this.chapterNum = index + 1;
-          this.drawer = true;
-          this.addVisit();
-          this.getContent();
-        } else {
-          ElMessage.error("There is no chapter in this book");
-        }
-      }
-    },
-
     async getContent() {
       try {
         const response = await fetch(`http://localhost:8888/api/front/book/get_content?chapterId=${this.chapterId}&userId=${this.$store.getters.GetUID}`, {
@@ -209,6 +218,8 @@ export default {
           this.chapterContent = data.data.bookContent;
           this.chapterName = data.data.chapterInfo.chapterName;
           this.chapterId = data.data.chapterInfo.id;
+          this.prevChapterId = data.data.chapterInfo.id;
+          this.chapterNum = data.data.chapterInfo.chapterNum;
         } else {
           console.log(response.status);
         }
@@ -218,36 +229,34 @@ export default {
     },
 
     async cancel_collect() {
-      if (!this.$store.getters.isAuthenticated) {
-        ElMessage.error("Please log in to collect");
-      } else {
-        const reqbody = {
-          userId: this.$store.getters.GetUID,
-          bookId: this.$route.params.bookId,
-        };
-        try {
-          const response = await fetch('http://localhost:8888/api/front/book/cancel_collect', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(reqbody),
-          });
-          if (response.status == 200) {
-            this.clickedLoading();
-            ElMessage.success("Collection Removed");
-          } else {
-            console.log(response.status);
-          }
-        } catch (error) {
-          console.error(error);
+      const reqbody = {
+        userId: this.$store.getters.GetUID,
+        bookId: this.$route.params.bookId,
+      };
+      try {
+        const response = await fetch('http://localhost:8888/api/front/book/cancel_collect', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(reqbody),
+        });
+        if (response.status == 200) {
+          this.clickedLoading();
+          ElMessage.success("Collection Removed");
+        } else {
+          console.log(response.status);
         }
+      } catch (error) {
+        console.error(error);
       }
     },
 
     async collect() {
       if (!this.$store.getters.isAuthenticated) {
         ElMessage.error("Please log in to collect");
+      } else if (this.totalChapters === "0") {
+        ElMessage.error("There is no chapter in this book");
       } else {
         const reqbody = {
           userId: this.$store.getters.GetUID,
@@ -404,24 +413,6 @@ export default {
       }
     },
 
-    chooseComments() {
-      this.clickedLoad = true;
-      setTimeout(() => {
-        this.isShowChapters = false;
-        this.isShowComments = true;
-        this.clickedLoad = false;
-      }, 500);
-    },
-
-    chooseChapters() {
-      this.clickedLoad = true;
-      setTimeout(async () => {
-        this.isShowComments = false;
-        this.isShowChapters = true;
-        this.clickedLoad = false;
-      }, 500);
-    },
-
     async getChapters() {
       try {
         const response = await fetch(`http://localhost:8888/api/front/book/chapter/list?bookId=${this.$route.params.bookId}&pageNum=${this.chapterPageNum}&pageSize=20`, {
@@ -442,12 +433,49 @@ export default {
       }
     },
 
+    goToContent(chapterId, chapterName) {
+      if (!this.$store.getters.isAuthenticated) {
+        ElMessage.error("Please log in to read the book");
+      } else {
+        if (chapterId) {
+          this.prevChapterId = chapterId;
+          this.chapterId = chapterId;
+          this.chapterName = chapterName;
+          this.drawer = true;
+          this.addVisit();
+          this.getContent();
+        } else {
+          ElMessage.error("There is no chapter in this book");
+        }
+      }
+    },
+
+    chooseComments() {
+      this.clickedLoad = true;
+      setTimeout(() => {
+        this.isShowChapters = false;
+        this.isShowComments = true;
+        this.clickedLoad = false;
+      }, 500);
+    },
+
+    chooseChapters() {
+      this.clickedLoad = true;
+      setTimeout(async () => {
+        this.getChapters();
+        this.isShowComments = false;
+        this.isShowChapters = true;
+        this.clickedLoad = false;
+      }, 500);
+    },
+
     clickedLoading() {
       this.clickedLoad = true;
       setTimeout(() => {
         this.getUserComment();
         this.getAllComments();
         this.getBookInfo();
+        this.getUserCollect();
         this.clickedLoad = false;
       }, 500);
     },
@@ -455,12 +483,15 @@ export default {
     clearUserComment() {
       this.userComment = null;
     },
+
     changeDrawerColor(color) {
       this.themeColor = color;
       const drawer = document.getElementsByClassName('el-drawer')[0];
       drawer.style.backgroundColor = color;
     },
+
   },
+
   computed: {
     fontSizeStyle() {
       const fontSizeList = ["12px", "16px", "20px", "24px", "28px"];
@@ -520,14 +551,19 @@ export default {
               &nbsp;&nbsp;&nbsp;
             </div>
             <div style="margin-top: 10px;">
-              <el-button style="font-size: 14pt;" size="large" type="primary" round :icon="Reading"
-                @click="goToContent(chapters[0] ? chapters[0].id : null, chapters[0] ? chapters[0].chapterName : null, 0)">
+              <el-button v-if="this.prevChapterId === null" style="font-size: 14pt;" size="large" type="primary" round :icon="Reading"
+                @click="goToContent(chapters[0] ? chapters[0].id : null, chapters[0] ? chapters[0].chapterName : null)">
                 READ
               </el-button>
-              <el-button style="font-size: 14pt;" size="large" type="primary" round :icon="Plus" @click="collect">
+              <el-button v-else style="font-size: 14pt;" size="large" type="primary" round :icon="Reading"
+                @click="goToContent(this.prevChapterId, this.chapterName)">
+                CONTINUE READING
+              </el-button>
+              <el-button v-if="!isCollected" style="font-size: 14pt;" size="large" type="primary" round :icon="Plus"
+                @click="collect">
                 ADD TO COLLECTIONS
               </el-button>
-              <el-button style="font-size: 14pt;" size="large" type="primary" round :icon="Delete"
+              <el-button v-else style="font-size: 14pt;" size="large" type="primary" round :icon="Delete"
                 @click="cancel_collect">
                 REMOVE FROM COLLECTIONS
               </el-button>
