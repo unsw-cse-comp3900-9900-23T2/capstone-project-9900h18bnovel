@@ -70,6 +70,7 @@ export function logout(if_in_userprofile) {
     store.dispatch('clearPhoto');
     store.dispatch('logout');
     if (if_in_userprofile) {
-        router.push('/home');
+        //router.push('/home');
+        router.go(-1);
     }
 }

@@ -304,6 +304,19 @@ export default {
           <h3>Time of Account Creating:</h3>
         </div>
       </div>
+      <el-divider />
+    </div>
+    <div class="MyCollectionContainer">
+      <h1 style="text-align: center; align-content: center;">
+        My Collection</h1>
+      <el-divider />
+      <div class="CollectionsContainer">
+        <h3>Book 1</h3>
+        <h3>Book 2</h3>
+        <h3>Book 3</h3>
+        <h3>Book 4</h3>
+        <h3>Book 5</h3>
+      </div>
     </div>
   </div>
   <Global_Footer />
@@ -377,7 +390,6 @@ export default {
   text-align: left;
 }
 
-
 .EmailContainer {
   display: flex;
   flex-direction: row;
@@ -412,5 +424,11 @@ export default {
 
 .gender-row h3:first-child, .name-row h3:first-child {
   margin-right: 10px;
+}
+
+.CollectionsContainer{
+  display: flex;
+  flex-direction: column;
+  width: 100%;
 }
 </style>
