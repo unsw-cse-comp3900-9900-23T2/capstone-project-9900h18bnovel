@@ -232,6 +232,8 @@ export default {
                 message: 'Welcome ' + data.data.userName,
                 type: 'success',
               });
+              console.log("在用户刚登录的时候，后台返回了：");
+              console.log(data);
               localStorage.setItem('email', this.email);
               localStorage.setItem('token', data.data.token);
               localStorage.setItem('uid', data.data.uid);
@@ -585,6 +587,7 @@ export default {
 
 <style >
 .auth_form {
+  display: block;
   display: flex;
   flex-direction: column;
   justify-content: center;

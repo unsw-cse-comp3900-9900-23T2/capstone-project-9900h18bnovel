@@ -2,6 +2,8 @@
 import {
   UserFilled,
   Warning,
+  View,
+  ArrowRight,
 } from '@element-plus/icons-vue';
 import { getItemColor } from '../utils'
 // import { ElMessage } from 'element-plus';
@@ -35,15 +37,25 @@ export default {
       showHomePage: false,
       loading: true,
       showProfile: false,
+      collectedBooks: [],
     }
   },
   components: {
     Global_Footer,
     Profile,
   },
+  watch: {
+    '$store.getters.GetUID': {
+      handler() {
+        this.getUserCollect();
+      },
+      deep: true
+    },
+  },
   mounted() {
     this.getHomeBooks();
     setTimeout(() => {
+      this.getUserCollect();
       this.loading = false;
       this.showHomePage = true;
     }, 500);
@@ -67,6 +79,25 @@ export default {
       return {
         'background-image': `url(${imageUrl})`
       };
+    },
+
+    async getUserCollect() {
+      try {
+        const response = await fetch(`http://localhost:8888/api/front/user/user_collect?userId=${this.$store.getters.GetUID}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+        });
+        if (response.status == 200) {
+          const data = await response.json();
+          this.collectedBooks = data.data;
+        } else {
+          console.log(response.status);
+        }
+      } catch (error) {
+        console.error(error);
+      }
     },
 
     async getHomeBooks() {
@@ -164,7 +195,29 @@ export default {
               </el-empty>
             </div>
             <div v-else class="collected_novel_user">
-              <el-empty :image-size="120" description="You don't have collect books"></el-empty>
+              <div v-if="collectedBooks" class="collected_novel_user_ya">
+                <div v-for="item in collectedBooks.slice(0, 3)" :key="item.bookId"
+                  style="margin-left: 15px; display: flex; flex-direction:column; align-items:center;">
+                  <img :src="item.picUrl" class="collected_img" @click="goBookInfo(item.bookId)" />
+                  <div class="collected_title" style="margin-top: 10px;" @click="goBookInfo(item.bookId)">
+                    <b>{{ item.bookName }}</b>
+                  </div>
+                  <div style="display: flex; align-items:center;">
+                    <el-icon>
+                      <View />
+                    </el-icon> Chapter {{ item.preChapterId }}
+                  </div>
+                </div>
+                <el-button
+                  style="height:100%; background-color:rgb(0,0,0,0); right:0; position:absolute; border-color:rgb(0,0,0,0); border-left: 1px solid #b7b7b7; border-radius: 0;">M<br>Y<br><br>C<br>O<br>L<br>L<br>E<br>C<br>T<br>I<br>O<br>N<br>S<el-icon>
+                    <ArrowRight />
+                  </el-icon></el-button>
+              </div>
+              <div v-else>
+                <div class="collected_novel_user_na">
+                  <el-empty :image-size="120" description="You don't have collect books"></el-empty>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -471,11 +524,17 @@ export default {
   overflow: hidden;
 }
 
+.collected_novel_na_user .el-empty__description p {
+  color: #000000;
+}
+
 .collected_novel_container {
   width: 50%;
+  min-height: 300px;
   margin-left: 5px;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
 .collected_novel_na_user {
@@ -485,17 +544,55 @@ export default {
   justify-content: center;
   align-items: center;
   box-shadow: var(--el-box-shadow);
-  background-color: #FAFCFF;
+  background-color: #f1ddbb;
+  color: white;
 }
 
 .collected_novel_user {
   height: 100%;
+  box-shadow: var(--el-box-shadow);
+  background-color: #f1ddbb
+}
+
+.collected_novel_user_ya {
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: 9px;
+  position: relative;
+}
+
+.collected_title {
+  text-align: center;
+  width: 132px;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  overflow: hidden;
+}
+
+.collected_title:hover {
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.collected_img {
+  object-fit: contain;
+  width: 150px;
+  box-shadow: 6px 4px 6px rgb(65, 65, 65);
+  border-radius: 8px;
+  transition: transform 0.3s ease;
+}
+
+.collected_img:hover {
+  transform: translateY(-4px);
+  cursor: pointer;
+}
+
+.collected_novel_user_na {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  box-shadow: var(--el-box-shadow);
-  background-color: #FAFCFF;
 }
 
 .recomm_books_container {

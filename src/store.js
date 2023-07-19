@@ -12,6 +12,7 @@ export default createStore({
       photo: null,
       sex: null,
       searchInput: null,
+      myCollection: null,
     };
   },
   mutations: {
@@ -23,6 +24,12 @@ export default createStore({
     },
     clearToken(state) {
       state.token = null;
+    },
+    myCollection(state,myCollection){
+      state.myCollection = myCollection;
+    },
+    clearMyCollection(state){
+      state.myCollection = null;
     },
     Sex(state, sex) {
       state.sex = sex;
@@ -70,6 +77,12 @@ export default createStore({
   actions: {
     isLoginVisible({ commit }, bool) {
       commit('isLoginVisible', bool);
+    },
+    myCollection({commit},myCollection){
+      commit('myCollection', myCollection);
+    },
+    clearMyCollection({commit}){
+      commit('clearMyCollection');
     },
     login({ commit }, token) {
       commit('setToken', token);
@@ -127,6 +140,9 @@ export default createStore({
     getCurrentURL: (state) => {
       return state.currentURL;
     },
+    GetMyCollection:(state) =>{
+      return state.myCollection;
+},
     GetSex: (state) => {
       return state.sex;
     },

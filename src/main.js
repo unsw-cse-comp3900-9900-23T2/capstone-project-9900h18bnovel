@@ -13,6 +13,14 @@ import 'element-plus/theme-chalk/index.css';
 const app = createApp(App);
 app.use(ElementPlus);
 
+function isUserLoggedIn() {
+  // 判断用户是否已登录的逻辑
+  // 返回 true 表示已登录，返回 false 表示未登录
+  // 这里仅为示例，你需要根据实际情况进行判断
+  console.log(localStorage.getItem('token'));
+  return localStorage.getItem('token') !== null;
+}
+
 // Rounter address here
 const routes = [
   { path: '/', redirect: '/home' },
@@ -31,7 +39,13 @@ const routes = [
     },
   },
   //{ path: '/newupdate', component: new_update },
-  { path: '/userprofile', component: Profile },
+  { path: '/userprofile',
+    component: Profile,
+    name: 'UserProfile',
+    meta: {
+      requiresAuth: true,
+    },
+  },
   { path: '/newestrank', component: ranksPages },
   { path: '/clickrank', component: ranksPages },
   { path: '/updaterank', component: ranksPages },
@@ -41,6 +55,22 @@ const routes = [
 export const router = createRouter({
   history: createWebHistory(),
   routes
+});
+router.beforeEach((to, from, next) => {
+  if (to.meta.requiresAuth && !isUserLoggedIn()) {
+    console.log(to.meta.requiresAuth);
+    console.log(isUserLoggedIn());
+    console.log('用户未登录，重定向到登录页面或其他处理逻辑');
+    console.log('from.path:', from.path);
+    next(from.path ? from.path : '/home');
+  } else {
+    console.log(to.meta.requiresAuth);
+    console.log(isUserLoggedIn());
+    console.log('用户已登录或无需验证，允许访问');
+    console.log('to.path:', to.path);
+    console.log('from.path:', from.path);
+    next();
+  }
 });
 
 app.use(store);

@@ -1,13 +1,26 @@
 <script setup>
 import {
   Edit,
-  ShoppingCart,
-  GoldMedal,
-  Coin,
   Upload,
   Check,
+  User,
+  /*Postcard,*/
+  MessageBox,
+  Filter,
+  CaretBottom, Reading, Delete, /*Document, CollectionTag, View, Clock,*/
 } from '@element-plus/icons-vue';
+import { computed } from 'vue'
+const iconStyle = computed(() => {
+  const marginMap = {
+    large: '8px',
+    default: '8px',
+  }
+  return {
+    marginRight: marginMap['large'.value] || marginMap.default,
+  }
+})
 import { ElIcon } from 'element-plus'
+import {getItemColor} from "@/utils";
 const svg = `
 <path class="path" d="
           M 10 40
@@ -37,11 +50,25 @@ export default {
       gender: '',
       isGenderEditing: false,
       isNameEditing: false,
+      isLoadBooks: false,
       newGender: '',
       SubmitSex: '',
       newUserName: '',
       CurrentPhoto: '',
       DefaultPhoto: 'https://img-qn.51miz.com/Element/00/88/60/42/ea5b40df_E886042_1992a532.png!/quality/90/unsharp/true/compress/true/format/png/fw/300',
+      AllCollections: '',
+      EachBook: '',
+    }
+  },
+  computed: {
+    truncatedDesc() {
+      return function (desc) {
+        if (desc.length <= 200) {
+          return desc;
+        } else {
+          return desc.slice(0, 200) + "... ...";
+        }
+      };
     }
   },
   mounted() {
@@ -156,7 +183,6 @@ export default {
         this.isNameEditing = false;
         return;
       }
-
       const requestData = {
         userId: parseInt(this.uid),
         username: this.newUserName,
@@ -193,7 +219,59 @@ export default {
     },
     StartEditName(){
       this.isNameEditing = true;
-    }
+    },
+    async LoadingCollections(){
+      this.isLoadBooks = true;
+      try {
+        const response = await fetch(`http://localhost:8888/api/front/user/user_collect?userId=${this.$store.getters.GetUID}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+        });
+        if (response.status === 200) {
+          const data = await response.json();
+          console.log(data);
+          if (data.code === '00000') {
+            this.AllCollections = data.data;
+          }
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    GoToBook(bookId){
+      this.$router.push('/bookInfo/'+bookId);
+    },
+    async cancel_collect(bookId) {
+      if (!this.$store.getters.isAuthenticated) {
+        ElMessage.error("Please log in to collect");
+      } else {
+        const reqbody = {
+          userId: this.$store.getters.GetUID,
+          bookId: bookId,
+        };
+        console.log(reqbody);
+        try {
+          const response = await fetch('http://localhost:8888/api/front/book/cancel_collect', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(reqbody),
+          });
+          if (response.status == 200) {
+            this.clickedLoading();
+            ElMessage.success("Collection Removed");
+          } else {
+            console.log(response.status);
+          }
+        } catch (error) {
+          console.error(error);
+        }
+      }
+      this.isLoadBooks = false;
+    },
   }
 }
 </script>
@@ -203,105 +281,178 @@ export default {
     style="top:50%; left: 50%; transform: translate(-50%,-50%); position: absolute;"></div>
   <div class="ProfileBody">
     <div class="ProfileContainer">
-      <h1
-        style="border-bottom: 1px solid; border-color: rgb(223, 223, 223); padding-bottom: 10px; margin-bottom: 22px; margin-top: 30px; text-align: center;">
-        User Profile</h1>
-      <div class="BasicInfoContainer">
-        <div class="AvatarContainer">
+      <h1 style="text-align: center; align-content: center; margin-top: 1.5em;">
+        Basic Information</h1>
+      <el-divider />
+      <el-container>
+        <el-aside ><!--width="40%"-->
+          <div class="AvatarContainer">
           <span class="el-avatar el-avatar--circle"
-            style="height: 200px; width: 200px; line-height: 200px; margin: 2em;"><img :src="this.$store.state.photo? this.$store.state.photo : CurrentPhoto"
-              style="object-fit: contain;"></span>
-          <input type="file" ref="fileInput" @change="CollectNewPhoto" style="display: none" />
-          <el-button class="UploadPhotoButton" circle @click="openPhotoInput">
-            <el-icon color="gray">
-              <Upload />
+                style="height: 200px; width: 200px; line-height: 200px; margin: 2em;"><img :src="this.$store.state.photo? this.$store.state.photo : CurrentPhoto" style="object-fit: contain;"></span>
+            <input type="file" ref="fileInput" @change="CollectNewPhoto" style="display: none" />
+            <el-button class="UploadPhotoButton" circle @click="openPhotoInput">
+              <el-icon color="gray">
+                <Upload />
+              </el-icon>
+            </el-button>
+          </div>
+        </el-aside>
+        <el-main>
+          <el-descriptions
+              class="BasicInfoContainer"
+              :column="1"
+              :size="large"
+              border>
+<!--            <el-descriptions-item>
+              <template #label>
+                <div class="cell-item">
+                  <el-icon :style="iconStyle">
+                    <Postcard />
+                  </el-icon>
+                  UserID
+                </div>
+              </template>
+              {{ uid }}
+            </el-descriptions-item>-->
+            <el-descriptions-item>
+              <template #label>
+                <div class="cell-item">
+                  <el-icon :style="iconStyle">
+                    <MessageBox />
+                  </el-icon>
+                  Email
+                </div>
+              </template>
+              {{ email }}
+            </el-descriptions-item>
+            <el-descriptions-item>
+              <template #label>
+                <div class="cell-item">
+                  <el-icon :style="iconStyle">
+                    <user />
+                  </el-icon>
+                  Username
+                </div>
+              </template>
+              <div class="name-row" v-if="!isNameEditing">
+                <div class="name-info">
+                  {{ userName }}
+                  <el-button class="UpdateNameButton" @click="StartEditName" circle>
+                    <el-icon color="gray">
+                      <edit />
+                    </el-icon>
+                  </el-button>
+                </div>
+              </div>
+              <div class="name-row" v-else>
+                <div class="input-name-container">
+                  <input type="text" v-model="newUserName" :placeholder="userName" />
+                  <el-button class="SubmitNewName" @click="UpdateNewName" circle>
+                    <el-icon color="lightgreen">
+                      <Check />
+                    </el-icon>
+                  </el-button>
+                </div>
+              </div>
+            </el-descriptions-item>
+            <el-descriptions-item>
+              <template #label>
+                <div class="cell-item">
+                  <el-icon :style="iconStyle">
+                    <Filter />
+                  </el-icon>
+                  Gender
+                </div>
+              </template>
+              <div class="gender-row" v-if="!isGenderEditing">
+                <div class="gender-info">
+                  {{this.$store.state.sex== 0 ? 'Male' : 'Female' }}<!---->
+                  <el-button class="UpdateGenderButton" @click="StartEditGender" circle>
+                    <el-icon color="gray">
+                      <edit />
+                    </el-icon>
+                  </el-button>
+                </div>
+              </div>
+                <div class="gender-row" v-else>
+                  <div class="input-gender-container">
+                    <input type="text" v-model="newGender" placeholder="Male / Female" />
+                    <el-button class="SubmitGender" @click="UpdateGender" circle>
+                      <el-icon color="lightgreen">
+                        <Check />
+                      </el-icon>
+                    </el-button>
+                  </div>
+                </div>
+            </el-descriptions-item>
+          </el-descriptions>
+        </el-main>
+      </el-container>
+    </div>
+
+    <div class="MyCollectionContainer">
+      <el-divider />
+      <h1 style="text-align: center; align-content: center;">
+        My Collection</h1>
+      <el-divider />
+      <div class="CollectionsContainer">
+          <el-button class = "loadingCollButton " v-if = "!isLoadBooks" type="primary" @click = "LoadingCollections">
+            Show All My Collections
+            <el-icon class="el-icon--right">
+              <CaretBottom />
             </el-icon>
           </el-button>
-        </div>
+        <div v-else>
+          <div class="bookInfo" v-for="book in AllCollections" :key = "book.bookId" >
+            <img :src="book.picUrl" style="height: 250px; margin: 20px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);" />
+            <div class="bookContentDetail">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h1 style="display: flex; align-items: center;"> {{ book.bookName }}
+                </h1>
+                <el-tag style="font-size: 14pt; margin: 0px 10px;" size="large" effect="plain">{{ book.bookStatus === "1" ? "Completed" :
+                    "Ongoing" }}</el-tag>
+              </div>
+              <el-tag effect="plain"  :style="getItemColor(book.categoryName)">{{
+                  book.categoryName
+                }}</el-tag>
+              <div style="font-size: 14pt; margin: 10px auto 10px 0;"> Author: {{ book.authorName }}</div>
+              <div style="display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 9; overflow: hidden;"> {{truncatedDesc(book.bookDesc)  }}</div>
+              <div style="bottom: 0; position: absolute;">
 
-        <div class="BasicInfo">
-          <h3>UserID: {{ uid }} </h3>
-          <div class="UserNameContainer">
-            <div class="name-row" v-if="!isNameEditing">
-              <h3>Username:</h3>
-              <div class="name-info">
-                <h3>{{ userName }}</h3>
-                <el-button class="UpdateNameButton" @click="StartEditName" circle>
-                  <el-icon color="gray">
-                    <edit />
+<!--                <div style="display: flex; font-size: 16pt; align-items: center; margin-top: 10px;">
+                  <el-icon>
+                    <Document />
                   </el-icon>
-                </el-button>
-              </div>
-            </div>
-            <div class="name-row" v-else>
-              <h3>Username:</h3>
-              <div class="input-name-container">
-                <input type="text" v-model="newUserName" :placeholder="userName" />
-                <el-button class="SubmitNewName" @click="UpdateNewName" circle>
-                  <el-icon color="lightgreen">
-                    <Check />
+                  {{ book.wordCount }}
+                  &nbsp;&nbsp;&nbsp;
+                  <el-icon>
+                    <View />
                   </el-icon>
-                </el-button>
-              </div>
-            </div>
-          </div>
-          <div class="EmailContainer">
-            <h3>Email: </h3>
-            <h3>{{ email }}</h3>
-          </div>
-          <div class="GenderContainer">
-            <div class="gender-row" v-if="!isGenderEditing">
-              <h3>Gender:</h3>
-              <div class="gender-info">
-                <h3>{{this.$store.state.sex == 0 ? 'Male' : 'Female'}}</h3><!-- -->
-                <el-button class="UpdateGenderButton" @click="StartEditGender" circle>
-                  <el-icon color="gray">
-                    <edit />
+                  {{ book.visitCount }}
+                  &nbsp;&nbsp;&nbsp;
+                  <el-icon>
+                    <CollectionTag />
                   </el-icon>
-                </el-button>
-              </div>
-            </div>
-            <div class="gender-row" v-else>
-              <h3>Gender:</h3>
-              <div class="input-gender-container">
-                <input type="text" v-model="newGender" placeholder="Male / Female" />
-                <el-button class="SubmitGender" @click="UpdateGender" circle>
-                  <el-icon color="lightgreen">
-                    <Check />
+                  {{ book.collectCount }}
+                  &nbsp;&nbsp;&nbsp;
+                  <el-icon>
+                    <Clock />
                   </el-icon>
-                </el-button>
+                  {{ book.lastChapterUpdateTime }}
+                  &nbsp;&nbsp;&nbsp;
+                </div>-->
+                <div style="margin-top: 10px;">
+                  <el-button style="font-size: 14pt;" size="large" type="primary" round :icon="Reading" @click = "GoToBook(book.bookId)"><!--@click="goToContent(chapters[0] ? chapters[0].id : null, chapters[0] ? chapters[0].chapterName : null, 0)"-->
+                    READ
+                  </el-button>
+                  <el-button style="font-size: 14pt;" size="large" type="primary" round :icon="Delete"
+                             @click="cancel_collect(book.bookId)">
+                    REMOVE FROM COLLECTIONS
+                  </el-button>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </div>
-      <el-divider />
-    </div>
-    <div class="OverviewContainer">
-      <h1 style="text-align: center;">
-        Account Overview</h1>
-      <el-divider />
-      <div class="AccountInfo">
-        <div class="IsVIPCont">
-          <h3>VIP Status:</h3>
-          <el-icon :size="20" color="gray" style="margin: auto; ">
-            <shopping-cart />
-          </el-icon>
-        </div>
-        <div class="VIPLevelCont">
-          <h3>VIP Level:</h3>
-          <el-icon :size="20" color="gray" style="margin: auto; ">
-            <GoldMedal />
-          </el-icon>
-        </div>
-        <div class="BalanceCont">
-          <h3>Balance:</h3>
-          <el-icon :size="20" color="gray" style="margin: auto; ">
-            <coin />
-          </el-icon>
-        </div>
-        <div class="CreateTimeCont">
-          <h3>Time of Account Creating:</h3>
         </div>
       </div>
     </div>
@@ -318,79 +469,53 @@ export default {
   align-items: center;
   margin: auto;
 }
-
-.IsVIPCont,
-.VIPLevelCont,
-.BalanceCont {
+.ProfileContainer, .MyCollectionContainer {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
+  width: 70%;
+  margin: auto;
 }
-
+.BasicInfoContainer{
+  margin: auto;
+}
 .AvatarContainer {
   position: relative;
-  margin-right: 5em;
+  margin: auto;
 }
-
+.loadingCollButton{
+  margin-bottom: 2em;
+}
 .UploadPhotoButton {
   position: absolute;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   bottom: 3em;
-  right: 3em;
+  right: 6em;
+}
+.bookInfo {
+  width: 95%;
+  display: flex;
+  background-color: whitesmoke;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  border-radius: 5px;
+  margin: 0 auto 20px auto;
+  padding: 10px;
 }
 
-.UpdateGenderButton {
+.bookContentDetail {
+  width: 75%;
+  position: relative;
+  margin: 0 30px 20px 20px;
+}
+.UpdateGenderButton, .UpdateNameButton {
   margin: auto 1em;
 }
-
-.GenderInputCont {
-  display: flex;
-  flex-direction: row;
-  padding: 8px;
+.el-descriptions {
+  margin-top: 2em;
 }
-
-.ProfileContainer,
-.OverviewContainer {
+.cell-item {
   display: flex;
-  flex-direction: column;
-  width: 100%;
-}
-
-.AccountInfo {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  grid-template-rows: repeat(2, 1fr);
-  gap: 10px;
-}
-
-.BasicInfoContainer {
-  display: flex;
-  padding-bottom: 10px;
-  margin: auto;
-  text-align: center;
-  flex-direction: row;
-}
-
-.BasicInfo {
-  display: flex;
-  flex-direction: column;
-  margin-left: 5em;
-  text-align: left;
-}
-
-
-.EmailContainer {
-  display: flex;
-  flex-direction: row;
-  margin: auto;
-  text-align: left;
-  justify-content: space-between;
-}
-
-.GenderContainer, .UserNameContainer{
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  text-align: left;
+  align-items: center;
+  label-align: left;
 }
 
 .gender-row, .name-row {
@@ -412,5 +537,11 @@ export default {
 
 .gender-row h3:first-child, .name-row h3:first-child {
   margin-right: 10px;
+}
+
+.CollectionsContainer{
+  display: flex;
+  flex-direction: column;
+  width: 100%;
 }
 </style>
