@@ -98,6 +98,7 @@ export default {
         });
         if (response.status == 200) {
           const data = await response.json();
+
           if (data.code === "00000") {
             if (data.data.userPhoto) {
               localStorage.setItem('userPhoto', data.data.userPhoto);
