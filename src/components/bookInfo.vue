@@ -14,6 +14,7 @@ import {
   Moon,
   ArrowLeft,
   ArrowRight,
+  CaretBottom
 } from '@element-plus/icons-vue';
 import { ElMessage } from 'element-plus';
 import { getItemColor } from '../utils'
@@ -81,6 +82,12 @@ export default {
     }
   },
   watch: {
+    '$store.getters.isAuthenticated': {
+      handler() {
+        this.isCollected = false;
+      },
+      deep: true
+    },
     'chapterPageNum': {
       handler() {
         this.chooseChapters();
@@ -509,7 +516,20 @@ export default {
     <div style="width: 100%; height: 440px; background-color: #f5f6fc; position: absolute; z-index: -10;"></div>
     <div class="bookInfoBody">
       <div class="bookDetail">
-        <img :src="book.picUrl" style="height: 400px;" />
+        <div class="bookmark-container">
+          <img :src="book.picUrl"
+            style="height: 400px; box-shadow: 6px 4px 6px rgb(155, 155, 155); border-radius: 8px;" />
+          <div v-if="isCollected" class="bookmark-icon">
+            <el-icon size="60">
+              <CaretBottom color="#f7ba2a" />
+            </el-icon>
+          </div>
+          <div v-if="isCollected" class="bookmark-icon2">
+            <el-icon size="60">
+              <CollectionTag color="#f7ba2a" />
+            </el-icon>
+          </div>
+        </div>
         <div class="bookWordDetail">
           <div style="display: flex; justify-content: space-between; align-items: center;">
             <h1 style="display: flex; align-items: center;"> {{ book.bookName }}
@@ -523,10 +543,12 @@ export default {
           <div style="font-size: 14pt; margin-bottom: 15px;"> {{ book.authorName }}</div>
           <div style="display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 9; overflow: hidden;"> {{
             book.bookDesc }}</div>
-          <div style="bottom: 10px; position: absolute;">
+          <div style="bottom: 10px; position: absolute; width: 100%;">
             <div class="bookInfoScore">
-              <el-rate v-model="book.score" disabled show-score text-color="#ff9900" size="large"
-                score-template="{value}" />&nbsp;({{ book.commentCount }})
+              <div style="display: flex; align-items: center;">
+                <el-rate v-model="book.score" disabled show-score text-color="#ff9900" size="large"
+                  score-template="{value}" />&nbsp;({{ book.commentCount }})
+              </div>
             </div>
             <div style="display: flex; font-size: 16pt; align-items: center; margin-top: 10px;">
               <el-icon>
@@ -551,7 +573,8 @@ export default {
               &nbsp;&nbsp;&nbsp;
             </div>
             <div style="margin-top: 10px;">
-              <el-button v-if="this.prevChapterId === null" style="font-size: 14pt;" size="large" type="primary" round :icon="Reading"
+              <el-button v-if="this.prevChapterId === null" style="font-size: 14pt;" size="large" type="primary" round
+                :icon="Reading"
                 @click="goToContent(chapters[0] ? chapters[0].id : null, chapters[0] ? chapters[0].chapterName : null)">
                 READ
               </el-button>
@@ -580,7 +603,7 @@ export default {
           </div>
         </div>
         <el-divider />
-        <div v-loading.fullscreen.lock="clickedLoad" :element-loading-spinner="svg"
+        <div v-loading.fullscreen="clickedLoad" :element-loading-spinner="svg"
           element-loading-svg-view-box="0, 5, 30, 40"></div>
         <div v-if="isShowComments">
           <div v-if="userCommented">
@@ -671,6 +694,7 @@ export default {
             <h1>{{ totalChapters }} Total</h1>
             <div style="display: flex; flex-wrap: wrap; justify-content: space-between;">
               <div v-for="(item, index) in chapters" :key="index" class="chapters"
+                :style="{ 'color': item.id === prevChapterId ? '#ff9800' : '#000000' }"
                 @click="goToContent(item.id, item.chapterName, index)">
                 <div style="overflow: hidden; text-overflow: ellipsis; width: 70%; ">
                   {{ item.chapterName }}
@@ -778,6 +802,30 @@ export default {
 
 
 <style>
+.highlighted {
+  background-color: #949494;
+}
+
+.bookmark-container {
+  position: relative;
+}
+
+.bookmark-icon {
+  position: absolute;
+  top: -28px;
+  right: 30px;
+  width: 40px;
+  height: 40px;
+}
+
+.bookmark-icon2 {
+  position: absolute;
+  top: -10px;
+  right: 30px;
+  width: 40px;
+  height: 40px;
+}
+
 .container {
   font-family: 'Roboto Condensed', sans-serif;
   margin-bottom: -20px;
@@ -904,6 +952,8 @@ export default {
 .bookInfoScore {
   display: flex;
   align-items: center;
+  justify-content: space-between;
+  width: 100%;
 }
 
 .bookInfoScore .el-rate {
