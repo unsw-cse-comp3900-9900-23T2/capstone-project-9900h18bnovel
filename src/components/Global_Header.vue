@@ -35,12 +35,12 @@ export default {
       login_button: 'Sign in',
       isSearchActive: false,
       searchInput: '',
-      uid: localStorage.getItem('uid')?localStorage.getItem('uid'):'',
+      uid: localStorage.getItem('uid') ? localStorage.getItem('uid') : '',
       email: localStorage.getItem('email') || '',
       userName: localStorage.getItem('username') || '',
       userPhoto: '',
       userSex: '',
-      CurrentPhoto:'',
+      CurrentPhoto: '',
       DefaultPhoto: 'https://img-qn.51miz.com/Element/00/88/60/42/ea5b40df_E886042_1992a532.png!/quality/90/unsharp/true/compress/true/format/png/fw/300',
     }
   },
@@ -49,7 +49,7 @@ export default {
     document.addEventListener('click', this.searchGlobalClick);
     if (localStorage.getItem('userPhoto') === 'undefined' || !localStorage.getItem('userPhoto')) {
       this.CurrentPhoto = this.DefaultPhoto;
-    } else{
+    } else {
       this.CurrentPhoto = localStorage.getItem('userPhoto');
     }
   },
@@ -86,7 +86,7 @@ export default {
     async ShowUserProfile() {
       this.$router.push('/userprofile');
       const requestData = {
-        userId: localStorage.getItem('uid')?localStorage.getItem('uid'):''
+        userId: localStorage.getItem('uid') ? localStorage.getItem('uid') : ''
       }
       try {
         const response = await fetch("http://localhost:8888/api/front/user/get_userInfo", {
@@ -109,7 +109,7 @@ export default {
             if (data.data.userSex) {
               console.log(data.data.userSex);
               localStorage.setItem('userSex', data.data.userSex);
-              this.userSex  = data.data.userSex;
+              this.userSex = data.data.userSex;
               this.$store.dispatch('sex', data.data.userSex);
             } else {
               this.userSex = '';
@@ -177,10 +177,12 @@ export default {
     </div>
     <div v-else style="color: white; display: flex; align-items: center; justify-content: space-between; width: 200px;">
       <div style="display: flex; flex-direction: column; align-items: center;" @click="ShowUserProfile()">
-        <el-avatar :size="70" :src="this.$store.state.photo? this.$store.state.photo : CurrentPhoto" style="object-fit: cover;"/>
+        <el-avatar :size="70" :src="this.$store.state.photo ? this.$store.state.photo : CurrentPhoto"
+          style="object-fit: cover;" />
         <div>{{ this.$store.state.userName ? this.$store.state.userName : userName }}</div>
       </div>
-      <el-button class="logout_button" type="primary" @click="logout(this.$router.currentRoute.value.path.includes('userprofile'))"><el-icon>
+      <el-button class="logout_button" type="primary"
+        @click="logout(this.$router.currentRoute.value.path.includes('userprofile'))"><el-icon>
           <User />
         </el-icon> Sign out </el-button>
     </div>
