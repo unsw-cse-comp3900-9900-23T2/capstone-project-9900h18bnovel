@@ -497,6 +497,13 @@ export default {
       drawer.style.backgroundColor = color;
     },
 
+    switchTheme() {
+      if (this.settingTheme) {
+        this.themeColor = '#1c1c1c';
+      } else {
+        this.themeColor = '#ffffff';
+      }
+    },
   },
 
   computed: {
@@ -718,8 +725,8 @@ export default {
         </div>
         <div class="drawerContainer">
           <el-drawer size="100%" :with-header="false" v-model="drawer" direction="ttb" :style="{
-            background: !settingTheme ? '#ffffff ' : '#1c1c1c ',
-            color: !settingTheme ? '#333333' : '#ffffff'
+            background: themeColor,
+            color: !settingTheme ? '#333333' : '#ffffff',
           }">
             <div :style="{ fontSize: fontSizeStyle }">
               <h1 style="display: flex; align-items: center; justify-content: space-between;">
@@ -742,7 +749,8 @@ export default {
                         </el-collapse-item>
                         <el-collapse-item style="padding: 10px;" title="Theme" name="2">
                           <div style="width: 100%; display: flex; justify-content: center;">
-                            <el-switch v-model="settingTheme" :active-icon="Moon" :inactive-icon="Sunny"
+                            <el-switch v-model="settingTheme" @change="switchTheme" :active-icon="Moon"
+                              :inactive-icon="Sunny"
                               style="border-right: 1px solid; border-color: #bebebe; padding-right: 15px;" />
                             &nbsp;&nbsp;&nbsp;
                             <el-button circle style="background-color: #ffffff"
@@ -774,8 +782,8 @@ export default {
                     <br>
                     V
                   </el-button></div>
-                <div style=" line-height: 2; margin-left: 20px; margin-right: 20px;">
-                  {{ chapterContent }}
+                <div style="line-height: 2; margin-left: 20px; margin-right: 20px;" v-html="chapterContent">
+                  
                 </div>
                 <div style="margin-right: -50px;"><el-button @click="nextChapter"
                     style="height: 100%; border-color: rgba(0, 0, 0, 0); background-color: rgba(0, 0, 0, 0); border-left: 1px solid #b7b7b7; border-radius: 0;">

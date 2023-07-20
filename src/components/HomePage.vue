@@ -275,7 +275,7 @@ export default {
                             </div>
                             <div
                               style="width: 60%; text-align: right; margin-right: 15px; display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 1; overflow: hidden;">
-                              -{{ comments.commentUserName }}
+                              {{ comments.commentUserName }}
                             </div>
                           </div>
                         </div>
