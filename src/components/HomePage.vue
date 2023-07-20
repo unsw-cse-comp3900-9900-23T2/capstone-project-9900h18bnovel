@@ -2,8 +2,8 @@
 import {
   UserFilled,
   Warning,
-  View,
   ArrowRight,
+  StarFilled,
 } from '@element-plus/icons-vue';
 import { getItemColor } from '../utils'
 // import { ElMessage } from 'element-plus';
@@ -91,7 +91,7 @@ export default {
         });
         if (response.status == 200) {
           const data = await response.json();
-          this.collectedBooks = data.data;
+          this.collectedBooks = data.data ? data.data : [];
         } else {
           console.log(response.status);
         }
@@ -195,17 +195,15 @@ export default {
               </el-empty>
             </div>
             <div v-else class="collected_novel_user">
-              <div v-if="collectedBooks" class="collected_novel_user_ya">
+              <div v-if="collectedBooks.length > 0" class="collected_novel_user_ya">
                 <div v-for="item in collectedBooks.slice(0, 3)" :key="item.bookId"
                   style="margin-left: 15px; display: flex; flex-direction:column; align-items:center;">
                   <img :src="item.picUrl" class="collected_img" @click="goBookInfo(item.bookId)" />
-                  <div class="collected_title" style="margin-top: 10px;" @click="goBookInfo(item.bookId)">
+                  <div class="collected_word" style="margin-top: 10px;" @click="goBookInfo(item.bookId)">
                     <b>{{ item.bookName }}</b>
                   </div>
-                  <div style="display: flex; align-items:center;">
-                    <el-icon>
-                      <View />
-                    </el-icon> Chapter {{ item.preChapterId }}
+                  <div class="collected_word" style="text-decoration: none; cursor: default;">
+                    {{ item.preChapterName }}
                   </div>
                 </div>
                 <el-button
@@ -245,7 +243,7 @@ export default {
                     </span>
                     <span style="font-size: 12pt;">{{ item.authorName }}</span>
                     <span
-                      style="font-size: 10pt; margin-top: 10px; margin-right: 10px; display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 10;overflow: hidden;">{{
+                      style="font-size: 10pt; margin-top: 10px; margin-right: 10px; display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 10; overflow: hidden;">{{
                         item.bookDesc }}</span>
                     <el-tag class="tag" effect="plain" :style="getItemColor(item.categoryName)">{{
                       item.categoryName
@@ -261,8 +259,26 @@ export default {
                   </div>
                   <div class="carousel_right_container">
                     <div class="carousel_right_comments_container">
-                      <div class="carousel_right_comments">
-                        <div class="comment-text">comments</div>
+                      <div v-for="(comments, index) in item.bookComments.slice(0, 3)" :key="index"
+                        class="carousel_right_comments">
+                        <div style="position: relative; height: 75px; padding: 5px;">
+                          <div class="comment-text">
+                            {{ comments.commentContent }}
+                          </div>
+                          <div
+                            style="bottom: 15px; position: absolute; width: 100%; display: flex; justify-content: space-between;">
+                            <div style="display: flex; align-items: center;">
+                              <el-icon>
+                                <StarFilled color="#f7ba2a" />
+                              </el-icon>
+                              {{ comments.score }}
+                            </div>
+                            <div
+                              style="width: 60%; text-align: right; margin-right: 15px; display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 1; overflow: hidden;">
+                              -{{ comments.commentUserName }}
+                            </div>
+                          </div>
+                        </div>
                       </div>
                     </div>
                     <div class="carousel_right_rates_container">
@@ -312,8 +328,26 @@ export default {
                   </div>
                   <div class="carousel_right_container">
                     <div class="carousel_right_comments_container">
-                      <div class="carousel_right_comments">
-                        <div class="comment-text">comments</div>
+                      <div v-for="(comments, index) in item.bookComments.slice(0, 3)" :key="index"
+                        class="carousel_right_comments">
+                        <div style="position: relative; height: 75px; padding: 5px;">
+                          <div class="comment-text">
+                            {{ comments.commentContent }}
+                          </div>
+                          <div
+                            style="bottom: 15px; position: absolute; width: 100%; display: flex; justify-content: space-between;">
+                            <div style="display: flex; align-items: center;">
+                              <el-icon>
+                                <StarFilled color="#f7ba2a" />
+                              </el-icon>
+                              {{ comments.score }}
+                            </div>
+                            <div
+                              style="width: 60%; text-align: right; margin-right: 15px; display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 1; overflow: hidden;">
+                              -{{ comments.commentUserName }}
+                            </div>
+                          </div>
+                        </div>
                       </div>
                     </div>
                     <div class="carousel_right_rates_container">
@@ -561,16 +595,16 @@ export default {
   position: relative;
 }
 
-.collected_title {
+.collected_word {
   text-align: center;
-  width: 132px;
+  width: 150px;
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 1;
   overflow: hidden;
 }
 
-.collected_title:hover {
+.collected_word:hover {
   cursor: pointer;
   text-decoration: underline;
 }
@@ -593,6 +627,7 @@ export default {
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  height: 300px;
 }
 
 .recomm_books_container {
@@ -691,7 +726,6 @@ export default {
 .carousel_right_comments_container {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
   height: 85%;
   margin-left: -10px;
 }
@@ -703,12 +737,13 @@ export default {
   border: 1px solid #1989fa;
   border-radius: 3px;
   overflow: hidden;
+  margin-bottom: 5px;
 }
 
 .carousel_right_comments .comment-text {
   display: -webkit-box;
   -webkit-box-orient: vertical;
-  -webkit-line-clamp: 5;
+  -webkit-line-clamp: 3;
   overflow: hidden;
 }
 

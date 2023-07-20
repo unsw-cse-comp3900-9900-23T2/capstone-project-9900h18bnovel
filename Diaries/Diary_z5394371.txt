@@ -25,6 +25,8 @@ Week6:
   -Implemented search and filters
   -Fixed resolution problem
 Week7:
-  -Implemented ranks pages, novel detail page
+  -Implemented ranks pages, novel detail page, comment section, chapter section
+  -User now can read books, also can customize font size and theme while reading
+  
 
   

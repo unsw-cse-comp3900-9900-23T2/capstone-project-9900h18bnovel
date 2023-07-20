@@ -477,7 +477,7 @@ export default {
               </div>
             </div>
           </div>
-          <div class="novels_container" v-loading.fullscreen.lock="clickedLoad" :element-loading-spinner="svg"
+          <div class="novels_container" v-loading.fullscreen="clickedLoad" :element-loading-spinner="svg"
             element-loading-svg-view-box="0, 5, 30, 40">
             <h3 v-if="this.keyword" style="width: 100%;">Search result for "{{ this.keyword }}"</h3>
             <h1 v-if="novels.length === 0" style="width: 100%; text-align: center;">No Results</h1>
