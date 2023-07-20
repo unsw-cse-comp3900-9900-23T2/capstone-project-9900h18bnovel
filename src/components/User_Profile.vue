@@ -263,6 +263,7 @@ export default {
           if (response.status == 200) {
             this.clickedLoading();
             ElMessage.success("Collection Removed");
+            this.AllCollections = this.AllCollections.filter(book => book.bookId !== bookId)
           } else {
             console.log(response.status);
           }
@@ -366,7 +367,7 @@ export default {
               </template>
               <div class="gender-row" v-if="!isGenderEditing">
                 <div class="gender-info">
-                  {{this.$store.state.sex== 0 ? 'Male' : 'Female' }}<!---->
+                  {{this.$store.state.sex== null || '' ? "Record Now!" : (this.$store.state.sex==0? 'Male':'Female') }}<!---->
                   <el-button class="UpdateGenderButton" @click="StartEditGender" circle>
                     <el-icon color="gray">
                       <edit />
