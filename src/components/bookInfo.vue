@@ -782,9 +782,7 @@ export default {
                     <br>
                     V
                   </el-button></div>
-                <div style="line-height: 2; margin-left: 20px; margin-right: 20px;" v-html="chapterContent">
-                  
-                </div>
+                <div style="line-height: 2; margin-left: 20px; margin-right: 20px;" v-html="chapterContent"></div>
                 <div style="margin-right: -50px;"><el-button @click="nextChapter"
                     style="height: 100%; border-color: rgba(0, 0, 0, 0); background-color: rgba(0, 0, 0, 0); border-left: 1px solid #b7b7b7; border-radius: 0;">
                     N
