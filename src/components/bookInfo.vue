@@ -493,8 +493,7 @@ export default {
 
     changeDrawerColor(color) {
       this.themeColor = color;
-      const drawer = document.getElementsByClassName('el-drawer')[0];
-      drawer.style.backgroundColor = color;
+      this.settingTheme = false;
     },
 
     switchTheme() {
