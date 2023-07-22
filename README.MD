@@ -33,10 +33,13 @@ novel project, including novel recommendation, work search, novel ranking, novel
 
 | Technology            |   Version    | Description         | Official website                                                   |                                        Learn                                        |
 | :----------------- | :-----: | -------------------------- | --------------------------------------- | :-------------------------------------------------: |
-| Vue.js        |  3.2.13  | Progressive JavaScript Framework | [click](https://vuejs.org)  |   [click](https://staging-cn.vuejs.org/guide/introduction.html)    |
-| Vue Router            |  4.0.15  | Official Routing for Vue.js                    | [click](https://router.vuejs.org)                  | [click](https://router.vuejs.org/zh/guide/) |
+| Vue.js        |  3.3.4  | Progressive JavaScript Framework | [click](https://vuejs.org)  |   [click](https://staging-cn.vuejs.org/guide/introduction.html)    |
+| Vue Router            |  4.2.2  | Official Routing for Vue.js                    | [click](https://router.vuejs.org)                  | [click](https://router.vuejs.org/zh/guide/) |
+| Vuex            |  4.1.0  | State Management Pattern         | [click](https://vuex.vuejs.org/)              |  [click](https://vuex.vuejs.org/guide/) |
+'''
 | axios       |  0.27.2  | Promise based web request library               | [click](https://axios-http.com)                  |     [click](https://axios-http.com/zh/docs/intro)      |
-| element-plus               | 2.2.0  | A component library for designers and developers based on Vue 3   | [click](https://element-plus.org)            |   [click](https://element-plus.org/zh-CN/guide/design.html)   |
+'''
+| element-plus               | 2.3.6  | A component library for designers and developers based on Vue 3   | [click](https://element-plus.org)            |   [click](https://element-plus.org/zh-CN/guide/design.html)   |
 
 ## Coding specification
 
