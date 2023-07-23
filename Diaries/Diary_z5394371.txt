@@ -27,6 +27,13 @@ Week6:
 Week7:
   -Implemented ranks pages, novel detail page, comment section, chapter section
   -User now can read books, also can customize font size and theme while reading
-  
+Week8:
+  -Fixed exist bugs
+  -Optimized coding style， UI/UX
+  -Checking and completed all existing functionality
+Week9:
+  -Implemented author page
+  -Introduce axios into project, in order to ensure the security of the request
+
 
   
