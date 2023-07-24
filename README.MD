@@ -36,8 +36,9 @@ novel project, including novel recommendation, work search, novel ranking, novel
 | Vue.js        |  3.3.4  | Progressive JavaScript Framework | [click](https://vuejs.org)  |   [click](https://staging-cn.vuejs.org/guide/introduction.html)    |
 | Vue Router            |  4.2.2  | Official Routing for Vue.js                    | [click](https://router.vuejs.org)                  | [click](https://router.vuejs.org/zh/guide/) |
 | Vuex            |  4.1.0  | State Management Pattern         | [click](https://vuex.vuejs.org/)              |  [click](https://vuex.vuejs.org/guide/) |
-| element-plus               | 2.3.6  | A component library for designers and developers based on Vue 3   | [click](https://element-plus.org)            |   [click](https://element-plus.org/zh-CN/guide/design.html)   |
-
+| Element-plus               | 2.3.6  | A component library for designers and developers based on Vue 3   | [click](https://element-plus.org)            |   [click](https://element-plus.org/zh-CN/guide/design.html)   |
+| Axios              | 1.4.0  | A promise-based HTTP Client for node.js and the browser   | [click](https://axios-http.com/)            |   [click](https://axios-http.com/docs/intro)   |
+| Animate.css              | 4.1.1 | A library of ready-to-use, cross-browser animations for use in web projects   | [click](https://animate.style/)            |   [click](https://animate.style/)   |
 ## Coding specification
 
 - Specification approach: strict adherence to the Ali coding statute.
