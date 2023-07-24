@@ -494,7 +494,7 @@ export default {
                     <span style="font-size: 11pt;">{{ item.authorName }}</span>
                     <span
                       style="font-size: 10pt; margin-top: 10px; margin-right: 10px; display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 4;overflow: hidden;">{{
-                        item.bookDesc }}</span>
+                        item.bookDesc }}</span>git
                     <div style="bottom: 40px; position: absolute;">
                       <el-tag effect="plain" :style="getItemColor(item.categoryName)">{{
                         item.categoryName
@@ -508,7 +508,7 @@ export default {
                         <StarFilled />
                       </el-icon>
                       {{ item.score }}
-                      &nbsp;&nbsp;&nbsp;
+                      &nbsp;&nbsp;
                       <el-icon>
                         <Document />
                       </el-icon>

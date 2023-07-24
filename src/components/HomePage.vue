@@ -544,6 +544,10 @@ export default {
 .carousel_weekly_text_title {
   font-size: 24pt;
   margin-bottom: 5px;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  overflow: hidden;
 }
 
 .carousel_weekly_text_title:hover {
