@@ -6,6 +6,7 @@ import {
   Warning,
 } from '@element-plus/icons-vue';
 import { ElMessage } from 'element-plus';
+import axios from 'axios';
 import { getItemColor } from '../utils'
 const svg = `
 <path class="path" d="
@@ -30,7 +31,7 @@ export default {
       isLoginVisible: false,
       verImage: '',
       sessionId: '',
-      newestUpdateBooks: null,
+      rankBooks: null,
       loading: true,
       showNewestUpdatePage: false,
       count: 10,
@@ -45,49 +46,44 @@ export default {
     path === "/newestrank" ? this.isNewestRank = true : this.isNewestRank = false;
     path === "/updaterank" ? this.isUpdateRank = true : this.isUpdateRank = false;
     path === "/clickrank" ? this.isClickRank = true : this.isClickRank = false;
-    this.getNewestUpdateBooks();
+    this.getRanks();
     setTimeout(() => {
       this.loading = false;
       this.showNewestUpdatePage = true;
     }, 500);
   },
   methods: {
-    async getNewestUpdateBooks() {
+    async getRanks() {
       const whichrank = this.isNewestRank ? "newest_rank" : this.isClickRank ? "visit_rank" : this.isUpdateRank ? "update_rank" : null;
-      try {
-        const response = await fetch("http://localhost:8888/api/front/book/" + whichrank, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json'
-          },
+      await axios.get("http://localhost:8888/api/front/book/" + whichrank)
+        .then(response => {
+          const data = response.data;
+          this.rankBooks = data.data;
+        })
+        .catch(error => {
+          console.error(error);
         });
-        if (response.status == 200) {
-          const data = await response.json();
-          this.newestUpdateBooks = data.data;
-        } else {
-          console.log(response.status);
-        }
-      } catch (error) {
-        console.error(error);
-      }
     },
+
     load() {
       this.loadMore = true;
       setTimeout(() => {
         this.loadMore = false;
         this.count += 5;
-        if (this.count >= this.newestUpdateBooks.length + 5) {
+        if (this.count >= this.rankBooks.length + 5) {
           ElMessage.error("There is no more books");
         }
       }, 500);
     },
+
     goBookInfo(bookId) {
       this.$router.push(`/bookInfo/${bookId}`);
     },
+
   },
   computed: {
     filteredBooks() {
-      return this.newestUpdateBooks.slice(0, this.count);
+      return this.rankBooks.slice(0, this.count);
     },
   },
   watch: {
@@ -96,17 +92,17 @@ export default {
         this.isNewestRank = true;
         this.isUpdateRank = false;
         this.isClickRank = false;
-        this.getNewestUpdateBooks();
+        this.getRanks();
       } else if (to.path === "/updaterank") {
         this.isNewestRank = false;
         this.isUpdateRank = true;
         this.isClickRank = false;
-        this.getNewestUpdateBooks();
+        this.getRanks();
       } else if (to.path === "/clickrank") {
         this.isNewestRank = false;
         this.isUpdateRank = false;
         this.isClickRank = true;
-        this.getNewestUpdateBooks();
+        this.getRanks();
       }
       this.loading = true;
       this.showNewestUpdatePage = false;
@@ -173,7 +169,7 @@ export default {
           <div style="height: 100px; margin-top: 20px; width: 100%; display:flex; justify-content: center;"
             v-loading="loadMore" :element-loading-spinner="svg" element-loading-svg-view-box="0, 5, 30, 40"
             element-loading-background="rgba(255, 255, 255, 255)">
-            <div v-if="count >= newestUpdateBooks.length + 5" @click="scrollToTop"
+            <div v-if="count >= rankBooks.length + 5" @click="scrollToTop"
               style="text-align: center; width: 100%;">
               <h3>
                 <el-icon>

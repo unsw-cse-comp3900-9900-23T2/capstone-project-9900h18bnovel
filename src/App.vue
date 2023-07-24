@@ -14,7 +14,6 @@ const svg = `
 
 <script>
 import Global_Header from './components/Global_Header.vue';
-import Global_Nav from './components/Global_Nav.vue';
 import Login from './components/Auth_Page.vue';
 
 export default {
@@ -29,7 +28,6 @@ export default {
   },
   components: {
     Global_Header,
-    Global_Nav,
     Login,
   },
   mounted() {
@@ -89,9 +87,8 @@ export default {
     element-loading-background="rgba(255, 255, 255, 255)"></div>
   <div v-if="isLoadFinished" :class="{ 'blur': this.$store.state.isLoginVisible }">
     <Global_Header @clearSearch="clearSearch" @handleSearch="handleSearch" @showLogin="showLogin"
-      @closeLoginBox="closeLoginBox" :searchInput="this.searchInput" :verImage="this.verImage"
+      @closeLoginBox="closeLoginBox" :verImage="this.verImage"
       :sessionId="this.sessionId" />
-    <Global_Nav />
     <router-view>
     </router-view>
     <!-- Go to top floating buttom -->
@@ -103,9 +100,11 @@ export default {
       </div>
     </el-backtop>
   </div>
-  <div v-if="this.$store.state.isLoginVisible" class="loginSection">
-    <Login class="login" :verImage="this.verImage" :sessionId="this.sessionId" @closeLoginBox="closeLoginBox" />
-  </div>
+  <transition name="fade">
+    <div v-if="this.$store.state.isLoginVisible" class="loginSection">
+      <Login class="login" :verImage="this.verImage" :sessionId="this.sessionId" @closeLoginBox="closeLoginBox" />
+    </div>
+  </transition>
 </template>
 
 <style>
@@ -116,7 +115,7 @@ export default {
 
 .fade-enter-active,
 .fade-leave-active {
-  transition: opacity 0.5s;
+  transition: opacity 500ms;
 }
 
 .blur {

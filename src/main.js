@@ -26,7 +26,7 @@ const routes = [
   { path: '/', redirect: '/home' },
   { path: '/home', component: HomePage },
   {
-    path: '/allnovels/',
+    path: '/allnovels',
     component: All_Novels,
   },
   {
@@ -39,7 +39,8 @@ const routes = [
     },
   },
   //{ path: '/newupdate', component: new_update },
-  { path: '/userprofile',
+  {
+    path: '/userprofile',
     component: Profile,
     name: 'UserProfile',
     meta: {

@@ -1,3 +1,4 @@
+<!-- 1.修复了nav bar不跟着url走的问题 -->
 <script setup>
 import {
   UserFilled,
@@ -5,6 +6,7 @@ import {
   ArrowRight,
   StarFilled,
 } from '@element-plus/icons-vue';
+import axios from 'axios';
 import { getItemColor } from '../utils'
 // import { ElMessage } from 'element-plus';
 const svg = `
@@ -61,20 +63,6 @@ export default {
     }, 500);
   },
   methods: {
-    goNewestRank() {
-      this.$router.push('/newestrank');
-    },
-    goClickRank() {
-      this.$router.push('/clickrank');
-    },
-    goUpdateRank() {
-      this.$router.push('/updaterank');
-    },
-
-    testFlag() {
-      this.collect_flag = !this.collect_flag;
-    },
-
     getBackgroundStyle(imageUrl) {
       return {
         'background-image': `url(${imageUrl})`
@@ -82,46 +70,30 @@ export default {
     },
 
     async getUserCollect() {
-      try {
-        const response = await fetch(`http://localhost:8888/api/front/user/user_collect?userId=${this.$store.getters.GetUID}`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-        });
-        if (response.status == 200) {
-          const data = await response.json();
+      await axios.get(`http://localhost:8888/api/front/user/user_collect?userId=${this.$store.getters.GetUID}`)
+        .then(response => {
+          const data = response.data;
           this.collectedBooks = data.data ? data.data : [];
-        } else {
-          console.log(response.status);
-        }
-      } catch (error) {
-        console.error(error);
-      }
+        })
+        .catch(error => {
+          console.error(error);
+        });
     },
 
     async getHomeBooks() {
-      try {
-        const response = await fetch("http://localhost:8888/api/front/home/books", {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-        });
-        if (response.status == 200) {
-          const data = await response.json();
+      await axios.get("http://localhost:8888/api/front/home/books")
+        .then(response => {
+          const data = response.data;
           this.weekly_books_info = data.data.filter(item => item.type === '0');
           this.hottest_books_info = data.data.filter(item => item.type === '1');
           this.best_books_info = data.data.filter(item => item.type === '2');
           this.click_rank_info = data.data.filter(item => item.type === '3');
           this.newest_rank_info = data.data.filter(item => item.type === '4');
           this.update_rank_info = data.data.filter(item => item.type === '5');
-        } else {
-          console.log(response.status);
-        }
-      } catch (error) {
-        console.error(error);
-      }
+        })
+        .catch(error => {
+          console.error(error);
+        });
     },
 
     goBookInfo(bookId) {
@@ -144,6 +116,9 @@ export default {
     element-loading-background="rgba(255, 255, 255, 255)"
     style="top:50%; left: 50%; transform: translate(-50%,-50%); position: absolute;"></div>
   <div v-if="showHomePage">
+    
+    <div id="svgContainer"></div>
+
     <div style="display: flex; justify-content: center;">
       <div class="homeBody">
         <div class="weekly_collect_books_container">
@@ -163,10 +138,10 @@ export default {
               <el-carousel-item v-for="item in weekly_books_info.slice(0, 3)" :key="item.title">
                 <div class="carousel_weekly_background" :style="getBackgroundStyle(item.picUrl)"></div>
                 <el-row>
-                  <el-column class="carousel_weekly_image_container">
+                  <div class="carousel_weekly_image_container">
                     <img :src="item.picUrl" class="carousel_weekly_image" @click="goBookInfo(item.bookId)">
-                  </el-column>
-                  <el-column class="carousel_weekly_text_container">
+                  </div>
+                  <div class="carousel_weekly_text_container">
                     <div class="carousel_weekly_text">
                       <span class="carousel_weekly_text_title" @click="goBookInfo(item.bookId)">{{ item.bookName
                       }}</span>
@@ -176,7 +151,7 @@ export default {
                         item.categoryName
                       }}</el-tag>
                     </div>
-                  </el-column>
+                  </div>
                 </el-row>
               </el-carousel-item>
             </el-carousel>
@@ -250,7 +225,7 @@ export default {
                     </span>
                     <span style="font-size: 12pt;">{{ item.authorName }}</span>
                     <span
-                      style="font-size: 10pt; margin-top: 10px; margin-right: 10px; display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 10; overflow: hidden;">{{
+                      style="font-size: 10pt; line-height: 1.5; margin-top: 10px; margin-right: 10px; display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 7; overflow: hidden;">{{
                         item.bookDesc }}</span>
                     <el-tag class="tag" effect="plain" :style="getItemColor(item.categoryName)">{{
                       item.categoryName
@@ -319,7 +294,7 @@ export default {
                     </span>
                     <span style="font-size: 12pt;">{{ item.authorName }}</span>
                     <span
-                      style="font-size: 10pt; margin-top: 10px; margin-right: 10px; display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 10;overflow: hidden;">{{
+                      style="font-size: 10pt; line-height: 1.5; margin-top: 10px; margin-right: 10px; display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 7;overflow: hidden;">{{
                         item.bookDesc }}</span>
                     <el-tag class="tag" effect="plain" :style="getItemColor(item.categoryName)">{{
                       item.categoryName
@@ -395,8 +370,8 @@ export default {
                 <br />
                 <el-text truncated style="font-size: 10pt;">{{ item.authorName }}</el-text>
                 <br />
-                <el-text truncated style="font-size: 10pt; width: 250px;"><el-rate v-model="item.score" disabled
-                    show-score text-color="#ff9900" size="small" score-template="{value} points" /></el-text>
+                <el-text truncated style="font-size: 10pt; width: 250px;"><el-rate v-model="item.score"
+                    disabled show-score text-color="#ff9900" size="small" score-template="{value} points" /></el-text>
               </div>
             </div>
           </div>
@@ -424,8 +399,8 @@ export default {
                 <br />
                 <el-text truncated style="font-size: 10pt;">{{ item.authorName }}</el-text>
                 <br />
-                <el-text truncated style="font-size: 10pt; width: 250px;"><el-rate v-model="item.score" disabled
-                    show-score text-color="#ff9900" size="small" score-template="{value} points" /></el-text>
+                <el-text truncated style="font-size: 10pt; width: 250px;"><el-rate v-model="item.score"
+                    disabled show-score text-color="#ff9900" size="small" score-template="{value} points" /></el-text>
               </div>
             </div>
           </div>
@@ -453,8 +428,8 @@ export default {
                 <br />
                 <el-text truncated style="font-size: 10pt;">{{ item.authorName }}</el-text>
                 <br />
-                <el-text truncated style="font-size: 10pt; width: 250px;"><el-rate v-model="item.score" disabled
-                    show-score text-color="#ff9900" size="small" score-template="{value} points" /></el-text>
+                <el-text truncated style="font-size: 10pt; width: 250px;"><el-rate v-model="item.score"
+                    disabled show-score text-color="#ff9900" size="small" score-template="{value} points" /></el-text>
               </div>
             </div>
           </div>
@@ -464,7 +439,6 @@ export default {
     <div v-if="showProfile">
       <Profile />
     </div>
-
     <Global_Footer />
   </div>
 </template>
@@ -542,8 +516,12 @@ export default {
 }
 
 .carousel_weekly_text_title {
-  font-size: 24pt;
+  font-size: 22pt;
   margin-bottom: 5px;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  overflow: hidden;
 }
 
 .carousel_weekly_text_title:hover {
@@ -558,10 +536,11 @@ export default {
 
 .carousel_weekly_text_descr {
   font-size: 10pt;
+  line-height: 1.5;
   padding-right: 50px;
   display: -webkit-box;
   -webkit-box-orient: vertical;
-  -webkit-line-clamp: 7;
+  -webkit-line-clamp: 5;
   overflow: hidden;
 }
 
@@ -584,15 +563,13 @@ export default {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  box-shadow: var(--el-box-shadow);
-  background-color: #f1ddbb;
+  background-color: #f3f3f3;
   color: white;
 }
 
 .collected_novel_user {
   height: 100%;
-  box-shadow: var(--el-box-shadow);
-  background-color: #f1ddbb
+  background-color: #f3f3f3;
 }
 
 .collected_novel_user_ya {
@@ -735,6 +712,7 @@ export default {
   flex-direction: column;
   height: 85%;
   margin-left: -10px;
+  font-size: 10pt;
 }
 
 .carousel_right_comments {

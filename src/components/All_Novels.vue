@@ -1,5 +1,6 @@
 <script setup>
 import { ElMessage } from 'element-plus';
+import axios from 'axios';
 import { getItemColor } from '../utils'
 import {
   StarFilled,
@@ -72,8 +73,11 @@ export default {
     }
   },
   watch: {
-    '$store.getters.getCurrentURL'(newURL) {
-      this.updateAllNovelsRoute(newURL);
+    '$store.getters.getCurrentURL': {
+      handler(newURL) {
+        this.updateAllNovelsRoute(newURL);
+      },
+      immediate: true,
     },
     '$store.getters.getSearchInput'(searchInput) {
       this.keyword = searchInput;
@@ -272,24 +276,16 @@ export default {
       url += this.pageNum !== null ? "pageNum=" + this.pageNum + "&" : "";
 
       url = url.slice(0, -1);
-      try {
-        const response = await fetch(url, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-        });
-        if (response.status == 200) {
-          const data = await response.json();
+      await axios.get(url)
+        .then(response => {
+          const data = response.data;
           this.novels = data.data;
           this.totalNum = data.data[0] ? data.data[0].totalNum : 0;
           this.$store.dispatch('setCurrentURL', url.substring(url.indexOf('books')));
-        } else {
-          console.log(response.status);
-        }
-      } catch (error) {
-        console.error(error);
-      }
+        })
+        .catch(error => {
+          console.error(error);
+        });
     },
 
     load() {
@@ -472,8 +468,7 @@ export default {
               </div>
               <div style="margin-top: -2px; font-size: 14pt; width: 110px; text-align: right;">
                 <b>{{
-                  this.totalNum }} {{ novels.length <= 1 ? "book" : "books"}}
-                </b>
+                  this.totalNum }} {{ novels.length <= 1 ? "book" : "books" }} </b>
               </div>
             </div>
           </div>
@@ -493,7 +488,7 @@ export default {
                     </span>
                     <span style="font-size: 11pt;">{{ item.authorName }}</span>
                     <span
-                      style="font-size: 10pt; margin-top: 10px; margin-right: 10px; display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 4;overflow: hidden;">{{
+                      style="font-size: 10pt; line-height: 1.5; margin-top: 10px; margin-right: 10px; display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 3;overflow: hidden;">{{
                         item.bookDesc }}</span>
                     <div style="bottom: 40px; position: absolute;">
                       <el-tag effect="plain" :style="getItemColor(item.categoryName)">{{
@@ -503,26 +498,32 @@ export default {
                     <div style="margin-left: 2px; bottom: 20px; position: absolute; display: flex;">
                       Last update: {{ item.lastChapterUpdateTime }}
                     </div>
-                    <div style="bottom: 0; position: absolute; display: flex; align-items: center;">
-                      <el-icon>
-                        <StarFilled />
-                      </el-icon>
-                      {{ item.score }}
-                      &nbsp;&nbsp;&nbsp;
-                      <el-icon>
-                        <Document />
-                      </el-icon>
-                      {{ simplifiedWordCount(item.wordCount) }}
-                      &nbsp;&nbsp;&nbsp;
-                      <el-icon>
-                        <View />
-                      </el-icon>
-                      {{ simplifiedWordCount(item.visitCount) }}
-                      &nbsp;&nbsp;&nbsp;
-                      <el-icon>
-                        <CollectionTag />
-                      </el-icon>
-                      {{ simplifiedWordCount(item.collectCount) }}
+                    <div
+                      style="bottom: 0; position: absolute; width: 228px; display: flex; justify-content: space-between;">
+                      <div style="display: flex; align-items: center;">
+                        <el-icon>
+                          <StarFilled />
+                        </el-icon>
+                        {{ item.score }}
+                      </div>
+                      <div style="display: flex; align-items: center;">
+                        <el-icon>
+                          <Document />
+                        </el-icon>
+                        {{ simplifiedWordCount(item.wordCount) }}
+                      </div>
+                      <div style="display: flex; align-items: center;">
+                        <el-icon>
+                          <View />
+                        </el-icon>
+                        {{ simplifiedWordCount(item.visitCount) }}
+                      </div>
+                      <div style="display: flex; align-items: center;">
+                        <el-icon>
+                          <CollectionTag />
+                        </el-icon>
+                        {{ simplifiedWordCount(item.collectCount) }}
+                      </div>
                     </div>
                   </div>
                 </div>

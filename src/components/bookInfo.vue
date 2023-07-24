@@ -17,6 +17,7 @@ import {
   CaretBottom
 } from '@element-plus/icons-vue';
 import { ElMessage } from 'element-plus';
+import axios from 'axios';
 import { getItemColor } from '../utils'
 const svg = `
 <path class="path" d="
@@ -127,50 +128,34 @@ export default {
 
   methods: {
     async getUserCollect() {
-      try {
-        const response = await fetch(`http://localhost:8888/api/front/user/user_collect?userId=${this.$store.getters.GetUID}`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-        });
-        if (response.status == 200) {
-          const data = await response.json();
+      await axios.get(`http://localhost:8888/api/front/user/user_collect?userId=${this.$store.getters.GetUID}`)
+        .then(response => {
+          const data = response.data;
           this.collectedBooksId = data.data.map(item => item.bookId);
           this.isCollected = this.collectedBooksId.includes(this.$route.params.bookId) ? true : false;
           const thisBook = data.data.find(item => item.bookId === this.$route.params.bookId);
           console.log(thisBook)
           this.prevChapterId = thisBook ? thisBook.preChapterId : null;
           console.log(this.prevChapterId)
-        } else {
-          console.log(response.status);
-        }
-      } catch (error) {
-        console.error(error);
-      }
+        })
+        .catch(error => {
+          console.error(error);
+        });
     },
 
     async prevChapter() {
       if (this.chapterNum === "1") {
         ElMessage.error("There is no previous chapter");
       } else {
-        try {
-          const response = await fetch(`http://localhost:8888/api/front/book/pre_chapter_id/${this.chapterId}`, {
-            method: 'GET',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-          });
-          if (response.status == 200) {
-            const data = await response.json();
+        await axios.get(`http://localhost:8888/api/front/book/pre_chapter_id/${this.chapterId}`)
+          .then(response => {
+            const data = response.data;
             this.chapterId = data.data;
             this.getContent();
-          } else {
-            console.log(response.status);
-          }
-        } catch (error) {
-          console.error(error);
-        }
+          })
+          .catch(error => {
+            console.error(error);
+          });
       }
     },
 
@@ -178,61 +163,39 @@ export default {
       if (this.chapterNum === this.totalChapters) {
         ElMessage.error("There is no next chapter");
       } else {
-        try {
-          const response = await fetch(`http://localhost:8888/api/front/book/next_chapter_id/${this.chapterId}`, {
-            method: 'GET',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-          });
-          if (response.status == 200) {
-            const data = await response.json();
+        await axios.get(`http://localhost:8888/api/front/book/next_chapter_id/${this.chapterId}`)
+          .then(response => {
+            const data = response.data;
             this.chapterId = data.data;
             this.getContent();
-          } else {
-            console.log(response.status);
-          }
-        } catch (error) {
-          console.error(error);
-        }
+          })
+          .catch(error => {
+            console.error(error);
+          });
       }
     },
 
     async addVisit() {
-      try {
-        await fetch(`http://localhost:8888/api/front/book/add_visit?bookId=${this.$route.params.bookId}`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
+      await axios.get(`http://localhost:8888/api/front/book/add_visit?bookId=${this.$route.params.bookId}`)
+        .catch(error => {
+          console.error(error);
         });
-        this.getBookInfo();
-      } catch (error) {
-        console.error(error);
-      }
+      this.getBookInfo();
     },
 
     async getContent() {
-      try {
-        const response = await fetch(`http://localhost:8888/api/front/book/get_content?chapterId=${this.chapterId}&userId=${this.$store.getters.GetUID}`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
-        if (response.status == 200) {
-          const data = await response.json();
+      await axios.get(`http://localhost:8888/api/front/book/get_content?chapterId=${this.chapterId}&userId=${this.$store.getters.GetUID}`)
+        .then(response => {
+          const data = response.data;
           this.chapterContent = data.data.bookContent;
           this.chapterName = data.data.chapterInfo.chapterName;
           this.chapterId = data.data.chapterInfo.id;
           this.prevChapterId = data.data.chapterInfo.id;
           this.chapterNum = data.data.chapterInfo.chapterNum;
-        } else {
-          console.log(response.status);
-        }
-      } catch (error) {
-        console.error(error);
-      }
+        })
+        .catch(error => {
+          console.error(error);
+        });
     },
 
     async cancel_collect() {
@@ -240,23 +203,12 @@ export default {
         userId: this.$store.getters.GetUID,
         bookId: this.$route.params.bookId,
       };
-      try {
-        const response = await fetch('http://localhost:8888/api/front/book/cancel_collect', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(reqbody),
+      await axios.post('http://localhost:8888/api/front/book/cancel_collect', reqbody)
+        .catch(error => {
+          console.error(error);
         });
-        if (response.status == 200) {
-          this.clickedLoading();
-          ElMessage.success("Collection Removed");
-        } else {
-          console.log(response.status);
-        }
-      } catch (error) {
-        console.error(error);
-      }
+      this.clickedLoading();
+      ElMessage.success("Collection Removed");
     },
 
     async collect() {
@@ -269,26 +221,17 @@ export default {
           userId: this.$store.getters.GetUID,
           bookId: this.$route.params.bookId,
         };
-        try {
-          const response = await fetch('http://localhost:8888/api/front/book/collect', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(reqbody),
-          });
-          if (response.status == 200) {
-            const data = await response.json();
+        await axios.post('http://localhost:8888/api/front/book/collect', reqbody)
+          .then(response => {
+            const data = response.data;
             if (data.code === "00000") {
               ElMessage.success("Book Collected");
               this.clickedLoading();
             }
-          } else {
-            console.log(response.status);
-          }
-        } catch (error) {
-          console.error(error);
-        }
+          })
+          .catch(error => {
+            console.error(error);
+          });
       }
     },
 
@@ -299,17 +242,10 @@ export default {
         ElMessage.error("Comment cannot be empty");
       } else {
         this.requestBody.commentContent = this.userComment;
-        try {
-          await fetch('http://localhost:8888/api/front/book/update_comment', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(this.requestBody),
+        await axios.post('http://localhost:8888/api/front/book/update_comment', this.requestBody)
+          .catch(error => {
+            console.error(error);
           });
-        } catch (error) {
-          console.error(error);
-        }
         this.clickedLoading();
         this.isEditComment = false;
         this.userComment = null;
@@ -318,41 +254,25 @@ export default {
     },
 
     async deleteUserComment() {
-      try {
-        await fetch(`http://localhost:8888/api/front/book/comment/${this.userCommented.id}`, {
-          method: 'DELETE',
-          headers: {
-            'Content-Type': 'application/json',
-          },
+      await axios.delete(`http://localhost:8888/api/front/book/comment/${this.userCommented.id}`)
+        .catch(error => {
+          console.error(error);
         });
-      } catch (error) {
-        console.error(error);
-      }
       this.isEditComment = false;
       this.userComment = null;
       this.clickedLoading();
-
       ElMessage.success("Comment Deleted");
     },
 
     async getUserComment() {
-      try {
-        const response = await fetch('http://localhost:8888/api/front/book/get_comment', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(this.requestBody),
-        });
-        if (response.status == 200) {
-          const data = await response.json();
+      await axios.post('http://localhost:8888/api/front/book/get_comment', this.requestBody)
+        .then(response => {
+          const data = response.data;
           this.userCommented = data.data;
-        } else {
-          console.log(response.status);
-        }
-      } catch (error) {
-        console.error(error);
-      }
+        })
+        .catch(error => {
+          console.error(error);
+        });
     },
 
     async postUserComment() {
@@ -362,17 +282,11 @@ export default {
         ElMessage.error("Comment cannot be empty");
       } else {
         this.requestBody.commentContent = this.userComment;
-        try {
-          await fetch('http://localhost:8888/api/front/book/new_comment', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(this.requestBody),
+
+        await axios.post('http://localhost:8888/api/front/book/new_comment', this.requestBody)
+          .catch(error => {
+            console.error(error);
           });
-        } catch (error) {
-          console.error(error);
-        }
         this.clickedLoading();
         this.isEditComment = false;
         this.userComment = null;
@@ -381,63 +295,38 @@ export default {
     },
 
     async getAllComments() {
-      try {
-        const response = await fetch('http://localhost:8888/api/front/book/all_comments', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(this.requestBody),
-        });
-        if (response.status == 200) {
-          const data = await response.json();
+      await axios.post('http://localhost:8888/api/front/book/all_comments', this.requestBody)
+        .then(response => {
+          const data = response.data;
           this.comments = data.data.list;
           this.totalComments = data.data.total;
-        } else {
-          console.log(response.status);
-        }
-      } catch (error) {
-        console.error(error);
-      }
+        })
+        .catch(error => {
+          console.error(error);
+        });
     },
 
     async getBookInfo() {
-      try {
-        const response = await fetch(`http://localhost:8888/api/front/book/${this.$route.params.bookId}`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-        });
-        if (response.status == 200) {
-          const data = await response.json();
+      await axios.get(`http://localhost:8888/api/front/book/${this.$route.params.bookId}`)
+        .then(response => {
+          const data = response.data;
           this.book = data.data;
-        } else {
-          console.log(response.status);
-        }
-      } catch (error) {
-        console.error(error);
-      }
+        })
+        .catch(error => {
+          console.error(error);
+        });
     },
 
     async getChapters() {
-      try {
-        const response = await fetch(`http://localhost:8888/api/front/book/chapter/list?bookId=${this.$route.params.bookId}&pageNum=${this.chapterPageNum}&pageSize=20`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-        });
-        if (response.status == 200) {
-          const data = await response.json();
+      await axios.get(`http://localhost:8888/api/front/book/chapter/list?bookId=${this.$route.params.bookId}&pageNum=${this.chapterPageNum}&pageSize=20`)
+        .then(response => {
+          const data = response.data;
           this.chapters = data.data.list;
           this.totalChapters = data.data.total;
-        } else {
-          console.log(response.status);
-        }
-      } catch (error) {
-        console.error(error);
-      }
+        })
+        .catch(error => {
+          console.error(error);
+        });
     },
 
     goToContent(chapterId, chapterName) {
@@ -519,12 +408,11 @@ export default {
     element-loading-background="rgba(255, 255, 255, 255)"
     style="top:50%; left: 50%; transform: translate(-50%,-50%); position: absolute;"></div>
   <div v-if="showBookInfo">
-    <div style="width: 100%; height: 440px; background-color: #f5f6fc; position: absolute; z-index: -10;"></div>
     <div class="bookInfoBody">
       <div class="bookDetail">
         <div class="bookmark-container">
           <img :src="book.picUrl"
-            style="height: 400px; box-shadow: 6px 4px 6px rgb(155, 155, 155); border-radius: 8px;" />
+            style="height: 400px; box-shadow: 6px 4px 6px rgb(155, 155, 155); border-radius: 8px; margin-left: 20px;" />
           <div v-if="isCollected" class="bookmark-icon">
             <el-icon size="60">
               <CaretBottom color="#f7ba2a" />
@@ -537,19 +425,22 @@ export default {
           </div>
         </div>
         <div class="bookWordDetail">
-          <div style="display: flex; justify-content: space-between; align-items: center;">
-            <h1 style="display: flex; align-items: center;"> {{ book.bookName }}
-              <el-tag effect="plain" style="margin-left: 20px;" :style="getItemColor(book.categoryName)">{{
-                book.categoryName
-              }}</el-tag>
-            </h1>
-            <el-tag style="font-size: 14pt;" size="large" effect="plain">{{ book.bookStatus === "1" ? "Completed" :
-              "Ongoing" }}</el-tag>
+          <div>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <h1 style="display: flex; align-items: center;"> {{ book.bookName }}
+                <el-tag effect="plain" style="margin-left: 20px;" :style="getItemColor(book.categoryName)">{{
+                  book.categoryName
+                }}</el-tag>
+              </h1>
+              <el-tag style="font-size: 14pt;" size="large" effect="plain" :type="book.bookStatus === '1' ? 'success'
+                : ''">{{ book.bookStatus === "1" ? "Completed" : "Ongoing" }}</el-tag>
+            </div>
+            <div style="font-size: 14pt; margin-bottom: 15px;"> {{ book.authorName }}</div>
           </div>
-          <div style="font-size: 14pt; margin-bottom: 15px;"> {{ book.authorName }}</div>
-          <div style="display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 9; overflow: hidden;"> {{
+
+          <div style="line-height: 1.5;"> {{
             book.bookDesc }}</div>
-          <div style="bottom: 10px; position: absolute; width: 100%;">
+          <div>
             <div class="bookInfoScore">
               <div style="display: flex; align-items: center;">
                 <el-rate v-model="book.score" disabled show-score text-color="#ff9900" size="large"
@@ -948,6 +839,9 @@ export default {
 }
 
 .bookWordDetail {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   width: 100%;
   margin-left: 40px;
   position: relative;
@@ -957,7 +851,6 @@ export default {
 .bookInfoScore {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   width: 100%;
 }
 

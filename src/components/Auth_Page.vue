@@ -2,7 +2,9 @@
 // import {
 //   User,
 // } from '@element-plus/icons-vue'
-import { ElMessage, ElMessageBox } from 'element-plus'
+import { ElMessage, ElMessageBox } from 'element-plus';
+import axios from 'axios';
+import 'animate.css';
 </script >
 
 <script>
@@ -126,22 +128,10 @@ export default {
       const requestData = {
         email: this.email
       };
-      try {
-        const response = await fetch("http://localhost:8888/api/front/user/email_verify_code", {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(requestData)
+      await axios.post("http://localhost:8888/api/front/user/email_verify_code", requestData)
+        .catch(error => {
+          console.error(error);
         });
-        if (response.status == 200) {
-          await response.json();
-        } else {
-          ElMessage.error("Get verification code error");
-        }
-      } catch (error) {
-        ElMessage.error(error);
-      }
     },
 
     alertBox(situation) {
@@ -217,16 +207,10 @@ export default {
           velCode: this.verCode,
           sessionId: this.sessionId
         };
-        try {
-          const response = await fetch("http://localhost:8888/api/front/user/login", {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(requestData)
-          });
-          if (response.status == 200) {
-            const data = await response.json();
+
+        await axios.post("http://localhost:8888/api/front/user/login", requestData)
+          .then(response => {
+            const data = response.data;
             if (data.code === "00000") {
               ElMessage({
                 message: 'Welcome ' + data.data.userName,
@@ -273,14 +257,13 @@ export default {
               this.confirmPass = '';
               this.verCode = '';
             }
-          } else {
-            console.log("Test");
-          }
-        } catch (error) {
-          ElMessage.error(error);
-        }
+          })
+          .catch(error => {
+            console.error(error);
+          });
       }
     },
+
     async signUp() {
       if (this.email === '') {
         this.alertBox("emailEmpty")
@@ -314,16 +297,10 @@ export default {
           password: this.password,
           velCode: this.verCode
         };
-        try {
-          const response = await fetch("http://localhost:8888/api/front/user/register", {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(requestData)
-          });
-          if (response.status == 200) {
-            const data = await response.json();
+
+        await axios.post("http://localhost:8888/api/front/user/register", requestData)
+          .then(response => {
+            const data = response.data;
             if (data.code === "00000") {
               ElMessage({
                 message: 'Sign up successful',
@@ -349,14 +326,13 @@ export default {
               this.confirmPass = '';
               this.verCode = '';
             }
-          } else {
-            console.log("Test");
-          }
-        } catch (error) {
-          ElMessage.error(error);
-        }
+          })
+          .catch(error => {
+            console.error(error);
+          });
       }
     },
+
     async forgetPass() {
       if (this.email === '') {
         this.alertBox("emailEmpty")
@@ -383,16 +359,9 @@ export default {
           velCode: this.verCode,
           newPassword: this.password,
         };
-        try {
-          const response = await fetch("http://localhost:8888/api/front/user/reset_password", {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(requestData)
-          });
-          if (response.status == 200) {
-            const data = await response.json();
+        await axios.post("http://localhost:8888/api/front/user/reset_password", requestData)
+          .then(response => {
+            const data = response.data;
             console.log(data);
             if (data.code === "00000") {
               ElMessage({
@@ -419,12 +388,10 @@ export default {
               this.confirmPass = '';
               this.verCode = '';
             }
-          } else {
-            console.log("Test");
-          }
-        } catch (error) {
-          ElMessage.error(error);
-        }
+          })
+          .catch(error => {
+            console.error(error);
+          });
       }
     }
   },
@@ -442,145 +409,153 @@ export default {
 </script>
 
 <template>
-  <div v-if="isLoginVisible" class="auth_form">
-    <img src="../logo.png" style="height: 80px;" />
-    <div style="font-size: 14pt; padding-top: 10px;">Sign in</div>
-    <el-divider />
-    <div class="each_input_container">
-      <div class="text">Email: </div>
-      <el-input placeholder="example@example.com" style="width: 30%;" v-model="email" />
-      <div style="color: red;">&nbsp;*</div>
-    </div>
-
-    <div class="each_input_container">
-      <div class="text">Password: </div>
-      <el-input placeholder="eg: ****" style="width: 30%;" v-model="password" show-password type="password" />
-      <div style="color: red;">&nbsp;*</div>
-    </div>
-
-    <div class="each_input_container">
-      <div class="text">Verification Code: </div>
-      <el-input placeholder="eg: 0000" style="width: 30%;" v-model="verCode" />
-      <div style="color: red;">&nbsp;*&nbsp;</div>
-    </div>
-
-    <div class="each_input_container" style="margin-top: -20px;">
-      <div class="text"></div>
-      <img style="height: 100%; width: 80px;" :src="verImage" />
-    </div>
-
-    <div class="other_options">
-      <div style="width: 350px; display: flex; justify-content: space-between; margin-top: -15px;">
-        <el-link @click="toRegister">Not a user yet? Sign Up here!</el-link>
-        <el-link @click="toForget">Forget Password</el-link>
+  <div v-if="isLoginVisible" class="animate__bounceIn animate__faster">
+    <div class="auth_form">
+      <img src="../logo.png" style="height: 80px;" />
+      <div style="font-size: 14pt; padding-top: 10px;">Sign in</div>
+      <el-divider />
+      <div class="each_input_container">
+        <div class="text">Email: </div>
+        <el-input placeholder="example@example.com" style="width: 30%;" v-model="email" />
+        <div style="color: red;">&nbsp;*</div>
       </div>
-      <div style="margin-top: 20px;">
-        <el-button type="primary" @click="signin">Submit</el-button>
-        <el-button @click="closeLoginBox">Cancel</el-button>
+
+      <div class="each_input_container">
+        <div class="text">Password: </div>
+        <el-input placeholder="eg: ****" style="width: 30%;" v-model="password" show-password type="password" />
+        <div style="color: red;">&nbsp;*</div>
       </div>
-    </div>
-  </div>
 
-  <div v-else-if="isRegisterVisible" class="auth_form">
-    <img src="../logo.png" style="height: 80px;" />
-    <div style="font-size: 14pt; padding-top: 10px;">Sign Up</div>
-    <el-divider />
-
-    <div class="each_input_container">
-      <div class="text">Email: </div>
-      <el-input placeholder="example@example.com" style="width: 30%;" v-model="email" />
-      <div style="color: red;">&nbsp;*</div>
-    </div>
-
-    <div class="each_input_container">
-      <div class="text">Username: </div>
-      <el-input placeholder="eg: Osiris" style="width: 30%;" v-model="username" />
-      <div style="color: red;">&nbsp;*</div>
-    </div>
-
-    <div class="each_input_container">
-      <div class="text">Password: </div>
-      <el-input placeholder="eg: ****" style="width: 30%;" v-model="password" show-password type="password" />
-      <div style="color: red;">&nbsp;*</div>
-    </div>
-
-    <div class="each_input_container">
-      <div class="text">Confirm Password: </div>
-      <el-input placeholder="eg: ****" style="width: 30%;" v-model="confirmPass" show-password type="password" />
-      <div style="color: red;">&nbsp;*</div>
-    </div>
-
-    <div class="each_input_container">
-      <div class="text">Verification Code: </div>
-      <el-input placeholder="eg: 000000" style="width: 30%;" v-model="verCode" />
-      <div style="color: red;">&nbsp;*&nbsp;</div>
-    </div>
-
-    <div class="each_input_container" style="margin-top: -21px;">
-      <div class="text"></div>
-      <el-button :disabled="countdown1 > 0" @click="startCountdown(1)">
-        {{ countdown1 > 0 ? countdown1 + 's' : 'Get Code' }}
-      </el-button>
-    </div>
-
-    <div class="other_options">
-      <div style="width: 350px; display: flex; justify-content: space-between; margin-top: -15px;">
-        <el-link @click="toLogin">Already a user? Sign in here!</el-link>
-        <el-link @click="toForget">Forget Password</el-link>
+      <div class="each_input_container">
+        <div class="text">Verification Code: </div>
+        <el-input placeholder="eg: 0000" style="width: 30%;" v-model="verCode" />
+        <div style="color: red;">&nbsp;*&nbsp;</div>
       </div>
-      <div style="margin-top: 20px;">
-        <el-button type="primary" @click="signUp">Submit</el-button>
-        <el-button @click="closeLoginBox">Cancel</el-button>
+
+      <div class="each_input_container" style="margin-top: -20px;">
+        <div class="text"></div>
+        <img style="height: 100%; width: 80px;" :src="verImage" />
+      </div>
+
+      <div class="other_options">
+        <div style="width: 350px; display: flex; justify-content: space-between; margin-top: -15px;">
+          <el-link @click="toRegister">Not a user yet? Sign Up here!</el-link>
+          <el-link @click="toForget">Forget Password</el-link>
+        </div>
+        <div style="margin-top: 20px;">
+          <el-button type="primary" @click="signin">Submit</el-button>
+          <el-button @click="closeLoginBox">Cancel</el-button>
+        </div>
       </div>
     </div>
   </div>
 
-  <div v-else-if="isForgetVisible" class="auth_form">
-    <img src="../logo.png" style="height: 80px;" />
-    <div style="font-size: 14pt; padding-top: 10px;">Forget Password</div>
-    <el-divider />
+  <div v-else-if="isRegisterVisible" class="animate__bounceIn animate__faster">
+    <div class="auth_form">
+      <img src="../logo.png" style="height: 80px;" />
+      <div style="font-size: 14pt; padding-top: 10px;">Sign Up</div>
+      <el-divider />
 
-    <div class="each_input_container">
-      <div class="text">Email: </div>
-      <el-input placeholder="example@example.com" style="width: 30%;" v-model="email" />
-      <div style="color: red;">&nbsp;*</div>
-    </div>
-
-    <div class="each_input_container">
-      <div class="text">New Password: </div>
-      <el-input placeholder="eg: ****" style="width: 30%;" v-model="password" show-password type="password" />
-      <div style="color: red;">&nbsp;*</div>
-    </div>
-
-    <div class="each_input_container">
-      <div class="text">Confirm New Password: </div>
-      <el-input placeholder="eg: ****" style="width: 30%;" v-model="confirmPass" show-password type="password" />
-      <div style="color: red;">&nbsp;*</div>
-    </div>
-
-    <div class="each_input_container">
-      <div class="text">Verification Code: </div>
-      <el-input placeholder="eg: 000000" style="width: 30%;" v-model="verCode" />
-      <div style="color: red;">&nbsp;*&nbsp;</div>
-    </div>
-
-    <div class="each_input_container" style="margin-top: -21px;">
-      <div class="text"></div>
-      <el-button :disabled="countdown2 > 0" @click="startCountdown(2)">
-        {{ countdown2 > 0 ? countdown2 + 's' : 'Get Code' }}
-      </el-button>
-    </div>
-
-    <div class="other_options">
-      <div style="width: 350px; display: flex; justify-content: space-between; margin-top: -15px;">
-        <el-link @click="toLogin">Go back to Sign in</el-link>
-        <el-link @click="toRegister">Not a user yet? Sign Up here!</el-link>
+      <div class="each_input_container">
+        <div class="text">Email: </div>
+        <el-input placeholder="example@example.com" style="width: 30%;" v-model="email" />
+        <div style="color: red;">&nbsp;*</div>
       </div>
-      <div style="margin-top: 20px;">
-        <el-button type="primary" @click="forgetPass">Submit</el-button>
-        <el-button @click="closeLoginBox">Cancel</el-button>
+
+      <div class="each_input_container">
+        <div class="text">Username: </div>
+        <el-input placeholder="eg: Osiris" style="width: 30%;" v-model="username" />
+        <div style="color: red;">&nbsp;*</div>
+      </div>
+
+      <div class="each_input_container">
+        <div class="text">Password: </div>
+        <el-input placeholder="eg: ****" style="width: 30%;" v-model="password" show-password type="password" />
+        <div style="color: red;">&nbsp;*</div>
+      </div>
+
+      <div class="each_input_container">
+        <div class="text">Confirm Password: </div>
+        <el-input placeholder="eg: ****" style="width: 30%;" v-model="confirmPass" show-password type="password" />
+        <div style="color: red;">&nbsp;*</div>
+      </div>
+
+      <div class="each_input_container">
+        <div class="text">Verification Code: </div>
+        <el-input placeholder="eg: 000000" style="width: 30%;" v-model="verCode" />
+        <div style="color: red;">&nbsp;*&nbsp;</div>
+      </div>
+
+      <div class="each_input_container" style="margin-top: -21px;">
+        <div class="text"></div>
+        <el-button :disabled="countdown1 > 0" @click="startCountdown(1)">
+          {{ countdown1 > 0 ? countdown1 + 's' : 'Get Code' }}
+        </el-button>
+      </div>
+
+      <div class="other_options">
+        <div style="width: 350px; display: flex; justify-content: space-between; margin-top: -15px;">
+          <el-link @click="toLogin">Already a user? Sign in here!</el-link>
+          <el-link @click="toForget">Forget Password</el-link>
+        </div>
+        <div style="margin-top: 20px;">
+          <el-button type="primary" @click="signUp">Submit</el-button>
+          <el-button @click="closeLoginBox">Cancel</el-button>
+        </div>
       </div>
     </div>
+  </div>
+
+
+  <div v-else-if="isForgetVisible" class="animate__bounceIn animate__faster">
+    <div class="auth_form">
+      <img src="../logo.png" style="height: 80px;" />
+      <div style="font-size: 14pt; padding-top: 10px;">Forget Password</div>
+      <el-divider />
+
+      <div class="each_input_container">
+        <div class="text">Email: </div>
+        <el-input placeholder="example@example.com" style="width: 30%;" v-model="email" />
+        <div style="color: red;">&nbsp;*</div>
+      </div>
+
+      <div class="each_input_container">
+        <div class="text">New Password: </div>
+        <el-input placeholder="eg: ****" style="width: 30%;" v-model="password" show-password type="password" />
+        <div style="color: red;">&nbsp;*</div>
+      </div>
+
+      <div class="each_input_container">
+        <div class="text">Confirm New Password: </div>
+        <el-input placeholder="eg: ****" style="width: 30%;" v-model="confirmPass" show-password type="password" />
+        <div style="color: red;">&nbsp;*</div>
+      </div>
+
+      <div class="each_input_container">
+        <div class="text">Verification Code: </div>
+        <el-input placeholder="eg: 000000" style="width: 30%;" v-model="verCode" />
+        <div style="color: red;">&nbsp;*&nbsp;</div>
+      </div>
+
+      <div class="each_input_container" style="margin-top: -21px;">
+        <div class="text"></div>
+        <el-button :disabled="countdown2 > 0" @click="startCountdown(2)">
+          {{ countdown2 > 0 ? countdown2 + 's' : 'Get Code' }}
+        </el-button>
+      </div>
+
+      <div class="other_options">
+        <div style="width: 350px; display: flex; justify-content: space-between; margin-top: -15px;">
+          <el-link @click="toLogin">Go back to Sign in</el-link>
+          <el-link @click="toRegister">Not a user yet? Sign Up here!</el-link>
+        </div>
+        <div style="margin-top: 20px;">
+          <el-button type="primary" @click="forgetPass">Submit</el-button>
+          <el-button @click="closeLoginBox">Cancel</el-button>
+        </div>
+      </div>
+    </div>
+
   </div>
 </template>
 

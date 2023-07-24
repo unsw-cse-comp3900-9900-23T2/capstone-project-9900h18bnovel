@@ -1,20 +1,19 @@
 <script setup>
 import {
-  Search,
   User,
-  CircleCloseFilled,
+  HomeFilled,
+  Platform,
+  TrendCharts,
+  Collection,
+  EditPen,
 } from '@element-plus/icons-vue'
-
 import { ElMessage } from 'element-plus'
 </script >
 <script>
 import { logout } from '../utils';
 export default {
+  emits: ['clearSearch', 'handleSearch', 'showLogin', 'closeLoginBox'],
   props: {
-    keyword: {
-      type: String,
-      default: ''
-    },
     isLoginVisible: {
       type: Boolean,
       default: false
@@ -42,6 +41,7 @@ export default {
       userSex: '',
       CurrentPhoto: '',
       DefaultPhoto: 'https://img-qn.51miz.com/Element/00/88/60/42/ea5b40df_E886042_1992a532.png!/quality/90/unsharp/true/compress/true/format/png/fw/300',
+      activeIndex: "/home",
     }
   },
 
@@ -59,6 +59,17 @@ export default {
       console.log('userName 发生变化:', newValue);
     }
   },*/
+  watch: {
+    '$store.getters.getSearchInput'(searchInput) {
+      this.searchInput = searchInput;
+    },
+    '$route': {
+      handler() {
+        this.activeIndex = "/" + this.$route.path.split("/")[1];
+      },
+      immediate: true,
+    },
+  },
   beforeUnmount() {
     document.removeEventListener('click', this.searchGlobalClick);
   },
@@ -133,120 +144,220 @@ export default {
 
 </script>
 <template>
+  <div
+    style="width: 100%; height: 81px; background-color: #f3f3f3; border-bottom: 1px solid #dfdede; position: absolute; z-index: -10;">
+  </div>
   <div class="header_container">
     <!-- Click here will return to Home page in any circumstances -->
-    <div class="logo_container">
-      <img src="..\logo.png" class="logo" @click="goHome">
+    <div class="logo_container" @click="goHome">
+      <img src="..\logo1.png" class="logo">
+      <h1
+        style="font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif; color: rgb(68, 68, 68); text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);">
+        NovelHub</h1>
     </div>
-    <div class="search_container">
-      <div v-if="!isSearchActive">
-        <el-button class="searchButton" ref="searchContainer" @click.stop="toggleSearch" :icon="Search"
-          round>Search</el-button>
-      </div>
-      <div v-else @click.stop>
-        <el-input class="searchText" v-model="searchInput" :placeholder="keyword ? keyword : 'Please Enter Keyword'"
-          @keyup.enter="handleSearch">
-          <template #prepend>
-            <el-button @click.stop="handleSearch" :icon="Search" />
-          </template>
-          <template #append>
-            <el-button :icon="CircleCloseFilled" @click="clearSearch" />
-          </template>
-        </el-input>
+    <el-menu :default-active="activeIndex" mode="horizontal" router>
+      <el-menu-item route index="/home"><el-icon>
+          <HomeFilled />
+        </el-icon>Home</el-menu-item>
+      <el-menu-item route index="/allnovels"><el-icon>
+          <Platform />
+        </el-icon>Browse</el-menu-item>
+      <el-sub-menu index="2">
+        <template #title><el-icon>
+            <TrendCharts />
+          </el-icon>Ranking</template>
+        <el-menu-item route index="/clickrank">Click Rank</el-menu-item>
+        <el-menu-item route index="/newestrank">Newest Rank</el-menu-item>
+        <el-menu-item route index="/updaterank">Update Rank</el-menu-item>
+      </el-sub-menu>
+      <el-menu-item route index="4"><el-icon>
+          <EditPen />
+        </el-icon>My Creation</el-menu-item>
+      <el-menu-item route index=""><el-icon>
+          <Collection />
+        </el-icon>My Collection</el-menu-item>
+    </el-menu>
+
+    <div class="flexbox">
+      <div class="search">
+        <div>
+          <input v-model="searchInput" @keyup.enter="handleSearch" type="text" placeholder="Search . . ." required>
+        </div>
       </div>
     </div>
-    <div class="mobile_search_container">
-      <div v-if="!isSearchActive">
-        <el-button class="mobile_searchButton" ref="searchContainer" @click.stop="toggleSearch" :icon="Search"
-          round></el-button>
-      </div>
-      <div v-else @click.stop>
-        <el-input class="mobile_searchText" v-model="searchInput" placeholder="Keyword">
-          <template #prepend>
-            <el-button @click.stop="handleSearch" :icon="Search" />
-          </template>
-        </el-input>
-      </div>
-    </div>
-    <!-- This right side of class will represent user thumbnail, name and log out button once token exists -->
-    <!-- Click here will link to login page -->
+
     <div v-if="!this.$store.state.token"
       style="display: flex; align-items: center; justify-content: flex-end; width: 200px;">
       <el-button class="login_button" type="primary" @click="showLogin"><el-icon>
           <User />
         </el-icon>{{ login_button }}</el-button>
     </div>
-    <div v-else style="color: white; display: flex; align-items: center; justify-content: space-between; width: 200px;">
-      <div style="display: flex; flex-direction: column; align-items: center;" @click="ShowUserProfile()">
-        <el-avatar :size="70" :src="this.$store.state.photo ? this.$store.state.photo : CurrentPhoto"
-          style="object-fit: cover;" />
-        <div>{{ this.$store.state.userName ? this.$store.state.userName : userName }}</div>
-      </div>
-      <el-button class="logout_button" type="primary"
-        @click="logout(this.$router.currentRoute.value.path.includes('userprofile'))"><el-icon>
-          <User />
-        </el-icon> Sign out </el-button>
+    <div v-else class="logout_section">
+      <!-- <h3 style="color: black; margin-right: 20px;">{{ this.$store.state.userName ? this.$store.state.userName :
+        userName }}</h3> -->
+      <el-dropdown trigger="click">
+        <div>
+          <el-avatar :size="70" :src="this.$store.state.photo ? this.$store.state.photo : CurrentPhoto"
+            class="user_Avatar" />
+        </div>
+        <template #dropdown>
+          <el-dropdown-menu>
+            <el-dropdown-item @click="ShowUserProfile()">My Profile</el-dropdown-item>
+            <el-dropdown-item @click="logout(this.$router.currentRoute.value.path.includes('userprofile'))" divided>
+              Sign out
+            </el-dropdown-item>
+          </el-dropdown-menu>
+        </template>
+      </el-dropdown>
     </div>
   </div>
 </template>
 
 <style >
 .logo_container {
-  height: 100px;
-  margin-left: 20px;
-  object-fit: contain;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: 5px;
 }
 
-.logo {
-  height: 100%;
-}
-
-.logo:hover {
+.logo_container:hover {
   cursor: pointer;
 }
 
-.search_container {
-  display: block;
-  text-align: center;
-  width: 500px;
+.logo {
+  border: 1px solid #c7c7c7;
+  border-radius: 20px;
+  height: 60px;
+  width: 60px;
+  object-fit: cover;
+  margin-right: 10px;
 }
 
-.searchButton {
-  width: 30vh;
 
+
+.flexbox {
+  width: 200px;
+  height: 100%;
+  display: flex;
+  justify-content: right;
+  align-items: center;
+  right: 140px;
+  position: absolute;
+}
+
+.search {
+  margin: 20px;
+}
+
+.search>div {
+  display: inline-block;
+  position: relative;
+}
+
+.search>div:after {
+  content: "";
+  background: rgb(139, 139, 139);
+  width: 2px;
+  height: 15px;
+  position: absolute;
+  top: 23px;
+  right: 0px;
+  transform: rotate(135deg);
+}
+
+.search>div>input {
+  color: rgb(0, 0, 0);
+  font-size: 16px;
+  background: transparent;
+  width: 10px;
+  height: 10px;
+  padding: 8px;
+  border: solid 2px rgb(139, 139, 139);
+  outline: none;
+  border-radius: 20px;
+  transition: width 0.5s;
+}
+
+.search>div>input:hover {
+  cursor: pointer;
+}
+
+.search>div>input::placeholder {
+  color: rgb(139, 139, 139);
+  opacity: 0;
+  transition: opacity 0.5s ease-out;
+}
+
+.search>div>input:focus::placeholder {
+  opacity: 1;
+}
+
+.search>div>input:focus,
+.search>div>input:not(:placeholder-shown) {
+  width: 300px;
 }
 
 .login_button {
-  margin-right: 20px;
+  right: 0px;
+  position: absolute;
   width: 100px;
 }
 
-.logout_button {
-  margin-right: 20px;
-  width: 100px;
+.logout_section {
+  display: flex;
+  align-items: center;
+  right: 0px;
+  position: absolute;
 }
 
-.mobile_search_container {
-  display: none;
+.user_Avatar {
+  border: 2px solid white;
+  border-radius: 60px;
+  width: 70px;
+  height: 70px;
+}
+
+.user_Avatar:hover {
+  cursor: pointer;
 }
 
 .header_container {
   margin: 0;
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  background-color: black;
-  height: 100px;
-  min-width: 1152px;
+  background-color: #f3f3f3;
+  border-bottom: 1px solid #dfdede;
+  height: 81px;
+  width: 1152px;
+  margin: auto;
+  position: relative;
 }
 
-@media (max-width: 500px) {
-  .mobile_search_container {
-    display: block;
-  }
+.header_container .el-menu--horizontal {
+  border-bottom: none;
+  height: 81px;
+  background-color: #f3f3f3;
+  width: 500px;
+}
 
-  .search_container {
-    display: none;
-  }
+.header_container .el-menu--horizontal>.el-menu-item.is-active {
+  border-bottom: none;
+}
+
+.header_container .el-menu-item {
+  transition: background-color var(--el-transition-duration), color var(--el-transition-duration)
+}
+
+.header_container .el-menu--horizontal .el-menu-item:not(.is-disabled):hover {
+  background-color: rgb(0, 0, 0, 0);
+}
+
+.header_container .el-menu--horizontal .el-menu-item:not(.is-disabled):focus {
+  background-color: rgb(0, 0, 0, 0);
+}
+
+.header_container .el-menu--horizontal>.el-sub-menu .el-sub-menu__title:hover {
+  background-color: rgb(0, 0, 0, 0);
 }
 </style>
