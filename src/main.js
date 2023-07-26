@@ -4,6 +4,7 @@ import App from './App.vue';
 import HomePage from './components/HomePage.vue';
 import All_Novels from './components/All_Novels.vue';
 import Profile from './components/User_Profile.vue';
+import Novelists_Realm from "@/components/Novelists_Realm.vue";
 import ranksPages from './components/RanksPages.vue';
 import bookInfo from './components/bookInfo.vue';
 import store from './store';
@@ -46,6 +47,11 @@ const routes = [
     meta: {
       requiresAuth: true,
     },
+  },
+  {
+    path: "/Novelists_Realm",
+    component: Novelists_Realm,
+    name: 'Novelists_Realm',
   },
   { path: '/newestrank', component: ranksPages },
   { path: '/clickrank', component: ranksPages },

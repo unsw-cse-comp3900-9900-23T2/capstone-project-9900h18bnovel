@@ -93,8 +93,11 @@ export default {
     closeLoginBox() {
       this.$emit('closeLoginBox');
     },
-    async ShowUserProfile() {
+    ShowUserProfile() {
       this.$router.push('/userprofile');
+    },
+    GoToNovelistRealm(){
+      this.$router.push('/Novelists_Realm');
     },
     clearSearch() {
       this.searchInput = null;
@@ -165,6 +168,7 @@ export default {
         <template #dropdown>
           <el-dropdown-menu>
             <el-dropdown-item @click="ShowUserProfile()">My Profile</el-dropdown-item>
+            <el-dropdown-item @click="GoToNovelistRealm()">Novelist's Realm</el-dropdown-item>
             <el-dropdown-item @click="logout(this.$router.currentRoute.value.path.includes('userprofile'))" divided>
               Sign out
             </el-dropdown-item>
