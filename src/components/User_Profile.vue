@@ -7,7 +7,7 @@ import {
   /*Postcard,*/
   MessageBox,
   Filter,
-  CaretBottom, Reading, Delete, /*Document, CollectionTag, View, Clock,*/
+  Reading, Delete, /*Document, CollectionTag, View, Clock,*/
 } from '@element-plus/icons-vue';
 import { computed } from 'vue'
 const iconStyle = computed(() => {
@@ -36,6 +36,7 @@ import { Linter } from 'eslint';
 <script >
 import Global_Footer from './Global_Footer.vue';
 import { ElMessage } from "element-plus";
+import axios from "axios";
 // import Login from './Auth_Page.vue';
 export default {
   data() {
@@ -72,12 +73,45 @@ export default {
     }
   },
   mounted() {
-    if (localStorage.getItem('userPhoto') === 'undefined' || !localStorage.getItem('userPhoto')) {
-      this.CurrentPhoto = this.DefaultPhoto;
-    } else{
-      this.CurrentPhoto = this.userPhoto;
-    }
-    console.log("@#$@#$"+this.userSex);
+      if (localStorage.getItem('userPhoto') === 'undefined' || !localStorage.getItem('userPhoto')) {
+        this.CurrentPhoto = this.DefaultPhoto;
+      } else{
+        this.CurrentPhoto = this.userPhoto;
+      }
+      axios.post("http://localhost:8888/api/front/user/get_userInfo",{
+        userId: localStorage.getItem('uid') ? localStorage.getItem('uid') : ''
+      })
+          .then(response =>{
+        console.log(response);
+        if (response.data.code === "00000") {
+          if (response.data.data.userPhoto) {
+            localStorage.setItem('userPhoto', response.data.data.userPhoto);
+            this.$store.dispatch('photo', response.data.data.userPhoto);
+          } else {
+            this.userPhoto = this.DefaultPhoto;
+          }
+          if (response.data.data.userSex) {
+            localStorage.setItem('userSex', response.data.data.userSex);
+            this.userSex = response.data.data.userSex;
+            this.$store.dispatch('sex', response.data.data.userSex);
+          } else {
+            this.userSex = '';
+          }
+        }
+      }).catch(error => {
+        console.error("Failed in getting user information：", error);
+      });
+      axios.get(`http://localhost:8888/api/front/user/user_collect?userId=${this.$store.getters.GetUID}`)
+          .then(response =>{
+            if (response.status === 200){
+              if (response.data.code === '00000') {
+                this.AllCollections = response.data.data;
+              }
+            }
+          }).catch(error => {
+        // 请求失败时的处理
+        console.error("Failed in loading mycollections：", error);
+      });
   },
   components: {
     Global_Footer,
@@ -220,26 +254,6 @@ export default {
     StartEditName(){
       this.isNameEditing = true;
     },
-    async LoadingCollections(){
-      this.isLoadBooks = true;
-      try {
-        const response = await fetch(`http://localhost:8888/api/front/user/user_collect?userId=${this.$store.getters.GetUID}`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-        });
-        if (response.status === 200) {
-          const data = await response.json();
-          console.log(data);
-          if (data.code === '00000') {
-            this.AllCollections = data.data;
-          }
-        }
-      } catch (error) {
-        console.error(error);
-      }
-    },
     GoToBook(bookId){
       this.$router.push('/bookInfo/'+bookId);
     },
@@ -261,7 +275,6 @@ export default {
             body: JSON.stringify(reqbody),
           });
           if (response.status == 200) {
-            this.clickedLoading();
             ElMessage.success("Collection Removed");
             this.AllCollections = this.AllCollections.filter(book => book.bookId !== bookId)
           } else {
@@ -273,6 +286,7 @@ export default {
       }
       this.isLoadBooks = false;
     },
+
   }
 }
 </script>
@@ -289,7 +303,8 @@ export default {
         <el-aside ><!--width="40%"-->
           <div class="AvatarContainer">
           <span class="el-avatar el-avatar--circle"
-                style="height: 200px; width: 200px; line-height: 200px; margin: 2em;"><img :src="this.$store.state.photo? this.$store.state.photo : CurrentPhoto" style="object-fit: contain;"></span>
+                style="height: 200px; width: 200px; line-height: 200px; margin: 2em;"><img :src="this.$store.state.photo? this.$store.state.photo : CurrentPhoto"
+                                  style="object-fit: contain;"></span>
             <input type="file" ref="fileInput" @change="CollectNewPhoto" style="display: none" />
             <el-button class="UploadPhotoButton" circle @click="openPhotoInput">
               <el-icon color="gray">
@@ -304,17 +319,6 @@ export default {
               :column="1"
               :size="large"
               border>
-<!--            <el-descriptions-item>
-              <template #label>
-                <div class="cell-item">
-                  <el-icon :style="iconStyle">
-                    <Postcard />
-                  </el-icon>
-                  UserID
-                </div>
-              </template>
-              {{ uid }}
-            </el-descriptions-item>-->
             <el-descriptions-item>
               <template #label>
                 <div class="cell-item">
@@ -397,13 +401,9 @@ export default {
         My Collection</h1>
       <el-divider />
       <div class="CollectionsContainer">
-          <el-button class = "loadingCollButton " v-if = "!isLoadBooks" type="primary" @click = "LoadingCollections">
-            Show All My Collections
-            <el-icon class="el-icon--right">
-              <CaretBottom />
-            </el-icon>
-          </el-button>
-        <div v-else>
+        <div v-if="AllCollections.length == 0" >
+          <h2 style="color: darkgray; margin: 2em auto; text-align: center;">You don't have any collection yet!</h2>
+        </div>
           <div class="bookInfo" v-for="book in AllCollections" :key = "book.bookId" >
             <img :src="book.picUrl" style="height: 250px; margin: 20px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);" />
             <div class="bookContentDetail">
@@ -419,29 +419,6 @@ export default {
               <div style="font-size: 14pt; margin: 10px auto 10px 0;"> Author: {{ book.authorName }}</div>
               <div style="display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 9; overflow: hidden;"> {{truncatedDesc(book.bookDesc)  }}</div>
               <div style="bottom: 0; position: absolute;">
-
-<!--                <div style="display: flex; font-size: 16pt; align-items: center; margin-top: 10px;">
-                  <el-icon>
-                    <Document />
-                  </el-icon>
-                  {{ book.wordCount }}
-                  &nbsp;&nbsp;&nbsp;
-                  <el-icon>
-                    <View />
-                  </el-icon>
-                  {{ book.visitCount }}
-                  &nbsp;&nbsp;&nbsp;
-                  <el-icon>
-                    <CollectionTag />
-                  </el-icon>
-                  {{ book.collectCount }}
-                  &nbsp;&nbsp;&nbsp;
-                  <el-icon>
-                    <Clock />
-                  </el-icon>
-                  {{ book.lastChapterUpdateTime }}
-                  &nbsp;&nbsp;&nbsp;
-                </div>-->
                 <div style="margin-top: 10px;">
                   <el-button style="font-size: 14pt;" size="large" type="primary" round :icon="Reading" @click = "GoToBook(book.bookId)"><!--@click="goToContent(chapters[0] ? chapters[0].id : null, chapters[0] ? chapters[0].chapterName : null, 0)"-->
                     READ
@@ -454,7 +431,6 @@ export default {
               </div>
             </div>
           </div>
-        </div>
       </div>
     </div>
   </div>
@@ -501,7 +477,6 @@ export default {
   margin: 0 auto 20px auto;
   padding: 10px;
 }
-
 .bookContentDetail {
   width: 75%;
   position: relative;

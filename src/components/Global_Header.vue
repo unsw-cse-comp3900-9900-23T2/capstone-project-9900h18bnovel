@@ -7,7 +7,6 @@ import {
   Collection,
   EditPen,
 } from '@element-plus/icons-vue'
-import { ElMessage } from 'element-plus'
 </script >
 <script>
 import { logout } from '../utils';
@@ -96,43 +95,6 @@ export default {
     },
     async ShowUserProfile() {
       this.$router.push('/userprofile');
-      const requestData = {
-        userId: localStorage.getItem('uid') ? localStorage.getItem('uid') : ''
-      }
-      try {
-        const response = await fetch("http://localhost:8888/api/front/user/get_userInfo", {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(requestData)
-        });
-        if (response.status == 200) {
-          const data = await response.json();
-
-          if (data.code === "00000") {
-            if (data.data.userPhoto) {
-              localStorage.setItem('userPhoto', data.data.userPhoto);
-              console.log(data.data.userPhoto);
-              this.$store.dispatch('photo', data.data.userPhoto);
-            } else {
-              this.userPhoto = this.DefaultPhoto;
-            }
-            if (data.data.userSex) {
-              console.log(data.data.userSex);
-              localStorage.setItem('userSex', data.data.userSex);
-              this.userSex = data.data.userSex;
-              this.$store.dispatch('sex', data.data.userSex);
-            } else {
-              this.userSex = '';
-            }
-          }
-        } else {
-          console.log("Global_Header.vue 的78行附近有问题");
-        }
-      } catch (error) {
-        ElMessage.error(error);
-      }
     },
     clearSearch() {
       this.searchInput = null;
