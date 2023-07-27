@@ -212,7 +212,7 @@ export default {
   display: flex;
   justify-content: right;
   align-items: center;
-  right: 90px;
+  right: 100px;
   position: absolute;
 }
 
@@ -231,7 +231,7 @@ export default {
   width: 2px;
   height: 15px;
   position: absolute;
-  top: 23px;
+  top: 22px;
   right: 0px;
   transform: rotate(135deg);
 }
@@ -242,7 +242,7 @@ export default {
   background: transparent;
   width: 10px;
   height: 10px;
-  padding: 8px;
+  padding: 12px;
   border: solid 2px rgb(139, 139, 139);
   outline: none;
   border-radius: 20px;
@@ -304,23 +304,26 @@ export default {
   position: relative;
 }
 
+
 .header_container .el-menu--horizontal {
   border-bottom: none;
   background-color: #ffffff;
   width: 650px;
 }
 
-.header_container .el-menu--horizontal>.el-menu-item.is-active {
+.header_container .el-menu--horizontal>.el-menu-item.is-active,
+.header_container .el-menu--horizontal>.el-sub-menu.is-active .el-sub-menu__title {
   border-bottom: none;
 }
 
-.header_container .el-menu-item {
+.header_container .el-menu-item,
+.header_container .el-menu--horizontal>.el-sub-menu.is-active .el-sub-menu__title {
   transition: background-color var(--el-transition-duration), color var(--el-transition-duration)
 }
 
 .header_container .el-menu--horizontal .el-menu-item:not(.is-disabled):hover,
 .header_container .el-menu--horizontal .el-menu-item:not(.is-disabled):focus,
-.header_container .el-menu--horizontal>.el-sub-menu .el-sub-menu__title:hover {
+.header_container .el-menu--horizontal>.el-sub-menu .el-sub-menu__title:hover{
   background-color: rgb(0, 0, 0, 0);
 }
 

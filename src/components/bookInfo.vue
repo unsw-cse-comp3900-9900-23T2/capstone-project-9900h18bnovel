@@ -113,6 +113,7 @@ export default {
   },
 
   mounted() {
+    window.scrollTo(0, 0);
     setTimeout(() => {
       this.getBookInfo();
       this.getChapters();
@@ -700,30 +701,30 @@ export default {
   height: 40px;
 }
 
-.container {
+.chapterDetail .container {
   font-family: 'Roboto Condensed', sans-serif;
   margin-bottom: -20px;
   color: #b7b7b7;
 }
 
-.container .list {
+.chapterDetail .container .list {
   list-style: none;
   margin: 0;
   padding: 0;
 }
 
-.container h1 {
+.chapterDetail .container h1 {
   display: inline-block;
   padding: 0 10px;
 }
 
-.container span {
+.chapterDetail .container span {
   position: relative;
   display: block;
   cursor: pointer;
 }
 
-.container span {
+.chapterDetail .container span {
 
   &:before,
   &:after {
@@ -853,7 +854,7 @@ export default {
   align-items: center;
   margin-bottom: 20px;
   font-size: 14pt;
-  width: 45%;
+  width: 49%;
   padding: 20px;
   position: relative;
   transition: transform 0.3s ease;

@@ -99,8 +99,21 @@ export default {
     goBookInfo(bookId) {
       this.$router.push(`/bookInfo/${bookId}`);
     },
+
     GoToMyCollection() {
       this.$router.push('/userprofile');
+    },
+
+    goClickRank(){
+      this.$router.push("/clickrank");
+    },
+
+    goNewestRank(){
+      this.$router.push("/newestrank")
+    },
+
+    goUpdateRank(){
+      this.$router.push("/updaterank")
     },
   },
   computed: {

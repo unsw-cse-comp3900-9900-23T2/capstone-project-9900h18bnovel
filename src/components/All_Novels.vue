@@ -424,10 +424,10 @@ export default {
                       <el-check-tag class="tags" :checked="updateChecked[2]" @click="updateonChange(2)">A
                         year</el-check-tag>
                       <el-date-picker v-model="updateTimeMin" type="date" placeholder="Pick a Date"
-                        value-format="YYYY-MM-DD" @change="clickedLoading" style="width: 140px;" />
+                        value-format="YYYY-MM-DD" @change="clickedLoading" style="width: 180px;" />
                     </div>
                   </div>
-                  <div style="width: 100%; margin: auto; ">
+                  <div style="width: 100%; margin: auto; " class="slider">
                     <h4 style="color: rgb(117, 117, 117);">Word Count</h4>
                     <el-slider v-model="wordCount" range :marks="marks" show-stops :show-tooltip="false" :max="10"
                       style="width: 98%; margin: auto;" @change="wordcountonchange()" />
@@ -562,6 +562,9 @@ export default {
 
 
 <style>
+.slider .el-slider{
+  --el-slider-button-wrapper-offset: -9px
+}
 .Action.el-check-tag.is-checked {
   background-color: #b3281a;
   color: white;
