@@ -5,6 +5,7 @@ import com.example.novel_backend.dao.entity.BookCategory;
 
 /**
  * Book Category Mapper Interface
+ *
  * @author :Contanstin
  * @create 2023/7/8 19:48
  */

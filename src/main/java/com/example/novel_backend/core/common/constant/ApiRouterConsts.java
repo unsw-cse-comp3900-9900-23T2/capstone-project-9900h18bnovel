@@ -23,6 +23,11 @@ public class ApiRouterConsts {
     public static final String API_FRONT_URL_PREFIX = API_URL_PREFIX + "/front";
 
     /**
+     * Author Management System Request Path Prefix
+     */
+    public static final String API_AUTHOR_URL_PREFIX = API_URL_PREFIX + "/author";
+
+    /**
      * User module request path prefix
      */
     public static final String USER_URL_PREFIX = "/user";

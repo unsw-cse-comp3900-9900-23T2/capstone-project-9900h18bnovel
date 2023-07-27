@@ -10,14 +10,14 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
- * Book category
+ * Author information
  *
  * @author :Contanstin
- * @create 2023/7/8 19:45
+ * @create 2023/7/27 14:56
  */
-@TableName("book_category")
+@TableName("author_info")
 @Data
-public class BookCategory implements Serializable {
+public class AuthorInfo implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
@@ -25,20 +25,14 @@ public class BookCategory implements Serializable {
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
-    /**
-     * Direction of work;0 - Male 1 - Female
-     */
-    private Integer workDirection;
+    private Long userId;
+
+    private String penName;
 
     /**
-     * Category name
+     * Author signature
      */
-    private String name;
-
-    /**
-     * Sort
-     */
-    private Integer sort;
+    private String signature;
 
     /**
      * Create time

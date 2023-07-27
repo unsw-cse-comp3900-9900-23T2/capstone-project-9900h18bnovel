@@ -190,7 +190,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public RestResp<List<UserCollectBookRespDto>> listUserCollect(Long userId) {
         QueryWrapper<BookCollect> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("user_id", userId);
+        queryWrapper.eq("user_id", userId).orderByDesc("create_time");
         List<BookCollect> bookCollects = bookCollectMapper.selectList(queryWrapper);
         List<Long> bookIds = bookCollects.stream().map(BookCollect::getBookId).toList();
         if(bookIds.isEmpty()){
@@ -199,6 +199,8 @@ public class UserServiceImpl implements UserService {
         QueryWrapper<BookInfo> bookInfoQueryWrapper = new QueryWrapper<>();
         bookInfoQueryWrapper.in("id", bookIds);
         List<BookInfo> bookInfos = bookInfoMapper.selectList(bookInfoQueryWrapper);
+        // Order by collecting time
+        bookInfos.sort(Comparator.comparingInt(book -> bookIds.indexOf(book.getId())));
         QueryWrapper<UserReadHistory> userReadHistoryQueryWrapper = new QueryWrapper<>();
         userReadHistoryQueryWrapper.eq("user_id", userId)
                 .in("book_id", bookIds);
