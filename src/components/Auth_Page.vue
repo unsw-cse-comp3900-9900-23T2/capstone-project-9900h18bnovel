@@ -411,24 +411,24 @@ export default {
 <template>
   <div v-if="isLoginVisible" class="animate__bounceIn animate__faster">
     <div class="auth_form">
-      <img src="../logo.png" style="height: 80px;" />
-      <div style="font-size: 14pt; padding-top: 10px;">Sign in</div>
+      <img src="..\logo1.png" class="logo">
+      <div style="font-size: 22pt; font-weight: bold; padding-top: 10px;">Sign in</div>
       <el-divider />
       <div class="each_input_container">
         <div class="text">Email: </div>
-        <el-input placeholder="example@example.com" style="width: 30%;" v-model="email" />
+        <el-input placeholder="example@example.com" v-model="email" />
         <div style="color: red;">&nbsp;*</div>
       </div>
 
       <div class="each_input_container">
         <div class="text">Password: </div>
-        <el-input placeholder="eg: ****" style="width: 30%;" v-model="password" show-password type="password" />
+        <el-input placeholder="eg: ****" v-model="password" show-password type="password" />
         <div style="color: red;">&nbsp;*</div>
       </div>
 
       <div class="each_input_container">
         <div class="text">Verification Code: </div>
-        <el-input placeholder="eg: 0000" style="width: 30%;" v-model="verCode" />
+        <el-input placeholder="eg: 0000" v-model="verCode" />
         <div style="color: red;">&nbsp;*&nbsp;</div>
       </div>
 
@@ -452,37 +452,37 @@ export default {
 
   <div v-else-if="isRegisterVisible" class="animate__bounceIn animate__faster">
     <div class="auth_form">
-      <img src="../logo.png" style="height: 80px;" />
-      <div style="font-size: 14pt; padding-top: 10px;">Sign Up</div>
+      <img src="..\logo1.png" class="logo">
+      <div style="font-size: 22pt; font-weight: bold; padding-top: 10px;">Sign Up</div>
       <el-divider />
 
       <div class="each_input_container">
         <div class="text">Email: </div>
-        <el-input placeholder="example@example.com" style="width: 30%;" v-model="email" />
+        <el-input placeholder="example@example.com" v-model="email" />
         <div style="color: red;">&nbsp;*</div>
       </div>
 
       <div class="each_input_container">
         <div class="text">Username: </div>
-        <el-input placeholder="eg: Osiris" style="width: 30%;" v-model="username" />
+        <el-input placeholder="eg: Osiris" v-model="username" />
         <div style="color: red;">&nbsp;*</div>
       </div>
 
       <div class="each_input_container">
         <div class="text">Password: </div>
-        <el-input placeholder="eg: ****" style="width: 30%;" v-model="password" show-password type="password" />
+        <el-input placeholder="eg: ****" v-model="password" show-password type="password" />
         <div style="color: red;">&nbsp;*</div>
       </div>
 
       <div class="each_input_container">
         <div class="text">Confirm Password: </div>
-        <el-input placeholder="eg: ****" style="width: 30%;" v-model="confirmPass" show-password type="password" />
+        <el-input placeholder="eg: ****" v-model="confirmPass" show-password type="password" />
         <div style="color: red;">&nbsp;*</div>
       </div>
 
       <div class="each_input_container">
         <div class="text">Verification Code: </div>
-        <el-input placeholder="eg: 000000" style="width: 30%;" v-model="verCode" />
+        <el-input placeholder="eg: 000000" v-model="verCode" />
         <div style="color: red;">&nbsp;*&nbsp;</div>
       </div>
 
@@ -506,34 +506,33 @@ export default {
     </div>
   </div>
 
-
   <div v-else-if="isForgetVisible" class="animate__bounceIn animate__faster">
     <div class="auth_form">
-      <img src="../logo.png" style="height: 80px;" />
-      <div style="font-size: 14pt; padding-top: 10px;">Forget Password</div>
+      <img src="..\logo1.png" class="logo">
+      <div style="font-size: 22pt; font-weight: bold; padding-top: 10px;">Forget Password</div>
       <el-divider />
 
       <div class="each_input_container">
         <div class="text">Email: </div>
-        <el-input placeholder="example@example.com" style="width: 30%;" v-model="email" />
+        <el-input placeholder="example@example.com" v-model="email" />
         <div style="color: red;">&nbsp;*</div>
       </div>
 
       <div class="each_input_container">
         <div class="text">New Password: </div>
-        <el-input placeholder="eg: ****" style="width: 30%;" v-model="password" show-password type="password" />
+        <el-input placeholder="eg: ****" v-model="password" show-password type="password" />
         <div style="color: red;">&nbsp;*</div>
       </div>
 
       <div class="each_input_container">
-        <div class="text">Confirm New Password: </div>
-        <el-input placeholder="eg: ****" style="width: 30%;" v-model="confirmPass" show-password type="password" />
+        <div class="text">Confirm Password: </div>
+        <el-input placeholder="eg: ****" v-model="confirmPass" show-password type="password" />
         <div style="color: red;">&nbsp;*</div>
       </div>
 
       <div class="each_input_container">
         <div class="text">Verification Code: </div>
-        <el-input placeholder="eg: 000000" style="width: 30%;" v-model="verCode" />
+        <el-input placeholder="eg: 000000" v-model="verCode" />
         <div style="color: red;">&nbsp;*&nbsp;</div>
       </div>
 
@@ -567,7 +566,7 @@ export default {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  width: 600px;
+  width: 450px;
   border-radius: 50px;
   box-shadow: 0 10px 10px rgba(0, 0, 0, 0.4);
   padding: 20px;
@@ -578,22 +577,23 @@ export default {
   margin: 0 auto;
 }
 
-
+.auth_form .el-input {
+  width: 200px;
+}
 
 .each_input_container {
   display: flex;
   align-items: center;
   width: 100%;
   margin-bottom: 20px;
-  font-size: 14pt;
+  font-size: 12pt;
 }
 
 .text {
-  width: 210px;
+  width: 180px;
   display: flex;
   justify-content: flex-end;
   padding-right: 10px;
-
 }
 
 .other_options {

@@ -427,7 +427,7 @@ export default {
                         value-format="YYYY-MM-DD" @change="clickedLoading" style="width: 140px;" />
                     </div>
                   </div>
-                  <div style="width: 100%; margin: auto; margin-top: -35px;">
+                  <div style="width: 100%; margin: auto; ">
                     <h4 style="color: rgb(117, 117, 117);">Word Count</h4>
                     <el-slider v-model="wordCount" range :marks="marks" show-stops :show-tooltip="false" :max="10"
                       style="width: 98%; margin: auto;" @change="wordcountonchange()" />
@@ -486,9 +486,9 @@ export default {
                     <span class="novel_title" @click="goBookInfo(item.id)">
                       <b>{{ item.bookName }}</b>
                     </span>
-                    <span style="font-size: 11pt;">{{ item.authorName }}</span>
+                    <span style="font-size: 10pt;">{{ item.authorName }}</span>
                     <span
-                      style="font-size: 10pt; line-height: 1.5; margin-top: 10px; margin-right: 10px; display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 3;overflow: hidden;">{{
+                      style="font-size: 9pt; line-height: 1.5; margin-top: 5px; margin-right: 10px; display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 3;overflow: hidden;">{{
                         item.bookDesc }}</span>
                     <div style="bottom: 40px; position: absolute;">
                       <el-tag effect="plain" :style="getItemColor(item.categoryName)">{{
@@ -694,7 +694,7 @@ body .el-tag {
 }
 
 .novel_title {
-  font-size: 12pt;
+  font-size: 13pt;
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 1;

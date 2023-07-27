@@ -143,11 +143,11 @@ export default {
                   style=" height: 155px; border-radius: 5px; box-shadow: 6px 4px 6px rgb(151, 151, 151);" />
                 <div class="update_book_item_container">
                   <div
-                    style="font-size: 18pt; margin-bottom: 3px; display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 1; overflow: hidden;">
+                    style="font-size: 18pt; display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 1; overflow: hidden;">
                     {{ item.bookName }}</div>
                   <div style="font-size: 12pt;">{{ item.authorName }}</div>
                   <div
-                    style="font-size: 10pt; margin-top: 5px; display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 5; overflow: hidden;">
+                    style="font-size: 10pt; margin-top: 3px; display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 4; overflow: hidden;">
                     {{ item.bookDesc }}</div>
                   <el-tag style="bottom: 12px; position: absolute;" :style="getItemColor(item.categoryName)"
                     :color="getItemColor(item.categoryName)" effect="plain">{{

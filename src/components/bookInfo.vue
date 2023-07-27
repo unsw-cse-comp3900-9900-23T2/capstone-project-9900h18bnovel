@@ -12,8 +12,6 @@ import {
   Setting,
   Sunny,
   Moon,
-  ArrowLeft,
-  ArrowRight,
   CaretBottom
 } from '@element-plus/icons-vue';
 import { ElMessage } from 'element-plus';
@@ -433,7 +431,7 @@ export default {
                 }}</el-tag>
               </h1>
               <el-tag style="font-size: 14pt;" size="large" effect="plain" :type="book.bookStatus === '1' ? 'success'
-                : ''">{{ book.bookStatus === "1" ? "Completed" : "Ongoing" }}</el-tag>
+                    : ''">{{ book.bookStatus === "1" ? "Completed" : "Ongoing" }}</el-tag>
             </div>
             <div style="font-size: 14pt; margin-bottom: 15px;"> {{ book.authorName }}</div>
           </div>
@@ -659,32 +657,12 @@ export default {
                 </div>
               </h1>
               <div style="display: flex;">
-                <div style="margin-left: -50px;"><el-button @click="prevChapter"
-                    style="height: 100%; border-color: rgba(0, 0, 0, 0); background-color: rgba(0, 0, 0, 0); border-right: 1px solid #b7b7b7; border-radius: 0;">
-                    <el-icon>
-                      <ArrowLeft />
-                    </el-icon>
-                    P
-                    <br>
-                    R
-                    <br>
-                    E
-                    <br>
-                    V
+                <div style="margin-left: -50px; position: relative"><el-button @click="prevChapter"
+                    style="height: 100%; width: 550px; top: 0; left: 0; position: absolute; border-color: rgba(0, 0, 0, 0); background-color: rgba(0, 0, 0, 0);">
                   </el-button></div>
                 <div style="line-height: 2; margin-left: 20px; margin-right: 20px;" v-html="chapterContent"></div>
-                <div style="margin-right: -50px;"><el-button @click="nextChapter"
-                    style="height: 100%; border-color: rgba(0, 0, 0, 0); background-color: rgba(0, 0, 0, 0); border-left: 1px solid #b7b7b7; border-radius: 0;">
-                    N
-                    <br>
-                    E
-                    <br>
-                    X
-                    <br>
-                    T
-                    <el-icon>
-                      <ArrowRight />
-                    </el-icon>
+                <div style="margin-right: -50px; position: relative;"><el-button @click="nextChapter"
+                    style="height: 100%; width: 550px; top: 0; right: 0; position: absolute; border-color: rgba(0, 0, 0, 0); background-color: rgba(0, 0, 0, 0);">
                   </el-button></div>
               </div>
             </div>

@@ -1,8 +1,11 @@
 <template>
   <footer class="footer">
     <div class="footer-top">
-      <div class="footer-top-blocks">
-        <img src="../logo.png" style="height: 100px;" />
+      <div class="logo_container">
+        <img src="..\logo1.png" class="logo">
+        <h1
+          style="font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif; color: rgb(68, 68, 68); text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4); margin-right: 50px;">
+          NovelHub</h1>
       </div>
       <div class="footer-top-blocks">
         <h2>TEAMS</h2>
@@ -66,7 +69,7 @@
   display: flex;
   flex-direction: column;
   margin-right: 60px;
-  
+
 }
 
 .footer-elements {

@@ -145,7 +145,7 @@ export default {
 </script>
 <template>
   <div
-    style="width: 100%; height: 81px; background-color: #f3f3f3; border-bottom: 1px solid #dfdede; position: absolute; z-index: -10;">
+    style="width: 100%; height: 81px; background-color: #ffffff; border-bottom: 1px solid #e7e7e7; position: absolute; z-index: -10;">
   </div>
   <div class="header_container">
     <!-- Click here will return to Home page in any circumstances -->
@@ -242,7 +242,7 @@ export default {
   display: flex;
   justify-content: right;
   align-items: center;
-  right: 140px;
+  right: 110px;
   position: absolute;
 }
 
@@ -326,8 +326,8 @@ export default {
   margin: 0;
   display: flex;
   align-items: center;
-  background-color: #f3f3f3;
-  border-bottom: 1px solid #dfdede;
+  background-color: #ffffff;
+  border-bottom: 1px solid #e7e7e7;
   height: 81px;
   width: 1152px;
   margin: auto;
@@ -336,8 +336,7 @@ export default {
 
 .header_container .el-menu--horizontal {
   border-bottom: none;
-  height: 81px;
-  background-color: #f3f3f3;
+  background-color: #ffffff;
   width: 500px;
 }
 
@@ -349,15 +348,16 @@ export default {
   transition: background-color var(--el-transition-duration), color var(--el-transition-duration)
 }
 
-.header_container .el-menu--horizontal .el-menu-item:not(.is-disabled):hover {
-  background-color: rgb(0, 0, 0, 0);
-}
-
-.header_container .el-menu--horizontal .el-menu-item:not(.is-disabled):focus {
-  background-color: rgb(0, 0, 0, 0);
-}
-
+.header_container .el-menu--horizontal .el-menu-item:not(.is-disabled):hover,
+.header_container .el-menu--horizontal .el-menu-item:not(.is-disabled):focus,
 .header_container .el-menu--horizontal>.el-sub-menu .el-sub-menu__title:hover {
   background-color: rgb(0, 0, 0, 0);
+}
+
+
+.header_container .el-menu--horizontal>.el-menu-item,
+.header_container .el-menu--horizontal>.el-sub-menu .el-sub-menu__title {
+  color: #717174;
+  font-weight: bold;
 }
 </style>

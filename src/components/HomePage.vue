@@ -116,9 +116,6 @@ export default {
     element-loading-background="rgba(255, 255, 255, 255)"
     style="top:50%; left: 50%; transform: translate(-50%,-50%); position: absolute;"></div>
   <div v-if="showHomePage">
-    
-    <div id="svgContainer"></div>
-
     <div style="display: flex; justify-content: center;">
       <div class="homeBody">
         <div class="weekly_collect_books_container">
@@ -134,7 +131,8 @@ export default {
                 </template>
               </el-popover>
             </h2>
-            <el-carousel :interval="4000" height="300px">
+            <el-carousel :interval="4000" height="300px"
+              style="border-radius: 5px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
               <el-carousel-item v-for="item in weekly_books_info.slice(0, 3)" :key="item.title">
                 <div class="carousel_weekly_background" :style="getBackgroundStyle(item.picUrl)"></div>
                 <el-row>
@@ -230,7 +228,7 @@ export default {
                     <el-tag class="tag" effect="plain" :style="getItemColor(item.categoryName)">{{
                       item.categoryName
                     }}</el-tag>
-                    <span style="bottom: 10px;position: absolute;">
+                    <span style="bottom: 0px;position: absolute;">
                       {{ item.collectCount }} <el-icon>
                         <UserFilled />
                       </el-icon> Collected
@@ -299,7 +297,7 @@ export default {
                     <el-tag class="tag" effect="plain" :style="getItemColor(item.categoryName)">{{
                       item.categoryName
                     }}</el-tag>
-                    <span style="bottom: 10px;position: absolute;">
+                    <span style="bottom: 0px;position: absolute;">
                       {{ item.collectCount }} <el-icon>
                         <UserFilled />
                       </el-icon> Collected
@@ -370,8 +368,8 @@ export default {
                 <br />
                 <el-text truncated style="font-size: 10pt;">{{ item.authorName }}</el-text>
                 <br />
-                <el-text truncated style="font-size: 10pt; width: 250px;"><el-rate v-model="item.score"
-                    disabled show-score text-color="#ff9900" size="small" score-template="{value} points" /></el-text>
+                <el-text truncated style="font-size: 10pt; width: 250px;"><el-rate v-model="item.score" disabled
+                    show-score text-color="#ff9900" size="small" score-template="{value} points" /></el-text>
               </div>
             </div>
           </div>
@@ -399,8 +397,8 @@ export default {
                 <br />
                 <el-text truncated style="font-size: 10pt;">{{ item.authorName }}</el-text>
                 <br />
-                <el-text truncated style="font-size: 10pt; width: 250px;"><el-rate v-model="item.score"
-                    disabled show-score text-color="#ff9900" size="small" score-template="{value} points" /></el-text>
+                <el-text truncated style="font-size: 10pt; width: 250px;"><el-rate v-model="item.score" disabled
+                    show-score text-color="#ff9900" size="small" score-template="{value} points" /></el-text>
               </div>
             </div>
           </div>
@@ -428,8 +426,8 @@ export default {
                 <br />
                 <el-text truncated style="font-size: 10pt;">{{ item.authorName }}</el-text>
                 <br />
-                <el-text truncated style="font-size: 10pt; width: 250px;"><el-rate v-model="item.score"
-                    disabled show-score text-color="#ff9900" size="small" score-template="{value} points" /></el-text>
+                <el-text truncated style="font-size: 10pt; width: 250px;"><el-rate v-model="item.score" disabled
+                    show-score text-color="#ff9900" size="small" score-template="{value} points" /></el-text>
               </div>
             </div>
           </div>
@@ -511,12 +509,12 @@ export default {
 .carousel_weekly_text {
   display: flex;
   flex-direction: column;
-  margin-top: 40px;
+  margin-top: 20px;
   color: white;
 }
 
 .carousel_weekly_text_title {
-  font-size: 22pt;
+  font-size: 20pt;
   margin-bottom: 5px;
   display: -webkit-box;
   -webkit-box-orient: vertical;
@@ -563,13 +561,15 @@ export default {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background-color: #f3f3f3;
+  background-color: #f6f6f6;
   color: white;
+  border-radius: 5px;
 }
 
 .collected_novel_user {
   height: 100%;
   background-color: #f3f3f3;
+  border-radius: 5px;
 }
 
 .collected_novel_user_ya {
@@ -577,6 +577,7 @@ export default {
   flex-wrap: wrap;
   margin-top: 9px;
   position: relative;
+  border-radius: 5px;
 }
 
 .collected_word {
@@ -652,23 +653,23 @@ export default {
 }
 
 .carousel_container {
+  padding: 10px;
   height: 300px;
-
 }
 
 .carousel_container:hover {
-
   cursor: default;
 }
 
 
 .carousel_left_container {
   width: 30%;
-  padding-left: 20px;
-  padding-top: 20px;
-  margin-right: 5px;
   display: flex;
   flex-direction: column;
+  margin-left: 10px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  position: relative;
 }
 
 .carousel_left_title {
@@ -677,7 +678,6 @@ export default {
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
   overflow: hidden;
-  margin-bottom: 5px;
 }
 
 .carousel_left_title:hover {
@@ -687,6 +687,7 @@ export default {
 
 .carousel_image_container {
   height: 100%;
+
   transform: scale(1);
   transition: transform 0.3s ease;
 }
@@ -697,14 +698,15 @@ export default {
 }
 
 .carousel_image {
+  box-shadow: 6px 4px 6px rgb(92, 92, 92);
+  border-radius: 5px;
   height: 100%;
   object-fit: contain;
 }
 
 .carousel_right_container {
   padding-left: 20px;
-  padding-top: 15px;
-  width: 28%;
+  width: 30%;
 }
 
 .carousel_right_comments_container {
@@ -712,13 +714,14 @@ export default {
   flex-direction: column;
   height: 85%;
   margin-left: -10px;
+  margin-top: 10px;
   font-size: 10pt;
 }
 
 .carousel_right_comments {
   display: block;
-  height: 31%;
-  width: 90%;
+  height: 30%;
+  width: 100%;
   border: 1px solid #1989fa;
   border-radius: 3px;
   overflow: hidden;
@@ -733,12 +736,11 @@ export default {
 }
 
 .carousel_right_rates_container {
-  bottom: 7px;
+  bottom: 10px;
   position: absolute;
 }
 
 .rank_books_container {
-  margin-top: -10px;
   margin-bottom: 15px;
   display: flex;
   justify-content: center;
@@ -773,7 +775,7 @@ export default {
 
 .rank_items {
   display: flex;
-  margin-top: 8px;
+  margin-top: 5px;
 }
 
 .rank_image img {
@@ -792,7 +794,6 @@ export default {
   margin-right: 10px;
   font-size: 14pt;
   color: grey;
-  padding-top: 3px;
 }
 
 .red {
@@ -808,7 +809,6 @@ export default {
 }
 
 .rank_info {
-  padding-top: 3px;
   font-size: 14pt;
 }
 

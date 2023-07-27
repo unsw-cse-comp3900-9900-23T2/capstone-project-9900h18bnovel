@@ -6,6 +6,7 @@ import All_Novels from './components/All_Novels.vue';
 import Profile from './components/User_Profile.vue';
 import ranksPages from './components/RanksPages.vue';
 import bookInfo from './components/bookInfo.vue';
+import notFoundPage from './components/NotFoundPage.vue';
 import store from './store';
 import ElementPlus from 'element-plus';
 import 'element-plus/theme-chalk/index.css';
@@ -23,6 +24,7 @@ function isUserLoggedIn() {
 
 // Rounter address here
 const routes = [
+
   { path: '/', redirect: '/home' },
   { path: '/home', component: HomePage },
   {
@@ -50,7 +52,8 @@ const routes = [
   { path: '/newestrank', component: ranksPages },
   { path: '/clickrank', component: ranksPages },
   { path: '/updaterank', component: ranksPages },
-  { path: '/bookInfo/:bookId', component: bookInfo }
+  { path: '/bookInfo/:bookId', component: bookInfo },
+  { path: '/:pathMatch(.*)', component: notFoundPage },
 ];
 
 export const router = createRouter({
