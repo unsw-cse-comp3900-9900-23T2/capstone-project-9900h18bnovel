@@ -4,10 +4,10 @@ import {
   Upload,
   Check,
   User,
-  /*Postcard,*/
   MessageBox,
   Filter,
-  CaretBottom, Reading, Delete, /*Document, CollectionTag, View, Clock,*/
+  Reading,
+  Delete,
 } from '@element-plus/icons-vue';
 import { computed } from 'vue'
 const iconStyle = computed(() => {
@@ -36,6 +36,18 @@ import { Linter } from 'eslint';
 <script >
 import Global_Footer from './Global_Footer.vue';
 import { ElMessage } from "element-plus";
+import axios from "axios";
+import { ref } from 'vue';
+const NewGender = ref([]);
+const options = [
+  {
+    value: 'male',
+    label: 'Male',
+  },
+  {
+    value: 'female',
+    label: 'Female',
+  }]
 // import Login from './Auth_Page.vue';
 export default {
   data() {
@@ -72,21 +84,54 @@ export default {
     }
   },
   mounted() {
-    if (localStorage.getItem('userPhoto') === 'undefined' || !localStorage.getItem('userPhoto')) {
-      this.CurrentPhoto = this.DefaultPhoto;
-    } else{
-      this.CurrentPhoto = this.userPhoto;
-    }
-    console.log("@#$@#$"+this.userSex);
+      if (localStorage.getItem('userPhoto') === 'undefined' || !localStorage.getItem('userPhoto')) {
+        this.CurrentPhoto = this.DefaultPhoto;
+      } else{
+        this.CurrentPhoto = this.userPhoto;
+      }
+      axios.post("http://localhost:8888/api/front/user/get_userInfo",{
+        userId: localStorage.getItem('uid') ? localStorage.getItem('uid') : ''
+      })
+          .then(response =>{
+        console.log(response);
+        if (response.data.code === "00000") {
+          if (response.data.data.userPhoto) {
+            localStorage.setItem('userPhoto', response.data.data.userPhoto);
+            this.$store.dispatch('photo', response.data.data.userPhoto);
+          } else {
+            this.userPhoto = this.DefaultPhoto;
+          }
+          if (response.data.data.userSex) {
+            localStorage.setItem('userSex', response.data.data.userSex);
+            this.userSex = response.data.data.userSex;
+            this.$store.dispatch('sex', response.data.data.userSex);
+          } else {
+            this.userSex = '';
+          }
+        }
+      }).catch(error => {
+        console.error("Failed in getting user information：", error);
+      });
+      axios.get(`http://localhost:8888/api/front/user/user_collect?userId=${this.$store.getters.GetUID}`)
+          .then(response =>{
+            if (response.status === 200){
+              if (response.data.code === '00000') {
+                this.AllCollections = response.data.data;
+              }
+            }
+          }).catch(error => {
+        // 请求失败时的处理
+        console.error("Failed in loading mycollections：", error);
+      });
   },
   components: {
     Global_Footer,
   },
   methods: {
     async UpdateGender() {
-      if (this.newGender.toLowerCase() === 'male') {
+      if (NewGender.value[0] === 'male') {/*.toLowerCase()*/
         this.userSex = 0;
-      } else if (this.newGender.toLowerCase() === 'female') {
+      } else if (NewGender.value[0] === 'female') {/*.toLowerCase()*/
         this.userSex = 1;
       } else {
         ElMessage.error('Please choose a provided gender!');
@@ -104,29 +149,23 @@ export default {
         username: this.userName,
         userPhoto: this.userPhoto,
         userSex: parseInt(this.userSex)
-      }
-      try {
-        const response = await fetch("http://localhost:8888/api/front/user/modify_userInfo", {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(requestData)
-        });
-        if (response.status === 200) {
-         const data = await response.json();
-          console.log(data);
-          if (data.code === '00000') {
-            this.isGenderEditing = false;
-            console.log("-*/-*/"+this.userSex);
-            // this.userSex = this.newGender;
-            localStorage.setItem('userSex', this.userSex);
-            this.$store.dispatch('sex',this.userSex);
-          }
-        }
-      } catch (error) {
-        console.error(error);
-      }
+      };
+      await axios.put("http://localhost:8888/api/front/user/modify_userInfo", requestData)
+          .then(response =>{
+            if (response.status === 200){
+              const data = response.data;
+              if (data.code === '00000'){
+                this.isGenderEditing = false;
+                localStorage.setItem('userSex', this.userSex);
+                this.$store.dispatch('sex',this.userSex);
+                ElMessage.success("Gender changed!");
+                console.log("Change gender successful!")
+              }
+            }
+          })
+          .catch(error => {
+            console.error(error);
+          });
     },
     openPhotoInput() {
       this.$refs.fileInput.click();
@@ -134,11 +173,6 @@ export default {
     async CollectNewPhoto(event) {
       const file = event.target.files[0];
       const reader = new FileReader();
-      /*if (this.userSex.toLowerCase() === "male") {
-        this.SubmitSex = 0;
-      } else {
-        this.SubmitSex = 1;
-      }*/
       reader.onload = () => {
         const requestData = {
           userId: parseInt(this.uid),
@@ -153,29 +187,23 @@ export default {
       }
     },
     async SubmitPhoto(requestData) {
-      try {
-        console.log(requestData);
-        const response = await fetch("http://localhost:8888/api/front/user/modify_userInfo", {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(requestData)
-        });
-        if (response.status === 200) {
-          const data = await response.json();
-          console.log(data);
-          if (data.code === '00000') {
-            this.CurrentPhoto = requestData.userPhoto;
-            localStorage.setItem('userPhoto',requestData.userPhoto);
-            this.$store.dispatch('photo',requestData.userPhoto);
-          } else {
-            console.log("User_Profile 169行有问题");
-          }
-        }
-      } catch (error) {
-        console.error(error);
-      }
+      await axios.put("http://localhost:8888/api/front/user/modify_userInfo", requestData)
+          .then(response =>{
+            if (response.status === 200) {
+              console.log(response);
+              if (response.data.code === '00000') {
+                this.CurrentPhoto = requestData.userPhoto;
+                ElMessage.success("Avatar changed!");
+                localStorage.setItem('userPhoto',requestData.userPhoto);
+                this.$store.dispatch('photo',requestData.userPhoto);
+              } else {
+                console.log("User_Profile 203行有问题");
+              }
+            }
+          })
+          .catch(error => {
+            console.error(error);
+          });
     },
     async UpdateNewName(){
       if (this.newUserName === ''){
@@ -189,56 +217,30 @@ export default {
         userPhoto: this.userPhoto,
         userSex: parseInt(this.userSex)
       }
-      console.log(requestData);
-      try {
-        const response = await fetch("http://localhost:8888/api/front/user/modify_userInfo", {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(requestData)
-        });
-        if (response.status === 200) {
-          const data = await response.json();
-          console.log(data);
-          if (data.code === '00000') {
-            this.isNameEditing = false;
-            this.userName = this.newUserName;
-            localStorage.setItem('username', this.newUserName);
-            this.$store.dispatch('username', this.newUserName);
-          }
-        }
-      } catch (error) {
-        console.error(error);
-      }
-
+      await axios.put("http://localhost:8888/api/front/user/modify_userInfo", requestData)
+          .then(response =>{
+            if (response.status === 200) {
+              console.log(response);
+              if (response.data.code === '00000') {
+                ElMessage.success("Username changed!");
+                this.isNameEditing = false;
+                this.userName = this.newUserName;
+                localStorage.setItem('username', this.newUserName);
+                this.$store.dispatch('username', this.newUserName);
+              } else {
+                console.log("User_Profile 228行有问题");
+              }
+            }
+          })
+          .catch(error => {
+            console.error(error);
+          });
     },
     StartEditGender() {
       this.isGenderEditing = true;
-      // this.newGender = this.userSex;
     },
     StartEditName(){
       this.isNameEditing = true;
-    },
-    async LoadingCollections(){
-      this.isLoadBooks = true;
-      try {
-        const response = await fetch(`http://localhost:8888/api/front/user/user_collect?userId=${this.$store.getters.GetUID}`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-        });
-        if (response.status === 200) {
-          const data = await response.json();
-          console.log(data);
-          if (data.code === '00000') {
-            this.AllCollections = data.data;
-          }
-        }
-      } catch (error) {
-        console.error(error);
-      }
     },
     GoToBook(bookId){
       this.$router.push('/bookInfo/'+bookId);
@@ -252,27 +254,24 @@ export default {
           bookId: bookId,
         };
         console.log(reqbody);
-        try {
-          const response = await fetch('http://localhost:8888/api/front/book/cancel_collect', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(reqbody),
-          });
-          if (response.status == 200) {
-            this.clickedLoading();
-            ElMessage.success("Collection Removed");
-            this.AllCollections = this.AllCollections.filter(book => book.bookId !== bookId)
-          } else {
-            console.log(response.status);
-          }
-        } catch (error) {
-          console.error(error);
-        }
+        await axios.post('http://localhost:8888/api/front/book/cancel_collect', reqbody)
+            .then(response =>{
+              if (response.status === 200) {
+                ElMessage.success("Collection Removed");
+                this.AllCollections = this.AllCollections.filter(book => book.bookId !== bookId)
+                console.log(response);
+              }
+              else {
+                  console.log("User_Profile 262行有问题");
+                }
+            })
+            .catch(error => {
+              console.error(error);
+            });
       }
       this.isLoadBooks = false;
     },
+
   }
 }
 </script>
@@ -289,7 +288,8 @@ export default {
         <el-aside ><!--width="40%"-->
           <div class="AvatarContainer">
           <span class="el-avatar el-avatar--circle"
-                style="height: 200px; width: 200px; line-height: 200px; margin: 2em;"><img :src="this.$store.state.photo? this.$store.state.photo : CurrentPhoto" style="object-fit: contain;"></span>
+                style="height: 200px; width: 200px; line-height: 200px; margin: 2em;"><img :src="this.$store.state.photo? this.$store.state.photo : CurrentPhoto"
+                                  style="object-fit: contain;"></span>
             <input type="file" ref="fileInput" @change="CollectNewPhoto" style="display: none" />
             <el-button class="UploadPhotoButton" circle @click="openPhotoInput">
               <el-icon color="gray">
@@ -304,17 +304,6 @@ export default {
               :column="1"
               :size="large"
               border>
-<!--            <el-descriptions-item>
-              <template #label>
-                <div class="cell-item">
-                  <el-icon :style="iconStyle">
-                    <Postcard />
-                  </el-icon>
-                  UserID
-                </div>
-              </template>
-              {{ uid }}
-            </el-descriptions-item>-->
             <el-descriptions-item>
               <template #label>
                 <div class="cell-item">
@@ -348,7 +337,7 @@ export default {
               <div class="name-row" v-else>
                 <div class="input-name-container">
                   <input type="text" v-model="newUserName" :placeholder="userName" />
-                  <el-button class="SubmitNewName" @click="UpdateNewName" circle>
+                  <el-button class="SubmitNewName" style="margin: auto 0px auto 5em;" @click="UpdateNewName" circle>
                     <el-icon color="lightgreen">
                       <Check />
                     </el-icon>
@@ -377,8 +366,8 @@ export default {
               </div>
                 <div class="gender-row" v-else>
                   <div class="input-gender-container">
-                    <input type="text" v-model="newGender" placeholder="Male / Female" />
-                    <el-button class="SubmitGender" @click="UpdateGender" circle>
+                    <el-cascader v-model="NewGender" :options="options" @change="UpdateGender()" />
+                    <el-button class="SubmitGender" @click="UpdateGender" style="margin: auto 0px auto 5em;" circle>
                       <el-icon color="lightgreen">
                         <Check />
                       </el-icon>
@@ -397,13 +386,9 @@ export default {
         My Collection</h1>
       <el-divider />
       <div class="CollectionsContainer">
-          <el-button class = "loadingCollButton " v-if = "!isLoadBooks" type="primary" @click = "LoadingCollections">
-            Show All My Collections
-            <el-icon class="el-icon--right">
-              <CaretBottom />
-            </el-icon>
-          </el-button>
-        <div v-else>
+        <div v-if="AllCollections.length == 0" >
+          <h2 style="color: darkgray; margin: 2em auto; text-align: center;">You don't have any collection yet!</h2>
+        </div>
           <div class="bookInfo" v-for="book in AllCollections" :key = "book.bookId" >
             <img :src="book.picUrl" style="height: 250px; margin: 20px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);" />
             <div class="bookContentDetail">
@@ -419,29 +404,6 @@ export default {
               <div style="font-size: 14pt; margin: 10px auto 10px 0;"> Author: {{ book.authorName }}</div>
               <div style="display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 9; overflow: hidden;"> {{truncatedDesc(book.bookDesc)  }}</div>
               <div style="bottom: 0; position: absolute;">
-
-<!--                <div style="display: flex; font-size: 16pt; align-items: center; margin-top: 10px;">
-                  <el-icon>
-                    <Document />
-                  </el-icon>
-                  {{ book.wordCount }}
-                  &nbsp;&nbsp;&nbsp;
-                  <el-icon>
-                    <View />
-                  </el-icon>
-                  {{ book.visitCount }}
-                  &nbsp;&nbsp;&nbsp;
-                  <el-icon>
-                    <CollectionTag />
-                  </el-icon>
-                  {{ book.collectCount }}
-                  &nbsp;&nbsp;&nbsp;
-                  <el-icon>
-                    <Clock />
-                  </el-icon>
-                  {{ book.lastChapterUpdateTime }}
-                  &nbsp;&nbsp;&nbsp;
-                </div>-->
                 <div style="margin-top: 10px;">
                   <el-button style="font-size: 14pt;" size="large" type="primary" round :icon="Reading" @click = "GoToBook(book.bookId)"><!--@click="goToContent(chapters[0] ? chapters[0].id : null, chapters[0] ? chapters[0].chapterName : null, 0)"-->
                     READ
@@ -454,7 +416,6 @@ export default {
               </div>
             </div>
           </div>
-        </div>
       </div>
     </div>
   </div>
@@ -501,7 +462,6 @@ export default {
   margin: 0 auto 20px auto;
   padding: 10px;
 }
-
 .bookContentDetail {
   width: 75%;
   position: relative;
@@ -521,11 +481,14 @@ export default {
 
 .gender-row, .name-row {
   display: flex;
+  flex-direction: row;
   align-items: center;
+  justify-content: space-between;
 }
 
 .gender-info, .name-info {
   display: flex;
+  flex-direction: row;
   justify-content: space-between;
   align-items: center;
   flex-grow: 1;
@@ -533,7 +496,10 @@ export default {
 
 .input-gender-container, .input-name-container {
   display: flex;
+  flex-direction: row;
+  justify-content: space-between;
   align-items: center;
+
 }
 
 .gender-row h3:first-child, .name-row h3:first-child {
