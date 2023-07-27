@@ -8,10 +8,12 @@ import Novelists_Realm from "@/components/Novelists_Realm.vue";
 import ranksPages from './components/RanksPages.vue';
 import bookInfo from './components/bookInfo.vue';
 import notFoundPage from './components/NotFoundPage.vue';
+import author_page from './components/Author_page.vue';
 import store from './store';
 import ElementPlus from 'element-plus';
 import 'element-plus/theme-chalk/index.css';
 
+// import AuthorApp from "./AuthorApp.vue"
 const app = createApp(App);
 app.use(ElementPlus);
 
@@ -60,6 +62,7 @@ const routes = [
   { path: '/updaterank', component: ranksPages },
   { path: '/bookInfo/:bookId', component: bookInfo },
   { path: '/:pathMatch(.*)', component: notFoundPage },
+  { path: '/author', component: author_page },
 ];
 
 export const router = createRouter({
@@ -86,3 +89,12 @@ router.beforeEach((to, from, next) => {
 app.use(store);
 app.use(router);
 app.mount('#app');
+
+// import Auther_pgae
+// const AuthorApp = createApp(AuthorApp);
+// AuthorApp.use(ElementPlus);
+
+// const author_routes = [
+//   { path: '/', redirect: '/home' },
+//   { path: '/home', component: HomePage },
+// ];

@@ -4,9 +4,9 @@ import {
   HomeFilled,
   Platform,
   TrendCharts,
-  Collection,
   EditPen,
 } from '@element-plus/icons-vue'
+import { ElMessage } from 'element-plus';
 </script >
 <script>
 import { logout } from '../utils';
@@ -96,12 +96,21 @@ export default {
     ShowUserProfile() {
       this.$router.push('/userprofile');
     },
-    GoToNovelistRealm(){
+    GoToNovelistRealm() {
       this.$router.push('/Novelists_Realm');
     },
     clearSearch() {
       this.searchInput = null;
       this.$emit("clearSearch");
+    },
+    goAuthorPage() {
+      if (this.$store.getters.isAuthenticated) {
+        window.open('/author');
+      } else {
+        ElMessage.error("Please Sign In First");
+        this.showLogin();
+      }
+
     }
   },
 
@@ -135,12 +144,9 @@ export default {
         <el-menu-item route index="/newestrank">Newest Rank</el-menu-item>
         <el-menu-item route index="/updaterank">Update Rank</el-menu-item>
       </el-sub-menu>
-      <el-menu-item route index="4"><el-icon>
+      <el-menu-item @click="goAuthorPage"><el-icon>
           <EditPen />
         </el-icon>My Creation</el-menu-item>
-      <el-menu-item route index=""><el-icon>
-          <Collection />
-        </el-icon>My Collection</el-menu-item>
     </el-menu>
 
     <div class="flexbox">
@@ -200,15 +206,13 @@ export default {
   margin-right: 10px;
 }
 
-
-
 .flexbox {
   width: 200px;
   height: 100%;
   display: flex;
   justify-content: right;
   align-items: center;
-  right: 110px;
+  right: 90px;
   position: absolute;
 }
 
@@ -261,7 +265,7 @@ export default {
 
 .search>div>input:focus,
 .search>div>input:not(:placeholder-shown) {
-  width: 300px;
+  width: 280px;
 }
 
 .login_button {
@@ -303,7 +307,7 @@ export default {
 .header_container .el-menu--horizontal {
   border-bottom: none;
   background-color: #ffffff;
-  width: 500px;
+  width: 650px;
 }
 
 .header_container .el-menu--horizontal>.el-menu-item.is-active {

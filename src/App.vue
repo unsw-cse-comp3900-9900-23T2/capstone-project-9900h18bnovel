@@ -15,7 +15,7 @@ const svg = `
 <script>
 import Global_Header from './components/Global_Header.vue';
 import Login from './components/Auth_Page.vue';
-
+import Author_page from './components/Author_page.vue';
 export default {
   data() {
     return {
@@ -29,6 +29,7 @@ export default {
   components: {
     Global_Header,
     Login,
+    Author_page,
   },
   mounted() {
     if (localStorage.getItem("token")) {
@@ -82,29 +83,33 @@ export default {
 </script>
 
 <template>
-  <div v-loading.fullscreen.lock="loading" element-loading-text="Welcome to NovelHub, novels will ready for you ASAP"
-    :element-loading-spinner="svg" element-loading-svg-view-box="0, 5, 30, 40"
-    element-loading-background="rgba(255, 255, 255, 255)"></div>
-  <div v-if="isLoadFinished" :class="{ 'blur': this.$store.state.isLoginVisible }">
-    <Global_Header @clearSearch="clearSearch" @handleSearch="handleSearch" @showLogin="showLogin"
-      @closeLoginBox="closeLoginBox" :verImage="this.verImage"
-      :sessionId="this.sessionId" />
-    <router-view>
-    </router-view>
-    <!-- Go to top floating buttom -->
-    <el-backtop :bottom="100">
-      <div class="goTopButton">
-        <el-icon>
-          <CaretTop />
-        </el-icon>
-      </div>
-    </el-backtop>
-  </div>
-  <transition name="fade">
-    <div v-if="this.$store.state.isLoginVisible" class="loginSection">
-      <Login class="login" :verImage="this.verImage" :sessionId="this.sessionId" @closeLoginBox="closeLoginBox" />
+  <div v-if="this.$route.path !== '/author'">
+    <div v-loading.fullscreen.lock="loading" element-loading-text="Welcome to NovelHub, novels will ready for you ASAP"
+      :element-loading-spinner="svg" element-loading-svg-view-box="0, 5, 30, 40"
+      element-loading-background="rgba(255, 255, 255, 255)"></div>
+    <div v-if="isLoadFinished" :class="{ 'blur': this.$store.state.isLoginVisible }">
+      <Global_Header @clearSearch="clearSearch" @handleSearch="handleSearch" @showLogin="showLogin"
+        @closeLoginBox="closeLoginBox" :verImage="this.verImage" :sessionId="this.sessionId" />
+      <router-view>
+      </router-view>
+      <!-- Go to top floating buttom -->
+      <el-backtop :bottom="100">
+        <div class="goTopButton">
+          <el-icon>
+            <CaretTop />
+          </el-icon>
+        </div>
+      </el-backtop>
     </div>
-  </transition>
+    <transition name="fade">
+      <div v-if="this.$store.state.isLoginVisible" class="loginSection">
+        <Login class="login" :verImage="this.verImage" :sessionId="this.sessionId" @closeLoginBox="closeLoginBox" />
+      </div>
+    </transition>
+  </div>
+  <div v-else>
+    <Author_page />
+  </div>
 </template>
 
 <style>

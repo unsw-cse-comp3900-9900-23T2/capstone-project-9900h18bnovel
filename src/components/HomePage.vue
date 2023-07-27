@@ -185,7 +185,7 @@ export default {
                 <el-button style="height:100%; background-color:rgb(0,0,0,0); right:0; position:absolute;
                   border-color:rgb(0,0,0,0); border-left: 1px solid #b7b7b7; border-radius: 0;"
                   @click="GoToMyCollection">
-                  M<br>Y<br><br>C<br>O<br>L<br>L<br>E<br>C<br>T<br>I<br>O<br>N<br>S
+                  A<br>L<br>L<br>
                   <el-icon>
                     <ArrowRight />
                   </el-icon>
