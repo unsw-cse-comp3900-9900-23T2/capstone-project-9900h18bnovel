@@ -3,10 +3,7 @@ package com.example.novel_backend.service;
 import com.example.novel_backend.core.common.resp.PageRespDto;
 import com.example.novel_backend.core.common.resp.RestResp;
 import com.example.novel_backend.dao.entity.AuthorInfo;
-import com.example.novel_backend.dto.req.AuthorBooksReqDto;
-import com.example.novel_backend.dto.req.AuthorRegisterReqDto;
-import com.example.novel_backend.dto.req.BookPublishReqDto;
-import com.example.novel_backend.dto.req.BookUpdateReqDto;
+import com.example.novel_backend.dto.req.*;
 import com.example.novel_backend.dto.resp.BookInfoRespDto;
 
 /**
@@ -57,17 +54,31 @@ public interface AuthorService {
     RestResp<Void> updateBook(BookUpdateReqDto dto);
 
     /**
-     * Delete book
-     *
-     * @param bookId
-     * @return
-     */
-    RestResp<Void> deleteBook(Long bookId);
-
-    /**
      * Get author published books
      * @param dto page parameters
      * @return Book information
      */
     RestResp<PageRespDto<BookInfoRespDto>> listAuthorBooks(AuthorBooksReqDto dto);
+
+    /**
+     * Publish chapter
+     * @param dto chapter information
+     * @return void
+     */
+    RestResp<Void> publishChapter(ChapterPublishReqDto dto);
+
+    /**
+     * Update chapter
+     * @param dto chapter information
+     * @return void
+     */
+    RestResp<Void> updateChapter(ChapterUpdateReqDto dto);
+
+    /**
+     * Delete chapter
+     *
+     * @param  chapterId chapter id
+     * @return void
+     */
+    RestResp<Void> deleteChapter(Long chapterId);
 }

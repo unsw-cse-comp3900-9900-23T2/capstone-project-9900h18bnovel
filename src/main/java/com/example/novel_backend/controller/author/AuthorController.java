@@ -6,10 +6,7 @@ import com.example.novel_backend.core.common.req.PageReqDto;
 import com.example.novel_backend.core.common.resp.PageRespDto;
 import com.example.novel_backend.core.common.resp.RestResp;
 import com.example.novel_backend.dao.entity.AuthorInfo;
-import com.example.novel_backend.dto.req.AuthorBooksReqDto;
-import com.example.novel_backend.dto.req.AuthorRegisterReqDto;
-import com.example.novel_backend.dto.req.BookPublishReqDto;
-import com.example.novel_backend.dto.req.BookUpdateReqDto;
+import com.example.novel_backend.dto.req.*;
 import com.example.novel_backend.dto.resp.BookInfoRespDto;
 import com.example.novel_backend.service.AuthorService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -79,20 +76,38 @@ public class AuthorController {
     }
 
     /**
-     * Delete book interface
-     */
-    @Operation(summary = "Delete book interface")
-    @DeleteMapping("delete_book/{bookId}")
-    public RestResp<Void> deleteComment(@Parameter(description = "Book ID") @PathVariable Long bookId) {
-        return authorService.deleteBook(bookId);
-    }
-
-    /**
      * Get author published books interface
      */
     @Operation(summary = "Get author published books interface")
     @GetMapping("get_books")
     public RestResp<PageRespDto<BookInfoRespDto>> listBooks(@ParameterObject AuthorBooksReqDto dto) {
         return authorService.listAuthorBooks(dto);
+    }
+
+    /**
+     * Chapter publish interface
+     */
+    @Operation(summary = "Chapter publish interface")
+    @PostMapping("publish_chapter")
+    public RestResp<Void> publishChapter(@Valid @RequestBody ChapterPublishReqDto dto) {
+        return authorService.publishChapter(dto);
+    }
+
+    /**
+     * Chapter update interface
+     */
+    @Operation(summary = "Chapter update interface")
+    @PostMapping("update_chapter")
+    public RestResp<Void> updateChapter(@Valid @RequestBody ChapterUpdateReqDto dto) {
+        return authorService.updateChapter(dto);
+    }
+
+    /**
+     * Delete chapter interface
+     */
+    @Operation(summary = "Delete chapter interface")
+    @DeleteMapping("delete_chapter/{chapterId}")
+    public RestResp<Void> deleteChapter(@Parameter(description = "Chapter ID") @PathVariable Long chapterId) {
+        return authorService.deleteChapter(chapterId);
     }
 }

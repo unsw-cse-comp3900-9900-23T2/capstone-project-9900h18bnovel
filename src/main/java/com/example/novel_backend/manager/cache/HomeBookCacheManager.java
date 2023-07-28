@@ -13,6 +13,7 @@ import com.example.novel_backend.dao.mapper.UserInfoMapper;
 import com.example.novel_backend.dto.resp.BookCommentRespDto;
 import com.example.novel_backend.dto.resp.HomeBookRespDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 
@@ -107,5 +108,11 @@ public class HomeBookCacheManager {
             }
         }
         return new ArrayList<>();
+    }
+
+    @CacheEvict(cacheManager = CacheConsts.REDIS_CACHE_MANAGER,
+            value = CacheConsts.HOME_BOOK_CACHE_NAME)
+    public void evictHomeBooks() {
+
     }
 }

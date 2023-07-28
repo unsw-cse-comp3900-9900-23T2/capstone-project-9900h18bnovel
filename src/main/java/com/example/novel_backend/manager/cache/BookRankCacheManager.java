@@ -6,6 +6,7 @@ import com.example.novel_backend.dao.entity.BookInfo;
 import com.example.novel_backend.dao.mapper.BookInfoMapper;
 import com.example.novel_backend.dto.resp.BookRankRespDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 
@@ -57,6 +58,18 @@ public class BookRankCacheManager {
         bookInfoQueryWrapper.orderByDesc("last_chapter_update_time")
                 .last("limit 30");
         return listRankBooks(bookInfoQueryWrapper);
+    }
+
+    @CacheEvict(cacheManager = CacheConsts.CAFFEINE_CACHE_MANAGER,
+            value = CacheConsts.BOOK_NEWEST_RANK_CACHE_NAME)
+    public void evictNewestRankCache() {
+
+    }
+
+    @CacheEvict(cacheManager = CacheConsts.CAFFEINE_CACHE_MANAGER,
+            value = CacheConsts.BOOK_UPDATE_RANK_CACHE_NAME)
+    public void evictUpdateRankCache() {
+
     }
 
     private List<BookRankRespDto> listRankBooks(QueryWrapper<BookInfo> bookInfoQueryWrapper){
