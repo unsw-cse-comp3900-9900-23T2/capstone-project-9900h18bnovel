@@ -75,7 +75,11 @@ public enum ErrorCodeEnum {
     /**
      * User comment fail
      */
-    USER_COMMENTED("A2001", "You have already commented!");
+    USER_COMMENTED("A2001", "You have already commented!"),
+    /**
+     * Book exists
+     */
+    AUTHOR_BOOK_NAME_EXIST("A3001", "Book exists");
 
     /**
      * Error Code
