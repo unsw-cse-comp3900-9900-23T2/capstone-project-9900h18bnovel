@@ -142,7 +142,7 @@ export default {
               :class="{ 'red': index === 0, 'orange': index === 1, 'green': index === 2 }">
               {{ index < 9 ? '0' + (index + 1) : index + 1 }} </div>
                 <img :src="item.picUrl"
-                  style=" height: 145px; border-radius: 5px; box-shadow: 6px 4px 6px rgb(110, 110, 110);" />
+                  style=" height: 145px; width:90.63px; border-radius: 5px; box-shadow: 6px 4px 6px rgb(110, 110, 110);" />
                 <div class="update_book_item_container">
                   <div
                     style="font-size: 18pt; display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 1; overflow: hidden;">

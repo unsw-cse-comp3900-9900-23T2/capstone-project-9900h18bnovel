@@ -157,7 +157,7 @@ export default {
       </div>
     </div>
 
-    <div v-if="!this.$store.state.token"
+    <div v-if="!$store.state.token"
       style="display: flex; align-items: center; justify-content: flex-end; width: 200px;">
       <el-button class="login_button" type="primary" @click="showLogin"><el-icon>
           <User />
@@ -168,14 +168,14 @@ export default {
         userName }}</h3> -->
       <el-dropdown trigger="click">
         <div>
-          <el-avatar :size="70" :src="this.$store.state.photo ? this.$store.state.photo : CurrentPhoto"
+          <el-avatar :size="70" :src="$store.state.photo ? $store.state.photo : CurrentPhoto"
             class="user_Avatar" />
         </div>
         <template #dropdown>
           <el-dropdown-menu>
             <el-dropdown-item @click="ShowUserProfile()">My Profile</el-dropdown-item>
             <el-dropdown-item @click="GoToNovelistRealm()">Novelist's Realm</el-dropdown-item>
-            <el-dropdown-item @click="logout(this.$router.currentRoute.value.path.includes('userprofile'))" divided>
+            <el-dropdown-item @click="logout($router.currentRoute.value.path.includes('userprofile'))" divided>
               Sign out
             </el-dropdown-item>
           </el-dropdown-menu>

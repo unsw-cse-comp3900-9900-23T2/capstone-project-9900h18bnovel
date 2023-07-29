@@ -43,6 +43,7 @@ export default {
     }, 1000);
     this.isLoadFinished = true;
   },
+
   methods: {
     clearSearch() {
       this.searchInput = null;
@@ -79,19 +80,22 @@ export default {
       this.$store.dispatch("isLoginVisible", false);
     },
   },
+
 }
 </script>
 
 <template>
-  <div v-if="this.$route.path !== '/author'">
+  <div v-if="$route.path !== '/author'">
     <div v-loading.fullscreen.lock="loading" element-loading-text="Welcome to NovelHub, novels will ready for you ASAP"
       :element-loading-spinner="svg" element-loading-svg-view-box="0, 5, 30, 40"
       element-loading-background="rgba(255, 255, 255, 255)"></div>
-    <div v-if="isLoadFinished" :class="{ 'blur': this.$store.state.isLoginVisible }">
+    <div v-if="isLoadFinished" :class="{ 'blur': $store.state.isLoginVisible }">
       <Global_Header @clearSearch="clearSearch" @handleSearch="handleSearch" @showLogin="showLogin"
-        @closeLoginBox="closeLoginBox" :verImage="this.verImage" :sessionId="this.sessionId" />
-      <router-view>
-      </router-view>
+        @closeLoginBox="closeLoginBox" :verImage="verImage" :sessionId="sessionId" />
+      <KeepAlive>
+        <router-view>
+        </router-view>
+      </KeepAlive>
       <!-- Go to top floating buttom -->
       <el-backtop :bottom="100">
         <div class="goTopButton">
@@ -100,10 +104,11 @@ export default {
           </el-icon>
         </div>
       </el-backtop>
+
     </div>
     <transition name="fade">
-      <div v-if="this.$store.state.isLoginVisible" class="loginSection">
-        <Login class="login" :verImage="this.verImage" :sessionId="this.sessionId" @closeLoginBox="closeLoginBox" />
+      <div v-if="$store.state.isLoginVisible" class="loginSection">
+        <Login class="login" :verImage="verImage" :sessionId="sessionId" @closeLoginBox="closeLoginBox" />
       </div>
     </transition>
   </div>

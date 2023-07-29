@@ -27,7 +27,6 @@ function isUserLoggedIn() {
 
 // Rounter address here
 const routes = [
-
   { path: '/', redirect: '/home' },
   { path: '/home', component: HomePage },
   {
@@ -38,12 +37,10 @@ const routes = [
     path: '/allnovels/:currentURL',
     component: All_Novels,
     beforeEnter: (to, from, next) => {
-      // Modify the route path to include currentURL
       to.params.currentURL = store.getters.getCurrentURL;
       next();
     },
   },
-  //{ path: '/newupdate', component: new_update },
   {
     path: '/userprofile',
     component: Profile,
@@ -89,12 +86,3 @@ router.beforeEach((to, from, next) => {
 app.use(store);
 app.use(router);
 app.mount('#app');
-
-// import Auther_pgae
-// const AuthorApp = createApp(AuthorApp);
-// AuthorApp.use(ElementPlus);
-
-// const author_routes = [
-//   { path: '/', redirect: '/home' },
-//   { path: '/home', component: HomePage },
-// ];
