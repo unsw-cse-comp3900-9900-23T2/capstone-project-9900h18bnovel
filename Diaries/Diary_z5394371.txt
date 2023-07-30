@@ -1,18 +1,18 @@
 Week2：
   -Created and set Jira configuration
-  -Helped figure front-end and back-end tools and environment
+  -Helped figure out front-end and back-end tools and environment
 Week3:
   -Helped create user stories
   -Designed UI/UX of Web front-end
   -Set Epic and task for front-end in Jira
   -Trans proposal from .doc to latex
-  -Implemented vue.js enviorments
+  -Implemented vue.js environments
   -Applied global router
-  -Implemented Header, footer, Nav bar, Home page
+  -Implemented Header, footer, Nav bar, and Home page
 Week4:
   -Fixed resolution problem
-  -Built more dynamic effect on home page, header, nav bar, footer
-  -Implemented of login, register, forget password sections and newest update page
+  -Built more dynamic effects on home page, header, nav bar, footer
+  -Implemented login, register, and forget password sections and newest update page
   -Completed the front-end and back-end joint debugging and obtain the back-end data
 Week5:
   -Implemented all functions of authorization pages, such as log-in and log-out
@@ -26,14 +26,17 @@ Week6:
   -Fixed resolution problem
 Week7:
   -Implemented ranks pages, novel detail page, comment section, chapter section
-  -User now can read books, also can customize font size and theme while reading
+  -Users can now read books, also can customize font size and theme while reading
 Week8:
-  -Fixed exist bugs
+  -Fixed existing bugs
   -Optimized coding style， UI/UX
-  -Checking and completed all existing functionality
+  -Checking and completing all existing functionality
 Week9:
-  -Implemented author page
-  -Introduce axios into project, in order to ensure the security of the request
+  -Implemented author page including registration, create&update books, create&update&delete chapters
+  -Introduce Axios into project, in order to ensure the security of the request
+  -Fixed remaining bugs
+  -Optimized UI/UX
+  -Set more constraints on user's possible behavior
 
 
   
