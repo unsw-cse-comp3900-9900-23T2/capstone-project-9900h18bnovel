@@ -603,7 +603,6 @@ export default {
 }
 
 .collected_img {
-  object-fit: contain;
   height: 240px;
   width: 150px;
   box-shadow: 6px 4px 6px rgb(65, 65, 65);

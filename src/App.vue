@@ -92,10 +92,8 @@ export default {
     <div v-if="isLoadFinished" :class="{ 'blur': $store.state.isLoginVisible }">
       <Global_Header @clearSearch="clearSearch" @handleSearch="handleSearch" @showLogin="showLogin"
         @closeLoginBox="closeLoginBox" :verImage="verImage" :sessionId="sessionId" />
-      <KeepAlive>
-        <router-view>
-        </router-view>
-      </KeepAlive>
+      <router-view>
+      </router-view>
       <!-- Go to top floating buttom -->
       <el-backtop :bottom="100">
         <div class="goTopButton">

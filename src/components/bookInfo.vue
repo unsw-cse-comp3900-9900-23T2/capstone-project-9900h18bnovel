@@ -12,7 +12,9 @@ import {
   Setting,
   Sunny,
   Moon,
-  CaretBottom
+  CaretBottom,
+  ArrowLeft,
+  ArrowRight,
 } from '@element-plus/icons-vue';
 import { ElMessage } from 'element-plus';
 import axios from 'axios';
@@ -660,11 +662,29 @@ export default {
               <div style="display: flex;">
                 <div style="margin-left: -50px; position: relative"><el-button @click="prevChapter"
                     style="height: 100%; width: 550px; top: 0; left: 0; position: absolute; border-color: rgba(0, 0, 0, 0); background-color: rgba(0, 0, 0, 0);">
-                  </el-button></div>
-                <div style="line-height: 2; margin-left: 20px; margin-right: 20px;" v-html="chapterContent"></div>
+                  </el-button>
+                </div>
+                <div style="line-height: 2; margin-left: 40px; margin-right: 40px;" v-html="chapterContent"></div>
                 <div style="margin-right: -50px; position: relative;"><el-button @click="nextChapter"
                     style="height: 100%; width: 550px; top: 0; right: 0; position: absolute; border-color: rgba(0, 0, 0, 0); background-color: rgba(0, 0, 0, 0);">
-                  </el-button></div>
+                  </el-button>
+                </div>
+              </div>
+              <div style="width: 100%; display: flex; justify-content: space-between; margin-top: 20px;">
+                <el-button @click="prevChapter" size="large" link style="font-size: 16pt;"><el-icon>
+                    <ArrowLeft />
+                  </el-icon><el-icon>
+                    <ArrowLeft />
+                  </el-icon><el-icon>
+                    <ArrowLeft />
+                  </el-icon>Prev</el-button>
+                <el-button @click="nextChapter" size="large" link style="font-size: 16pt;">Next<el-icon>
+                    <ArrowRight />
+                  </el-icon><el-icon>
+                    <ArrowRight />
+                  </el-icon><el-icon>
+                    <ArrowRight />
+                  </el-icon></el-button>
               </div>
             </div>
           </el-drawer>
