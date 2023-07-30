@@ -4,9 +4,9 @@ import {
   HomeFilled,
   Platform,
   TrendCharts,
-  Collection,
   EditPen,
 } from '@element-plus/icons-vue'
+import { ElMessage } from 'element-plus';
 </script >
 <script>
 import { logout } from '../utils';
@@ -96,12 +96,21 @@ export default {
     ShowUserProfile() {
       this.$router.push('/userprofile');
     },
-    GoToNovelistRealm(){
+    GoToNovelistRealm() {
       this.$router.push('/Novelists_Realm');
     },
     clearSearch() {
       this.searchInput = null;
       this.$emit("clearSearch");
+    },
+    goAuthorPage() {
+      if (this.$store.getters.isAuthenticated) {
+        window.open('/author');
+      } else {
+        ElMessage.error("Please Sign In First");
+        this.showLogin();
+      }
+
     }
   },
 
@@ -110,7 +119,7 @@ export default {
 </script>
 <template>
   <div
-    style="width: 100%; height: 81px; background-color: #f3f3f3; border-bottom: 1px solid #dfdede; position: absolute; z-index: -10;">
+    style="width: 100%; height: 81px; background-color: #ffffff; border-bottom: 1px solid #e7e7e7; position: absolute; z-index: -10;">
   </div>
   <div class="header_container">
     <!-- Click here will return to Home page in any circumstances -->
@@ -135,12 +144,9 @@ export default {
         <el-menu-item route index="/newestrank">Newest Rank</el-menu-item>
         <el-menu-item route index="/updaterank">Update Rank</el-menu-item>
       </el-sub-menu>
-      <el-menu-item route index="4"><el-icon>
+      <el-menu-item @click="goAuthorPage"><el-icon>
           <EditPen />
         </el-icon>My Creation</el-menu-item>
-      <el-menu-item route index=""><el-icon>
-          <Collection />
-        </el-icon>My Collection</el-menu-item>
     </el-menu>
 
     <div class="flexbox">
@@ -151,7 +157,7 @@ export default {
       </div>
     </div>
 
-    <div v-if="!this.$store.state.token"
+    <div v-if="!$store.state.token"
       style="display: flex; align-items: center; justify-content: flex-end; width: 200px;">
       <el-button class="login_button" type="primary" @click="showLogin"><el-icon>
           <User />
@@ -162,14 +168,14 @@ export default {
         userName }}</h3> -->
       <el-dropdown trigger="click">
         <div>
-          <el-avatar :size="70" :src="this.$store.state.photo ? this.$store.state.photo : CurrentPhoto"
+          <el-avatar :size="70" :src="$store.state.photo ? $store.state.photo : CurrentPhoto"
             class="user_Avatar" />
         </div>
         <template #dropdown>
           <el-dropdown-menu>
             <el-dropdown-item @click="ShowUserProfile()">My Profile</el-dropdown-item>
             <el-dropdown-item @click="GoToNovelistRealm()">Novelist's Realm</el-dropdown-item>
-            <el-dropdown-item @click="logout(this.$router.currentRoute.value.path.includes('userprofile'))" divided>
+            <el-dropdown-item @click="logout($router.currentRoute.value.path.includes('userprofile'))" divided>
               Sign out
             </el-dropdown-item>
           </el-dropdown-menu>
@@ -200,15 +206,13 @@ export default {
   margin-right: 10px;
 }
 
-
-
 .flexbox {
   width: 200px;
   height: 100%;
   display: flex;
   justify-content: right;
   align-items: center;
-  right: 140px;
+  right: 100px;
   position: absolute;
 }
 
@@ -227,7 +231,7 @@ export default {
   width: 2px;
   height: 15px;
   position: absolute;
-  top: 23px;
+  top: 22px;
   right: 0px;
   transform: rotate(135deg);
 }
@@ -238,7 +242,7 @@ export default {
   background: transparent;
   width: 10px;
   height: 10px;
-  padding: 8px;
+  padding: 12px;
   border: solid 2px rgb(139, 139, 139);
   outline: none;
   border-radius: 20px;
@@ -261,7 +265,7 @@ export default {
 
 .search>div>input:focus,
 .search>div>input:not(:placeholder-shown) {
-  width: 300px;
+  width: 280px;
 }
 
 .login_button {
@@ -292,38 +296,41 @@ export default {
   margin: 0;
   display: flex;
   align-items: center;
-  background-color: #f3f3f3;
-  border-bottom: 1px solid #dfdede;
+  background-color: #ffffff;
+  border-bottom: 1px solid #e7e7e7;
   height: 81px;
   width: 1152px;
   margin: auto;
   position: relative;
 }
 
+
 .header_container .el-menu--horizontal {
   border-bottom: none;
-  height: 81px;
-  background-color: #f3f3f3;
-  width: 500px;
+  background-color: #ffffff;
+  width: 650px;
 }
 
-.header_container .el-menu--horizontal>.el-menu-item.is-active {
+.header_container .el-menu--horizontal>.el-menu-item.is-active,
+.header_container .el-menu--horizontal>.el-sub-menu.is-active .el-sub-menu__title {
   border-bottom: none;
 }
 
-.header_container .el-menu-item {
+.header_container .el-menu-item,
+.header_container .el-menu--horizontal>.el-sub-menu.is-active .el-sub-menu__title {
   transition: background-color var(--el-transition-duration), color var(--el-transition-duration)
 }
 
-.header_container .el-menu--horizontal .el-menu-item:not(.is-disabled):hover {
+.header_container .el-menu--horizontal .el-menu-item:not(.is-disabled):hover,
+.header_container .el-menu--horizontal .el-menu-item:not(.is-disabled):focus,
+.header_container .el-menu--horizontal>.el-sub-menu .el-sub-menu__title:hover{
   background-color: rgb(0, 0, 0, 0);
 }
 
-.header_container .el-menu--horizontal .el-menu-item:not(.is-disabled):focus {
-  background-color: rgb(0, 0, 0, 0);
-}
 
-.header_container .el-menu--horizontal>.el-sub-menu .el-sub-menu__title:hover {
-  background-color: rgb(0, 0, 0, 0);
+.header_container .el-menu--horizontal>.el-menu-item,
+.header_container .el-menu--horizontal>.el-sub-menu .el-sub-menu__title {
+  color: #717174;
+  font-weight: bold;
 }
 </style>

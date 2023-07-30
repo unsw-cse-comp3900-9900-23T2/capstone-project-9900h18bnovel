@@ -12,8 +12,6 @@ import {
   Setting,
   Sunny,
   Moon,
-  ArrowLeft,
-  ArrowRight,
   CaretBottom
 } from '@element-plus/icons-vue';
 import { ElMessage } from 'element-plus';
@@ -115,6 +113,7 @@ export default {
   },
 
   mounted() {
+    window.scrollTo(0, 0);
     setTimeout(() => {
       this.getBookInfo();
       this.getChapters();
@@ -412,7 +411,7 @@ export default {
       <div class="bookDetail">
         <div class="bookmark-container">
           <img :src="book.picUrl"
-            style="height: 400px; box-shadow: 6px 4px 6px rgb(155, 155, 155); border-radius: 8px; margin-left: 20px;" />
+            style="height: 400px; width: 250px; box-shadow: 6px 4px 6px rgb(155, 155, 155); border-radius: 8px; margin-left: 20px;" />
           <div v-if="isCollected" class="bookmark-icon">
             <el-icon size="60">
               <CaretBottom color="#f7ba2a" />
@@ -433,7 +432,7 @@ export default {
                 }}</el-tag>
               </h1>
               <el-tag style="font-size: 14pt;" size="large" effect="plain" :type="book.bookStatus === '1' ? 'success'
-                : ''">{{ book.bookStatus === "1" ? "Completed" : "Ongoing" }}</el-tag>
+                    : ''">{{ book.bookStatus === "1" ? "Completed" : "Ongoing" }}</el-tag>
             </div>
             <div style="font-size: 14pt; margin-bottom: 15px;"> {{ book.authorName }}</div>
           </div>
@@ -470,13 +469,13 @@ export default {
               &nbsp;&nbsp;&nbsp;
             </div>
             <div style="margin-top: 10px;">
-              <el-button v-if="this.prevChapterId === null" style="font-size: 14pt;" size="large" type="primary" round
+              <el-button v-if="prevChapterId === null" style="font-size: 14pt;" size="large" type="primary" round
                 :icon="Reading"
                 @click="goToContent(chapters[0] ? chapters[0].id : null, chapters[0] ? chapters[0].chapterName : null)">
                 READ
               </el-button>
               <el-button v-else style="font-size: 14pt;" size="large" type="primary" round :icon="Reading"
-                @click="goToContent(this.prevChapterId, this.chapterName)">
+                @click="goToContent(prevChapterId, chapterName)">
                 CONTINUE READING
               </el-button>
               <el-button v-if="!isCollected" style="font-size: 14pt;" size="large" type="primary" round :icon="Plus"
@@ -508,7 +507,7 @@ export default {
               <div style="font-size: 16pt; display: flex; justify-content: space-between; align-items: center;">
                 <b>My Comment</b>
                 <div class="editSwitch">
-                  <el-switch size="large" inline-prompt v-model="this.isEditComment" active-text="Editing"
+                  <el-switch size="large" inline-prompt v-model="isEditComment" active-text="Editing"
                     inactive-text="Edit" />
                 </div>
               </div>
@@ -659,32 +658,12 @@ export default {
                 </div>
               </h1>
               <div style="display: flex;">
-                <div style="margin-left: -50px;"><el-button @click="prevChapter"
-                    style="height: 100%; border-color: rgba(0, 0, 0, 0); background-color: rgba(0, 0, 0, 0); border-right: 1px solid #b7b7b7; border-radius: 0;">
-                    <el-icon>
-                      <ArrowLeft />
-                    </el-icon>
-                    P
-                    <br>
-                    R
-                    <br>
-                    E
-                    <br>
-                    V
+                <div style="margin-left: -50px; position: relative"><el-button @click="prevChapter"
+                    style="height: 100%; width: 550px; top: 0; left: 0; position: absolute; border-color: rgba(0, 0, 0, 0); background-color: rgba(0, 0, 0, 0);">
                   </el-button></div>
                 <div style="line-height: 2; margin-left: 20px; margin-right: 20px;" v-html="chapterContent"></div>
-                <div style="margin-right: -50px;"><el-button @click="nextChapter"
-                    style="height: 100%; border-color: rgba(0, 0, 0, 0); background-color: rgba(0, 0, 0, 0); border-left: 1px solid #b7b7b7; border-radius: 0;">
-                    N
-                    <br>
-                    E
-                    <br>
-                    X
-                    <br>
-                    T
-                    <el-icon>
-                      <ArrowRight />
-                    </el-icon>
+                <div style="margin-right: -50px; position: relative;"><el-button @click="nextChapter"
+                    style="height: 100%; width: 550px; top: 0; right: 0; position: absolute; border-color: rgba(0, 0, 0, 0); background-color: rgba(0, 0, 0, 0);">
                   </el-button></div>
               </div>
             </div>
@@ -722,30 +701,30 @@ export default {
   height: 40px;
 }
 
-.container {
+.chapterDetail .container {
   font-family: 'Roboto Condensed', sans-serif;
   margin-bottom: -20px;
   color: #b7b7b7;
 }
 
-.container .list {
+.chapterDetail .container .list {
   list-style: none;
   margin: 0;
   padding: 0;
 }
 
-.container h1 {
+.chapterDetail .container h1 {
   display: inline-block;
   padding: 0 10px;
 }
 
-.container span {
+.chapterDetail .container span {
   position: relative;
   display: block;
   cursor: pointer;
 }
 
-.container span {
+.chapterDetail .container span {
 
   &:before,
   &:after {
@@ -875,7 +854,7 @@ export default {
   align-items: center;
   margin-bottom: 20px;
   font-size: 14pt;
-  width: 45%;
+  width: 49%;
   padding: 20px;
   position: relative;
   transition: transform 0.3s ease;

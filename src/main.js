@@ -7,10 +7,13 @@ import Profile from './components/User_Profile.vue';
 import Novelists_Realm from "@/components/Novelists_Realm.vue";
 import ranksPages from './components/RanksPages.vue';
 import bookInfo from './components/bookInfo.vue';
+import notFoundPage from './components/NotFoundPage.vue';
+import author_page from './components/Author_page.vue';
 import store from './store';
 import ElementPlus from 'element-plus';
 import 'element-plus/theme-chalk/index.css';
 
+// import AuthorApp from "./AuthorApp.vue"
 const app = createApp(App);
 app.use(ElementPlus);
 
@@ -34,12 +37,10 @@ const routes = [
     path: '/allnovels/:currentURL',
     component: All_Novels,
     beforeEnter: (to, from, next) => {
-      // Modify the route path to include currentURL
       to.params.currentURL = store.getters.getCurrentURL;
       next();
     },
   },
-  //{ path: '/newupdate', component: new_update },
   {
     path: '/userprofile',
     component: Profile,
@@ -56,7 +57,9 @@ const routes = [
   { path: '/newestrank', component: ranksPages },
   { path: '/clickrank', component: ranksPages },
   { path: '/updaterank', component: ranksPages },
-  { path: '/bookInfo/:bookId', component: bookInfo }
+  { path: '/bookInfo/:bookId', component: bookInfo },
+  { path: '/:pathMatch(.*)', component: notFoundPage },
+  { path: '/author', component: author_page },
 ];
 
 export const router = createRouter({

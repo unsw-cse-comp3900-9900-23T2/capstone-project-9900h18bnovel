@@ -20,7 +20,6 @@ const svg = `
 </script>
 <script>
 import Global_Footer from './Global_Footer.vue';
-import Profile from './User_Profile.vue';
 export default {
   data() {
     return {
@@ -38,13 +37,11 @@ export default {
       sessionId: '',
       showHomePage: false,
       loading: true,
-      showProfile: false,
       collectedBooks: [],
     }
   },
   components: {
     Global_Footer,
-    Profile,
   },
   watch: {
     '$store.getters.GetUID': {
@@ -99,8 +96,21 @@ export default {
     goBookInfo(bookId) {
       this.$router.push(`/bookInfo/${bookId}`);
     },
+
     GoToMyCollection() {
       this.$router.push('/userprofile');
+    },
+
+    goClickRank(){
+      this.$router.push("/clickrank");
+    },
+
+    goNewestRank(){
+      this.$router.push("/newestrank")
+    },
+
+    goUpdateRank(){
+      this.$router.push("/updaterank")
     },
   },
   computed: {
@@ -116,9 +126,6 @@ export default {
     element-loading-background="rgba(255, 255, 255, 255)"
     style="top:50%; left: 50%; transform: translate(-50%,-50%); position: absolute;"></div>
   <div v-if="showHomePage">
-    
-    <div id="svgContainer"></div>
-
     <div style="display: flex; justify-content: center;">
       <div class="homeBody">
         <div class="weekly_collect_books_container">
@@ -134,7 +141,8 @@ export default {
                 </template>
               </el-popover>
             </h2>
-            <el-carousel :interval="4000" height="300px">
+            <el-carousel :interval="4000" height="300px"
+              style="border-radius: 5px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
               <el-carousel-item v-for="item in weekly_books_info.slice(0, 3)" :key="item.title">
                 <div class="carousel_weekly_background" :style="getBackgroundStyle(item.picUrl)"></div>
                 <el-row>
@@ -168,7 +176,7 @@ export default {
                 </template>
               </el-popover>
             </h2>
-            <div v-if="!this.$store.state.token" class="collected_novel_na_user">
+            <div v-if="!$store.state.token" class="collected_novel_na_user">
               <el-empty :image-size="120" description="Please sign in to see more informations">
               </el-empty>
             </div>
@@ -187,7 +195,7 @@ export default {
                 <el-button style="height:100%; background-color:rgb(0,0,0,0); right:0; position:absolute;
                   border-color:rgb(0,0,0,0); border-left: 1px solid #b7b7b7; border-radius: 0;"
                   @click="GoToMyCollection">
-                  M<br>Y<br><br>C<br>O<br>L<br>L<br>E<br>C<br>T<br>I<br>O<br>N<br>S
+                  A<br>L<br>L<br>
                   <el-icon>
                     <ArrowRight />
                   </el-icon>
@@ -230,7 +238,7 @@ export default {
                     <el-tag class="tag" effect="plain" :style="getItemColor(item.categoryName)">{{
                       item.categoryName
                     }}</el-tag>
-                    <span style="bottom: 10px;position: absolute;">
+                    <span style="bottom: 0px;position: absolute;">
                       {{ item.collectCount }} <el-icon>
                         <UserFilled />
                       </el-icon> Collected
@@ -299,7 +307,7 @@ export default {
                     <el-tag class="tag" effect="plain" :style="getItemColor(item.categoryName)">{{
                       item.categoryName
                     }}</el-tag>
-                    <span style="bottom: 10px;position: absolute;">
+                    <span style="bottom: 0px;position: absolute;">
                       {{ item.collectCount }} <el-icon>
                         <UserFilled />
                       </el-icon> Collected
@@ -370,8 +378,8 @@ export default {
                 <br />
                 <el-text truncated style="font-size: 10pt;">{{ item.authorName }}</el-text>
                 <br />
-                <el-text truncated style="font-size: 10pt; width: 250px;"><el-rate v-model="item.score"
-                    disabled show-score text-color="#ff9900" size="small" score-template="{value} points" /></el-text>
+                <el-text truncated style="font-size: 10pt; width: 250px;"><el-rate v-model="item.score" disabled
+                    show-score text-color="#ff9900" size="small" score-template="{value} points" /></el-text>
               </div>
             </div>
           </div>
@@ -399,8 +407,8 @@ export default {
                 <br />
                 <el-text truncated style="font-size: 10pt;">{{ item.authorName }}</el-text>
                 <br />
-                <el-text truncated style="font-size: 10pt; width: 250px;"><el-rate v-model="item.score"
-                    disabled show-score text-color="#ff9900" size="small" score-template="{value} points" /></el-text>
+                <el-text truncated style="font-size: 10pt; width: 250px;"><el-rate v-model="item.score" disabled
+                    show-score text-color="#ff9900" size="small" score-template="{value} points" /></el-text>
               </div>
             </div>
           </div>
@@ -418,7 +426,7 @@ export default {
             </div>
             <div class="rank_items" v-for="(item, index) in update_rank_info.slice(0, 5)" :key="item">
               <div class="rank_image">
-                <img style="height: 80px;" :src="item.picUrl" @click="goBookInfo(item.bookId)" />
+                <img style="height: 80px; width: 50px;" :src="item.picUrl" @click="goBookInfo(item.bookId)" />
               </div>
               <div class="rank_rank" :class="{ 'red': index === 0, 'orange': index === 1, 'green': index === 2 }">
                 0{{ index + 1 }}
@@ -428,16 +436,13 @@ export default {
                 <br />
                 <el-text truncated style="font-size: 10pt;">{{ item.authorName }}</el-text>
                 <br />
-                <el-text truncated style="font-size: 10pt; width: 250px;"><el-rate v-model="item.score"
-                    disabled show-score text-color="#ff9900" size="small" score-template="{value} points" /></el-text>
+                <el-text truncated style="font-size: 10pt; width: 250px;"><el-rate v-model="item.score" disabled
+                    show-score text-color="#ff9900" size="small" score-template="{value} points" /></el-text>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
-    <div v-if="showProfile">
-      <Profile />
     </div>
     <Global_Footer />
   </div>
@@ -491,6 +496,7 @@ export default {
 }
 
 .carousel_weekly_image {
+  width: 156.25px;
   height: 250px;
   object-fit: contain;
   box-shadow: 6px 4px 6px white;
@@ -511,12 +517,12 @@ export default {
 .carousel_weekly_text {
   display: flex;
   flex-direction: column;
-  margin-top: 40px;
+  margin-top: 20px;
   color: white;
 }
 
 .carousel_weekly_text_title {
-  font-size: 22pt;
+  font-size: 20pt;
   margin-bottom: 5px;
   display: -webkit-box;
   -webkit-box-orient: vertical;
@@ -563,13 +569,15 @@ export default {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background-color: #f3f3f3;
+  background-color: #f6f6f6;
   color: white;
+  border-radius: 5px;
 }
 
 .collected_novel_user {
   height: 100%;
   background-color: #f3f3f3;
+  border-radius: 5px;
 }
 
 .collected_novel_user_ya {
@@ -577,6 +585,7 @@ export default {
   flex-wrap: wrap;
   margin-top: 9px;
   position: relative;
+  border-radius: 5px;
 }
 
 .collected_word {
@@ -595,6 +604,7 @@ export default {
 
 .collected_img {
   object-fit: contain;
+  height: 240px;
   width: 150px;
   box-shadow: 6px 4px 6px rgb(65, 65, 65);
   border-radius: 8px;
@@ -652,23 +662,23 @@ export default {
 }
 
 .carousel_container {
+  padding: 10px;
   height: 300px;
-
 }
 
 .carousel_container:hover {
-
   cursor: default;
 }
 
 
 .carousel_left_container {
   width: 30%;
-  padding-left: 20px;
-  padding-top: 20px;
-  margin-right: 5px;
   display: flex;
   flex-direction: column;
+  margin-left: 10px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  position: relative;
 }
 
 .carousel_left_title {
@@ -677,7 +687,6 @@ export default {
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
   overflow: hidden;
-  margin-bottom: 5px;
 }
 
 .carousel_left_title:hover {
@@ -687,6 +696,7 @@ export default {
 
 .carousel_image_container {
   height: 100%;
+
   transform: scale(1);
   transition: transform 0.3s ease;
 }
@@ -697,14 +707,16 @@ export default {
 }
 
 .carousel_image {
+  box-shadow: 6px 4px 6px rgb(92, 92, 92);
+  border-radius: 5px;
   height: 100%;
+  width: 175px;
   object-fit: contain;
 }
 
 .carousel_right_container {
   padding-left: 20px;
-  padding-top: 15px;
-  width: 28%;
+  width: 30%;
 }
 
 .carousel_right_comments_container {
@@ -712,13 +724,14 @@ export default {
   flex-direction: column;
   height: 85%;
   margin-left: -10px;
+  margin-top: 10px;
   font-size: 10pt;
 }
 
 .carousel_right_comments {
   display: block;
-  height: 31%;
-  width: 90%;
+  height: 30%;
+  width: 100%;
   border: 1px solid #1989fa;
   border-radius: 3px;
   overflow: hidden;
@@ -733,12 +746,11 @@ export default {
 }
 
 .carousel_right_rates_container {
-  bottom: 7px;
+  bottom: 10px;
   position: absolute;
 }
 
 .rank_books_container {
-  margin-top: -10px;
   margin-bottom: 15px;
   display: flex;
   justify-content: center;
@@ -773,7 +785,7 @@ export default {
 
 .rank_items {
   display: flex;
-  margin-top: 8px;
+  margin-top: 5px;
 }
 
 .rank_image img {
@@ -792,7 +804,6 @@ export default {
   margin-right: 10px;
   font-size: 14pt;
   color: grey;
-  padding-top: 3px;
 }
 
 .red {
@@ -808,7 +819,6 @@ export default {
 }
 
 .rank_info {
-  padding-top: 3px;
   font-size: 14pt;
 }
 
