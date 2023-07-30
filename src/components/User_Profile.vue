@@ -8,6 +8,7 @@ import {
   Filter,
   Reading,
   Delete,
+  Close,
 } from '@element-plus/icons-vue';
 import { computed } from 'vue'
 const iconStyle = computed(() => {
@@ -75,10 +76,10 @@ export default {
   computed: {
     truncatedDesc() {
       return function (desc) {
-        if (desc.length <= 200) {
+        if (desc.length <= 100) {
           return desc;
         } else {
-          return desc.slice(0, 200) + "... ...";
+          return desc.slice(0, 100) + "... ...";
         }
       };
     }
@@ -242,6 +243,12 @@ export default {
     StartEditName(){
       this.isNameEditing = true;
     },
+    CancelNameInput(){
+      this.isNameEditing = false;
+    },
+    CancelGenderSelect(){
+      this.isGenderEditing = false;
+    },
     GoToBook(bookId){
       this.$router.push('/bookInfo/'+bookId);
     },
@@ -298,84 +305,104 @@ export default {
             </el-button>
           </div>
         </el-aside>
-        <el-main>
-          <el-descriptions
-              class="BasicInfoContainer"
-              :column="1"
-              :size="large"
-              border>
-            <el-descriptions-item>
-              <template #label>
-                <div class="cell-item">
-                  <el-icon :style="iconStyle">
+        <el-main style="margin: auto">
+          <table>
+            <tbody class="InfoTableBody">
+            <div class="Binfo">
+              <tr class="InfoLine">
+                <td class = "InfoTitle">
+                  <el-icon :style="iconStyle" style="color: dimgray; margin: 19px 5px 19px 10px;">
                     <MessageBox />
                   </el-icon>
-                  Email
-                </div>
-              </template>
-              {{ email }}
-            </el-descriptions-item>
-            <el-descriptions-item>
-              <template #label>
-                <div class="cell-item">
-                  <el-icon :style="iconStyle">
-                    <user />
-                  </el-icon>
-                  Username
-                </div>
-              </template>
-              <div class="name-row" v-if="!isNameEditing">
-                <div class="name-info">
-                  {{ userName }}
-                  <el-button class="UpdateNameButton" @click="StartEditName" circle>
-                    <el-icon color="gray">
-                      <edit />
+                  <span style="font-weight: 700; color: #606266; display: inline-block">Email</span>
+                </td>
+                <td class = "InfoCont" style="margin-left: 10px; font-size:16px; color:  #606266; display: inline-block;">
+                  {{ email }}
+                </td>
+              </tr>
+              <tr class="InfoLine">
+                <td class = "InfoTitle">
+                  <div class="cell-item">
+                    <el-icon :style="iconStyle" style="color: dimgray; margin: 19px 5px 19px 10px;">
+                      <user />
                     </el-icon>
-                  </el-button>
-                </div>
-              </div>
-              <div class="name-row" v-else>
-                <div class="input-name-container">
-                  <input type="text" v-model="newUserName" :placeholder="userName" />
-                  <el-button class="SubmitNewName" style="margin: auto 0px auto 5em;" @click="UpdateNewName" circle>
-                    <el-icon color="lightgreen">
-                      <Check />
-                    </el-icon>
-                  </el-button>
-                </div>
-              </div>
-            </el-descriptions-item>
-            <el-descriptions-item>
-              <template #label>
-                <div class="cell-item">
-                  <el-icon :style="iconStyle">
-                    <Filter />
-                  </el-icon>
-                  Gender
-                </div>
-              </template>
-              <div class="gender-row" v-if="!isGenderEditing">
-                <div class="gender-info">
-                  {{this.$store.state.sex== null || '' ? "Record Now!" : (this.$store.state.sex==0? 'Male':'Female') }}<!---->
-                  <el-button class="UpdateGenderButton" @click="StartEditGender" circle>
-                    <el-icon color="gray">
-                      <edit />
-                    </el-icon>
-                  </el-button>
-                </div>
-              </div>
-                <div class="gender-row" v-else>
-                  <div class="input-gender-container">
-                    <el-cascader v-model="NewGender" :options="options" @change="UpdateGender()" />
-                    <el-button class="SubmitGender" @click="UpdateGender" style="margin: auto 0px auto 5em;" circle>
-                      <el-icon color="lightgreen">
-                        <Check />
-                      </el-icon>
-                    </el-button>
+                    <span style="font-weight: 700; color: #606266; display: inline-block">
+                    Username
+                  </span>
                   </div>
-                </div>
-            </el-descriptions-item>
-          </el-descriptions>
+                </td>
+                <td class = "InfoCont">
+                  <div class="name-row" v-if="!isNameEditing">
+                    <div class="name-info">
+                      {{ userName }}
+                      <el-button class="UpdateNameButton" @click="StartEditName" circle>
+                        <el-icon color="gray">
+                          <edit />
+                        </el-icon>
+                      </el-button>
+                    </div>
+                  </div>
+                  <div class="name-row" v-else>
+                    <div class="input-name-container">
+                      <input type="text" v-model="newUserName" :placeholder="userName" style="width: 190px; margin-left: 10px;"/>
+                      <el-button class = "CancelSubmitName" style = "margin: auto 0px auto 10px;" @click = "CancelNameInput" circle>
+                        <el-icon color="grey">
+                          <Close />
+                        </el-icon>
+                      </el-button>
+                      <el-button class="SubmitNewName" style="margin: auto 0px auto 10px;" @click="UpdateNewName" circle>
+                        <el-icon color="lightgreen">
+                          <Check />
+                        </el-icon>
+                      </el-button>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+              <tr class="InfoLine">
+                <td class = "InfoTitle">
+                  <div class="cell-item">
+                    <el-icon :style="iconStyle" style="color: dimgray; margin: 19px 5px 19px 10px;">
+                      <Filter />
+                    </el-icon>
+                    <span style="font-weight: 700; color: #606266; display: inline-block">
+                      Gender
+                    </span>
+                  </div>
+                </td>
+                <td class = "InfoCont">
+                  <div class="gender-row" v-if="!isGenderEditing">
+                    <div class="gender-info">
+                      {{this.$store.state.sex== null || '' ? "Record Now!" : (this.$store.state.sex==0? 'Male':'Female') }}<!---->
+                      <el-button class="UpdateGenderButton" @click="StartEditGender" circle>
+                        <el-icon color="gray">
+                          <edit />
+                        </el-icon>
+                      </el-button>
+                    </div>
+                  </div>
+                  <div class="gender-row" v-else>
+                    <div class="input-gender-container">
+                      <el-cascader v-model="NewGender" :options="options" @change="UpdateGender()" style="width: 190px; margin-left:10px;"/>
+                      <el-button class = "CancelGenderSelect" style = "margin: auto 0px auto 10px;" @click = "CancelGenderSelect" circle>
+                        <el-icon color="grey">
+                          <Close />
+                        </el-icon>
+                      </el-button>
+                      <el-button class="SubmitGender" @click="UpdateGender" style="margin: auto 0px auto 10px;" circle>
+                        <el-icon color="lightgreen">
+                          <Check />
+                        </el-icon>
+                      </el-button>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            </div>
+            </tbody>
+          </table>
+
+
         </el-main>
       </el-container>
     </div>
@@ -444,9 +471,7 @@ export default {
   position: relative;
   margin: auto;
 }
-.loadingCollButton{
-  margin-bottom: 2em;
-}
+
 .UploadPhotoButton {
   position: absolute;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
@@ -470,19 +495,42 @@ export default {
 .UpdateGenderButton, .UpdateNameButton {
   margin: auto 1em;
 }
+.InfoLine{
+  width: 500px;
+  height: 50px;
+  padding: 8px;
+  border: #949494 solid;
+}
+table{
+  border-collapse: collapse;
+}
+.InfoTableBody{
+  border: 0.5px solid #f5f7fa;
+}
+.InfoTitle{
+  width: 184px;
+  height: 34px;
+  background-color: rgba(61, 61, 62, 0.1);
+  border: 0.5px solid #f5f7fa;
+}
+.InfoCont{
+  width: 284px;
+  height: 34px;
+}
 .el-descriptions {
   margin-top: 2em;
 }
+
 .cell-item {
   display: flex;
   align-items: center;
-  label-align: left;
 }
 
 .gender-row, .name-row {
   display: flex;
   flex-direction: row;
   align-items: center;
+  right: 0;
   justify-content: space-between;
 }
 
@@ -492,6 +540,9 @@ export default {
   justify-content: space-between;
   align-items: center;
   flex-grow: 1;
+  font-size: 16px;
+  margin-left: 10px;
+  color: #606266;
 }
 
 .input-gender-container, .input-name-container {

@@ -409,7 +409,7 @@ export default {
 </script>
 
 <template>
-  <div v-if="isLoginVisible" class="animate__bounceIn animate__faster">
+  <div v-show="isLoginVisible" class="animate__bounceIn animate__faster">
     <div class="auth_form">
       <img src="..\logo1.png" class="logo">
       <div style="font-size: 22pt; font-weight: bold; padding-top: 10px;">Sign in</div>
@@ -450,7 +450,7 @@ export default {
     </div>
   </div>
 
-  <div v-else-if="isRegisterVisible" class="animate__bounceIn animate__faster">
+  <div v-show="isRegisterVisible" class="animate__bounceIn animate__faster">
     <div class="auth_form">
       <img src="..\logo1.png" class="logo">
       <div style="font-size: 22pt; font-weight: bold; padding-top: 10px;">Sign Up</div>
@@ -506,7 +506,7 @@ export default {
     </div>
   </div>
 
-  <div v-else-if="isForgetVisible" class="animate__bounceIn animate__faster">
+  <div v-show="isForgetVisible" class="animate__bounceIn animate__faster">
     <div class="auth_form">
       <img src="..\logo1.png" class="logo">
       <div style="font-size: 22pt; font-weight: bold; padding-top: 10px;">Forget Password</div>

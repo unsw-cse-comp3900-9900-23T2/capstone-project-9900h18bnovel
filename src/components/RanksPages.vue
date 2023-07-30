@@ -42,6 +42,7 @@ export default {
     }
   },
   mounted() {
+    window.scrollTo(0, 0);
     const path = this.$route.path;
     path === "/newestrank" ? this.isNewestRank = true : this.isNewestRank = false;
     path === "/updaterank" ? this.isUpdateRank = true : this.isUpdateRank = false;
@@ -137,17 +138,18 @@ export default {
           </h1>
           <li v-for="(item, index) in filteredBooks" :key="item.id" class="infinite-list-item"
             @click="goBookInfo(item.id)">
-            <div style="font-size: 14pt; width:100px; text-align: center;">
+            <div style="font-size: 14pt; font-weight: bold; width: 90px; text-align: center;"
+              :class="{ 'red': index === 0, 'orange': index === 1, 'green': index === 2 }">
               {{ index < 9 ? '0' + (index + 1) : index + 1 }} </div>
                 <img :src="item.picUrl"
-                  style=" height: 155px; border-radius: 5px; box-shadow: 6px 4px 6px rgb(151, 151, 151);" />
+                  style=" height: 145px; width:90.63px; border-radius: 5px; box-shadow: 6px 4px 6px rgb(110, 110, 110);" />
                 <div class="update_book_item_container">
                   <div
                     style="font-size: 18pt; display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 1; overflow: hidden;">
                     {{ item.bookName }}</div>
-                  <div style="font-size: 12pt;">{{ item.authorName }}</div>
+                  <div style="font-size: 11pt;">{{ item.authorName }}</div>
                   <div
-                    style="font-size: 10pt; margin-top: 3px; display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 4; overflow: hidden;">
+                    style="font-size: 9pt; margin-top: 3px; display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 3; overflow: hidden;">
                     {{ item.bookDesc }}</div>
                   <el-tag style="bottom: 12px; position: absolute;" :style="getItemColor(item.categoryName)"
                     :color="getItemColor(item.categoryName)" effect="plain">{{
@@ -169,8 +171,7 @@ export default {
           <div style="height: 100px; margin-top: 20px; width: 100%; display:flex; justify-content: center;"
             v-loading="loadMore" :element-loading-spinner="svg" element-loading-svg-view-box="0, 5, 30, 40"
             element-loading-background="rgba(255, 255, 255, 255)">
-            <div v-if="count >= rankBooks.length + 5" @click="scrollToTop"
-              style="text-align: center; width: 100%;">
+            <div v-if="count >= rankBooks.length + 5" @click="scrollToTop" style="text-align: center; width: 100%;">
               <h3>
                 <el-icon>
                   <CaretTop />

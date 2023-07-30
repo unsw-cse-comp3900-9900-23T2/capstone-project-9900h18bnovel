@@ -154,7 +154,7 @@ export default {
         : (() => {
           this.genreChecked = this.genreChecked.map(() => false);
           this.genreChecked[index] = true;
-          index >= 7 ? this.categoryId = index + 2 : index === 10 ? this.categoryId = 8 : this.categoryId = index + 1;
+          index === 10 ? this.categoryId = 8 : index >= 7 ? this.categoryId = index + 2 : this.categoryId = index + 1;
           this.clickedLoading();
         })()
     },
@@ -424,10 +424,10 @@ export default {
                       <el-check-tag class="tags" :checked="updateChecked[2]" @click="updateonChange(2)">A
                         year</el-check-tag>
                       <el-date-picker v-model="updateTimeMin" type="date" placeholder="Pick a Date"
-                        value-format="YYYY-MM-DD" @change="clickedLoading" style="width: 140px;" />
+                        value-format="YYYY-MM-DD" @change="clickedLoading" style="width: 180px;" />
                     </div>
                   </div>
-                  <div style="width: 100%; margin: auto; ">
+                  <div style="width: 100%; margin: auto; " class="slider">
                     <h4 style="color: rgb(117, 117, 117);">Word Count</h4>
                     <el-slider v-model="wordCount" range :marks="marks" show-stops :show-tooltip="false" :max="10"
                       style="width: 98%; margin: auto;" @change="wordcountonchange()" />
@@ -468,13 +468,13 @@ export default {
               </div>
               <div style="margin-top: -2px; font-size: 14pt; width: 110px; text-align: right;">
                 <b>{{
-                  this.totalNum }} {{ novels.length <= 1 ? "book" : "books" }} </b>
+                  totalNum }} {{ novels.length <= 1 ? "book" : "books" }} </b>
               </div>
             </div>
           </div>
           <div class="novels_container" v-loading.fullscreen="clickedLoad" :element-loading-spinner="svg"
             element-loading-svg-view-box="0, 5, 30, 40">
-            <h3 v-if="this.keyword" style="width: 100%;">Search result for "{{ this.keyword }}"</h3>
+            <h3 v-if="keyword" style="width: 100%;">Search result for "{{ keyword }}"</h3>
             <h1 v-if="novels.length === 0" style="width: 100%; text-align: center;">No Results</h1>
             <div v-for="(item) in novels" :key="item.bookName" class="each_novel_container">
               <el-card shadow="hover" :body-style="{ padding: '10px' }">
@@ -562,6 +562,10 @@ export default {
 
 
 <style>
+.slider .el-slider {
+  --el-slider-button-wrapper-offset: -9px
+}
+
 .Action.el-check-tag.is-checked {
   background-color: #b3281a;
   color: white;
@@ -682,6 +686,7 @@ body .el-tag {
 }
 
 .novel_img {
+  width: 109.38px;
   height: 175px;
   border-radius: 5px;
   transform: scale(1);

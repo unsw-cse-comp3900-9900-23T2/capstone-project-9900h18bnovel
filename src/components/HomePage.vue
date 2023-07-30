@@ -20,7 +20,6 @@ const svg = `
 </script>
 <script>
 import Global_Footer from './Global_Footer.vue';
-import Profile from './User_Profile.vue';
 export default {
   data() {
     return {
@@ -38,13 +37,11 @@ export default {
       sessionId: '',
       showHomePage: false,
       loading: true,
-      showProfile: false,
       collectedBooks: [],
     }
   },
   components: {
     Global_Footer,
-    Profile,
   },
   watch: {
     '$store.getters.GetUID': {
@@ -99,8 +96,21 @@ export default {
     goBookInfo(bookId) {
       this.$router.push(`/bookInfo/${bookId}`);
     },
+
     GoToMyCollection() {
       this.$router.push('/userprofile');
+    },
+
+    goClickRank(){
+      this.$router.push("/clickrank");
+    },
+
+    goNewestRank(){
+      this.$router.push("/newestrank")
+    },
+
+    goUpdateRank(){
+      this.$router.push("/updaterank")
     },
   },
   computed: {
@@ -166,7 +176,7 @@ export default {
                 </template>
               </el-popover>
             </h2>
-            <div v-if="!this.$store.state.token" class="collected_novel_na_user">
+            <div v-if="!$store.state.token" class="collected_novel_na_user">
               <el-empty :image-size="120" description="Please sign in to see more informations">
               </el-empty>
             </div>
@@ -416,7 +426,7 @@ export default {
             </div>
             <div class="rank_items" v-for="(item, index) in update_rank_info.slice(0, 5)" :key="item">
               <div class="rank_image">
-                <img style="height: 80px;" :src="item.picUrl" @click="goBookInfo(item.bookId)" />
+                <img style="height: 80px; width: 50px;" :src="item.picUrl" @click="goBookInfo(item.bookId)" />
               </div>
               <div class="rank_rank" :class="{ 'red': index === 0, 'orange': index === 1, 'green': index === 2 }">
                 0{{ index + 1 }}
@@ -433,9 +443,6 @@ export default {
           </div>
         </div>
       </div>
-    </div>
-    <div v-if="showProfile">
-      <Profile />
     </div>
     <Global_Footer />
   </div>
@@ -489,6 +496,7 @@ export default {
 }
 
 .carousel_weekly_image {
+  width: 156.25px;
   height: 250px;
   object-fit: contain;
   box-shadow: 6px 4px 6px white;
@@ -596,6 +604,7 @@ export default {
 
 .collected_img {
   object-fit: contain;
+  height: 240px;
   width: 150px;
   box-shadow: 6px 4px 6px rgb(65, 65, 65);
   border-radius: 8px;
@@ -701,6 +710,7 @@ export default {
   box-shadow: 6px 4px 6px rgb(92, 92, 92);
   border-radius: 5px;
   height: 100%;
+  width: 175px;
   object-fit: contain;
 }
 

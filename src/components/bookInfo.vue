@@ -113,6 +113,7 @@ export default {
   },
 
   mounted() {
+    window.scrollTo(0, 0);
     setTimeout(() => {
       this.getBookInfo();
       this.getChapters();
@@ -410,7 +411,7 @@ export default {
       <div class="bookDetail">
         <div class="bookmark-container">
           <img :src="book.picUrl"
-            style="height: 400px; box-shadow: 6px 4px 6px rgb(155, 155, 155); border-radius: 8px; margin-left: 20px;" />
+            style="height: 400px; width: 250px; box-shadow: 6px 4px 6px rgb(155, 155, 155); border-radius: 8px; margin-left: 20px;" />
           <div v-if="isCollected" class="bookmark-icon">
             <el-icon size="60">
               <CaretBottom color="#f7ba2a" />
@@ -468,13 +469,13 @@ export default {
               &nbsp;&nbsp;&nbsp;
             </div>
             <div style="margin-top: 10px;">
-              <el-button v-if="this.prevChapterId === null" style="font-size: 14pt;" size="large" type="primary" round
+              <el-button v-if="prevChapterId === null" style="font-size: 14pt;" size="large" type="primary" round
                 :icon="Reading"
                 @click="goToContent(chapters[0] ? chapters[0].id : null, chapters[0] ? chapters[0].chapterName : null)">
                 READ
               </el-button>
               <el-button v-else style="font-size: 14pt;" size="large" type="primary" round :icon="Reading"
-                @click="goToContent(this.prevChapterId, this.chapterName)">
+                @click="goToContent(prevChapterId, chapterName)">
                 CONTINUE READING
               </el-button>
               <el-button v-if="!isCollected" style="font-size: 14pt;" size="large" type="primary" round :icon="Plus"
@@ -506,7 +507,7 @@ export default {
               <div style="font-size: 16pt; display: flex; justify-content: space-between; align-items: center;">
                 <b>My Comment</b>
                 <div class="editSwitch">
-                  <el-switch size="large" inline-prompt v-model="this.isEditComment" active-text="Editing"
+                  <el-switch size="large" inline-prompt v-model="isEditComment" active-text="Editing"
                     inactive-text="Edit" />
                 </div>
               </div>
@@ -700,30 +701,30 @@ export default {
   height: 40px;
 }
 
-.container {
+.chapterDetail .container {
   font-family: 'Roboto Condensed', sans-serif;
   margin-bottom: -20px;
   color: #b7b7b7;
 }
 
-.container .list {
+.chapterDetail .container .list {
   list-style: none;
   margin: 0;
   padding: 0;
 }
 
-.container h1 {
+.chapterDetail .container h1 {
   display: inline-block;
   padding: 0 10px;
 }
 
-.container span {
+.chapterDetail .container span {
   position: relative;
   display: block;
   cursor: pointer;
 }
 
-.container span {
+.chapterDetail .container span {
 
   &:before,
   &:after {
@@ -853,7 +854,7 @@ export default {
   align-items: center;
   margin-bottom: 20px;
   font-size: 14pt;
-  width: 45%;
+  width: 49%;
   padding: 20px;
   position: relative;
   transition: transform 0.3s ease;
