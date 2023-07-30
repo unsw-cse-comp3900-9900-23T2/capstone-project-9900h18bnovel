@@ -530,7 +530,6 @@ table{
   display: flex;
   flex-direction: row;
   align-items: center;
-  width: 70%;
   right: 0;
   justify-content: space-between;
 }
