@@ -305,7 +305,7 @@ export default {
             </el-button>
           </div>
         </el-aside>
-        <el-main>
+        <el-main style="margin: auto">
           <table>
             <tbody class="InfoTableBody">
             <div class="Binfo">
