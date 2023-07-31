@@ -1,7 +1,7 @@
 <script setup>
 import { ElMessage } from 'element-plus';
 import axios from 'axios';
-import { getItemColor } from '../utils'
+import { getItemColor } from '../utils';
 import {
   StarFilled,
   CaretTop,
@@ -70,6 +70,7 @@ export default {
       sort: "visit_count",
       pageNum: 12,
       totalNum: null,
+      isEnd: false,
     }
   },
   watch: {
@@ -295,6 +296,7 @@ export default {
         setTimeout(() => {
           if (this.pageNum >= this.totalNum) {
             ElMessage.error("There is no more books behind");
+            this.isEnd = true;
             this.pageNum = this.totalNum;
           }
           this.getResultBooks();
@@ -324,7 +326,7 @@ export default {
 </script>
 
 <template>
-  <div v-infinite-scroll="load">
+  <div v-infinite-scroll="load" :infinite-scroll-disabled="isEnd">
     <div v-loading.lock="loading" :element-loading-spinner="svg" element-loading-svg-view-box="0, 5, 30, 40"
       element-loading-background="rgba(255, 255, 255, 255)"
       style="top:50%; left: 50%; transform: translate(-50%,-50%); position: absolute;"></div>

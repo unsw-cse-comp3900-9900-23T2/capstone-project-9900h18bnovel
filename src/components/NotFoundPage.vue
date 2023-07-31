@@ -1,8 +1,14 @@
 <script>
+import Global_Footer from './Global_Footer.vue';
+export default {
+  components: {
+    Global_Footer,
+  },
+}
 </script>
 <template>
   <div
-    style="display: flex; justify-content: center; align-items: center; width: 1152px; min-width: 1152px; margin: auto; ">
+    style="display: flex; justify-content: center; align-items: center; width: 1152px; min-width: 1152px; margin: auto;">
     <div class="section-center">
       <div class="section-up">
         <div class="sun">
@@ -361,13 +367,15 @@
     </div>
 
     <div style="margin-left: 30px; font-family: 'Nunito Sans';">
-      <h1 style="font-size: 80pt;">404</h1>
+      <div style="font-size: 120pt; font-weight: bold;">404</div>
       <h2 style="font-size: 30pt;">UH OH! You're lost.</h2>
-      <p>The page you are looking for does not exist. Maybe the page is under construction or maybe the way you got here is a mystery. 
+      <p>The page you are looking for does not exist. Maybe the page is under construction or maybe the way you got here
+        is a mystery.
         You can click the buttons above to go back to a existing page:)
       </p>
     </div>
   </div>
+  <Global_Footer />
 </template>
 <style>
 .section-center {

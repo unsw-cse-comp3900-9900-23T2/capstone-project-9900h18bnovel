@@ -1,7 +1,7 @@
 <script setup>
-// import {
-//   User,
-// } from '@element-plus/icons-vue'
+import {
+  Close,
+} from '@element-plus/icons-vue'
 import { ElMessage, ElMessageBox } from 'element-plus';
 import axios from 'axios';
 import 'animate.css';
@@ -411,147 +411,115 @@ export default {
 <template>
   <div v-show="isLoginVisible" class="animate__bounceIn animate__faster">
     <div class="auth_form">
+      <el-button style="top:10px; right: 10px; position: absolute;" @click="closeLoginBox" :icon="Close"
+        circle link size="large"></el-button>
       <img src="..\logo1.png" class="logo">
       <div style="font-size: 22pt; font-weight: bold; padding-top: 10px;">Sign in</div>
-      <el-divider />
+      <br>
       <div class="each_input_container">
-        <div class="text">Email: </div>
-        <el-input placeholder="example@example.com" v-model="email" />
+        <el-input placeholder="Email" v-model="email" size="large" />
         <div style="color: red;">&nbsp;*</div>
       </div>
 
       <div class="each_input_container">
-        <div class="text">Password: </div>
-        <el-input placeholder="eg: ****" v-model="password" show-password type="password" />
+        <el-input placeholder="Password" v-model="password" show-password type="password" size="large" />
         <div style="color: red;">&nbsp;*</div>
       </div>
 
       <div class="each_input_container">
-        <div class="text">Verification Code: </div>
-        <el-input placeholder="eg: 0000" v-model="verCode" />
+        <el-input placeholder="Verification Code" v-model="verCode" size="large" style="width: 60%;" />
         <div style="color: red;">&nbsp;*&nbsp;</div>
-      </div>
-
-      <div class="each_input_container" style="margin-top: -20px;">
-        <div class="text"></div>
         <img style="height: 100%; width: 80px;" :src="verImage" />
       </div>
 
       <div class="other_options">
-        <div style="width: 350px; display: flex; justify-content: space-between; margin-top: -15px;">
-          <el-link @click="toRegister">Not a user yet? Sign Up here!</el-link>
-          <el-link @click="toForget">Forget Password</el-link>
-        </div>
-        <div style="margin-top: 20px;">
-          <el-button type="primary" @click="signin">Submit</el-button>
-          <el-button @click="closeLoginBox">Cancel</el-button>
-        </div>
+        <el-button type="primary" @click="signin" style="width: 100%;" round>SIGN IN</el-button>
+        <el-link style="margin-top: 10px; margin-bottom: 10px;" @click="toForget">Forgot your password?</el-link>
+        <el-link @click="toRegister">Not a member?&nbsp; <b>Sign up now</b></el-link>
       </div>
     </div>
   </div>
 
   <div v-show="isRegisterVisible" class="animate__bounceIn animate__faster">
     <div class="auth_form">
+      <el-button style="top:10px; right: 10px; position: absolute;" @click="closeLoginBox" :icon="Close"
+        circle link size="large"></el-button>
       <img src="..\logo1.png" class="logo">
       <div style="font-size: 22pt; font-weight: bold; padding-top: 10px;">Sign Up</div>
-      <el-divider />
-
+      <br>
       <div class="each_input_container">
-        <div class="text">Email: </div>
-        <el-input placeholder="example@example.com" v-model="email" />
+        <el-input placeholder="Email" v-model="email" size="large" />
         <div style="color: red;">&nbsp;*</div>
       </div>
 
       <div class="each_input_container">
-        <div class="text">Username: </div>
-        <el-input placeholder="eg: Osiris" v-model="username" />
+        <el-input placeholder="Username" v-model="username" size="large" />
         <div style="color: red;">&nbsp;*</div>
       </div>
 
       <div class="each_input_container">
-        <div class="text">Password: </div>
-        <el-input placeholder="eg: ****" v-model="password" show-password type="password" />
+        <el-input placeholder="Password" v-model="password" show-password type="password" size="large" />
         <div style="color: red;">&nbsp;*</div>
       </div>
 
       <div class="each_input_container">
-        <div class="text">Confirm Password: </div>
-        <el-input placeholder="eg: ****" v-model="confirmPass" show-password type="password" />
+        <el-input placeholder="Confirm Password" v-model="confirmPass" show-password type="password" size="large" />
         <div style="color: red;">&nbsp;*</div>
       </div>
 
       <div class="each_input_container">
-        <div class="text">Verification Code: </div>
-        <el-input placeholder="eg: 000000" v-model="verCode" />
+        <el-input placeholder="Verification Code" v-model="verCode" size="large" style="width: 60%;" />
         <div style="color: red;">&nbsp;*&nbsp;</div>
-      </div>
-
-      <div class="each_input_container" style="margin-top: -21px;">
-        <div class="text"></div>
         <el-button :disabled="countdown1 > 0" @click="startCountdown(1)">
           {{ countdown1 > 0 ? countdown1 + 's' : 'Get Code' }}
         </el-button>
       </div>
 
       <div class="other_options">
-        <div style="width: 350px; display: flex; justify-content: space-between; margin-top: -15px;">
-          <el-link @click="toLogin">Already a user? Sign in here!</el-link>
-          <el-link @click="toForget">Forget Password</el-link>
-        </div>
-        <div style="margin-top: 20px;">
-          <el-button type="primary" @click="signUp">Submit</el-button>
-          <el-button @click="closeLoginBox">Cancel</el-button>
-        </div>
+        <el-button type="primary" @click="signUp" style="width: 100%;" round>SIGN UP</el-button>
+        <el-link style="margin-top: 10px; margin-bottom: 10px;" @click="toLogin">Already is member?&nbsp; <b>Sign in
+            now</b></el-link>
+        <el-link @click="toForget">Forgot your password?</el-link>
       </div>
     </div>
   </div>
 
   <div v-show="isForgetVisible" class="animate__bounceIn animate__faster">
     <div class="auth_form">
+      <el-button style="top:10px; right: 10px; position: absolute;" @click="closeLoginBox" :icon="Close"
+        circle link size="large"></el-button>
       <img src="..\logo1.png" class="logo">
-      <div style="font-size: 22pt; font-weight: bold; padding-top: 10px;">Forget Password</div>
-      <el-divider />
+      <div style="font-size: 22pt; font-weight: bold; padding-top: 10px;">Renew Password</div>
+      <br>
 
       <div class="each_input_container">
-        <div class="text">Email: </div>
-        <el-input placeholder="example@example.com" v-model="email" />
+        <el-input placeholder="Email" v-model="email" size="large" />
         <div style="color: red;">&nbsp;*</div>
       </div>
 
       <div class="each_input_container">
-        <div class="text">New Password: </div>
-        <el-input placeholder="eg: ****" v-model="password" show-password type="password" />
+        <el-input placeholder="New Password" v-model="password" show-password type="password" size="large" />
         <div style="color: red;">&nbsp;*</div>
       </div>
 
       <div class="each_input_container">
-        <div class="text">Confirm Password: </div>
-        <el-input placeholder="eg: ****" v-model="confirmPass" show-password type="password" />
+        <el-input placeholder="Confirm Password" v-model="confirmPass" show-password type="password" size="large" />
         <div style="color: red;">&nbsp;*</div>
       </div>
 
       <div class="each_input_container">
-        <div class="text">Verification Code: </div>
-        <el-input placeholder="eg: 000000" v-model="verCode" />
+        <el-input placeholder="Verification Code" v-model="verCode" size="large" style="width: 60%;" />
         <div style="color: red;">&nbsp;*&nbsp;</div>
-      </div>
-
-      <div class="each_input_container" style="margin-top: -21px;">
-        <div class="text"></div>
         <el-button :disabled="countdown2 > 0" @click="startCountdown(2)">
           {{ countdown2 > 0 ? countdown2 + 's' : 'Get Code' }}
         </el-button>
       </div>
 
       <div class="other_options">
-        <div style="width: 350px; display: flex; justify-content: space-between; margin-top: -15px;">
-          <el-link @click="toLogin">Go back to Sign in</el-link>
-          <el-link @click="toRegister">Not a user yet? Sign Up here!</el-link>
-        </div>
-        <div style="margin-top: 20px;">
-          <el-button type="primary" @click="forgetPass">Submit</el-button>
-          <el-button @click="closeLoginBox">Cancel</el-button>
-        </div>
+        <el-button type="primary" @click="forgetPass" style="width: 100%;" round>SUBMIT</el-button>
+        <el-link style="margin-top: 10px; margin-bottom: 10px;" @click="toLogin">Already is member?&nbsp; <b>Sign in
+            now</b></el-link>
+        <el-link @click="toRegister">Not a member?&nbsp; <b>Sign up now</b></el-link>
       </div>
     </div>
 
@@ -561,25 +529,23 @@ export default {
 
 <style >
 .auth_form {
-  display: block;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  width: 450px;
-  border-radius: 50px;
-  box-shadow: 0 10px 10px rgba(0, 0, 0, 0.4);
-  padding: 20px;
+  width: 350px;
+  /* box-shadow: 0 10px 10px rgba(0, 0, 0, 0.4); */
+  box-shadow: 0 0 40px 0 #6bb4fc;
+  padding: 30px 50px 30px 50px;
   background-color: white;
   background: url(../AuthBG.jpg);
   background-size: cover;
   background-position: 40% 60%;
   margin: 0 auto;
+  border-radius: 0.625rem;
+  position: relative;
 }
 
-.auth_form .el-input {
-  width: 200px;
-}
 
 .each_input_container {
   display: flex;
@@ -587,13 +553,6 @@ export default {
   width: 100%;
   margin-bottom: 20px;
   font-size: 12pt;
-}
-
-.text {
-  width: 180px;
-  display: flex;
-  justify-content: flex-end;
-  padding-right: 10px;
 }
 
 .other_options {
