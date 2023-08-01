@@ -1,8 +1,6 @@
 package com.example.novel_backend.controller.author;
 
 import com.example.novel_backend.core.common.constant.ApiRouterConsts;
-import com.example.novel_backend.core.common.constant.SystemConfigConsts;
-import com.example.novel_backend.core.common.req.PageReqDto;
 import com.example.novel_backend.core.common.resp.PageRespDto;
 import com.example.novel_backend.core.common.resp.RestResp;
 import com.example.novel_backend.dao.entity.AuthorInfo;
@@ -11,7 +9,6 @@ import com.example.novel_backend.dto.resp.BookInfoRespDto;
 import com.example.novel_backend.service.AuthorService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

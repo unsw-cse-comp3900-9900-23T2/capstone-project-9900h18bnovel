@@ -142,4 +142,46 @@ public interface BookService {
      */
     RestResp<Long> getNextChapterId(Long chapterId);
 
+    /**
+     * Publish fan fiction
+     * @param dto fan fiction dto
+     * @return void
+     */
+    RestResp<Void> publishFanfic(FanficPublishReqDto dto);
+
+    /**
+     * Update fan fiction
+     * @param dto fan fiction dto
+     * @return void
+     */
+    RestResp<Void> updateFanfic(FanficUpdateReqDto dto);
+
+    /**
+     * Delete fan fiction
+     * @param fanficId fan fiction id
+     * @return void
+     */
+    RestResp<Void> deleteFanfic(Long fanficId);
+
+    /**
+     * List all book fanfic
+     * @param dto book fanfic dto
+     * @return paged book fanfic
+     */
+    RestResp<PageRespDto<BookFanficRespDto>> listBookFanfic(BookFanficReqDto dto);
+
+
+    /**
+     * List User book fanfic
+     * @param dto book fanfic dto
+     * @return paged book fanfic
+     */
+    RestResp<PageRespDto<BookFanficRespDto>> listUserBookFanfic(BookFanficReqDto dto);
+
+    /**
+     * Get fanfic by fanfic id
+     * @param fanficId fanfic id
+     * @return fanfic information
+     */
+    RestResp<BookFanficRespDto> getBookFanficById(Long fanficId);
 }

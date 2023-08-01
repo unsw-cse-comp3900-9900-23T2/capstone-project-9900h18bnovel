@@ -100,4 +100,14 @@ public class UserController {
             @Parameter(description = "User ID") Long userId) {
         return userService.listUserCollect(userId);
     }
+
+    /**
+     * Get other user information interface
+     */
+    @Operation(summary = "Get other user information interface")
+    @GetMapping("get_other_userInfo")
+    public RestResp<UserOtherInfoRespDto> getOtherUserInfo(
+            @Parameter(description = "User ID") Long userId) {
+        return userService.getOtherUserInfo(userId);
+    }
 }

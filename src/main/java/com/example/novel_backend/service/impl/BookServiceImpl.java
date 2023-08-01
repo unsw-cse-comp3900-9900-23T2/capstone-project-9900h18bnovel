@@ -59,6 +59,8 @@ public class BookServiceImpl implements BookService {
 
     private final UserReadHistoryMapper userReadHistoryMapper;
 
+    private final BookFanficMapper bookFanficMapper;
+
     @Override
     public RestResp<List<BookRankRespDto>> listUpdateRankBooks() {
         return RestResp.ok(bookRankCacheManager.listUpdateRankBooks());
@@ -179,6 +181,7 @@ public class BookServiceImpl implements BookService {
                                 .commentUserName(userInfoMap.get(bookComment.getUserId()).getUsername())
                                 .commentUserImage(userInfoMap.get(bookComment.getUserId()).getUserPhoto())
                                 .commentTime(bookComment.getUpdateTime()).build()).toList()));
+
     }
 
     @Override
@@ -207,6 +210,9 @@ public class BookServiceImpl implements BookService {
         bookInfo.setScore(score);
         bookInfo.setCommentCount(bookInfo.getCommentCount() + 1);
         bookInfoMapper.updateById(bookInfo);
+        bookInfoCacheManager.evictBookInfoCache(dto.getBookId());
+        bookRankCacheManager.evictUpdateRankCache();
+        bookRankCacheManager.evictNewestRankCache();
         return RestResp.ok();
     }
 
@@ -227,13 +233,29 @@ public class BookServiceImpl implements BookService {
                 / (bookInfo.getCommentCount());
         bookInfo.setScore(score);
         bookInfoMapper.updateById(bookInfo);
+        bookInfoCacheManager.evictBookInfoCache(dto.getBookId());
+        bookRankCacheManager.evictUpdateRankCache();
+        bookRankCacheManager.evictNewestRankCache();
         return RestResp.ok();
 
     }
 
     @Override
     public RestResp<Void> deleteComment(Long commentId) {
+        BookComment bookComment = bookCommentMapper.selectById(commentId);
         bookCommentMapper.deleteById(commentId);
+        BookInfo bookInfo = bookInfoMapper.selectById(bookComment.getBookId());
+        float score = 0.0f;
+        if(bookInfo.getCommentCount() != 1) {
+            score = (bookInfo.getScore() * (bookInfo.getCommentCount() - 1))
+                    / (bookInfo.getCommentCount() - 1);
+        }
+        bookInfo.setScore(score);
+        bookInfo.setCommentCount(bookInfo.getCommentCount() - 1);
+        bookInfoMapper.updateById(bookInfo);
+        bookInfoCacheManager.evictBookInfoCache(bookComment.getBookId());
+        bookRankCacheManager.evictUpdateRankCache();
+        bookRankCacheManager.evictNewestRankCache();
         return RestResp.ok();
     }
 
@@ -340,6 +362,101 @@ public class BookServiceImpl implements BookService {
                 Optional.ofNullable(bookChapterMapper.selectOne(queryWrapper))
                         .map(BookChapter::getId)
                         .orElse(null)
+        );
+    }
+
+    @Override
+    public RestResp<Void> publishFanfic(FanficPublishReqDto dto) {
+        BookFanfic bookFanfic = new BookFanfic();
+        bookFanfic.setBookId(dto.getBookId());
+        bookFanfic.setUserId(dto.getUserId());
+        bookFanfic.setFanficContent(dto.getFanficContent());
+        bookFanfic.setCreateTime(LocalDateTime.now());
+        bookFanfic.setUpdateTime(LocalDateTime.now());
+        bookFanficMapper.insert(bookFanfic);
+        return RestResp.ok();
+    }
+
+    @Override
+    public RestResp<Void> updateFanfic(FanficUpdateReqDto dto) {
+        BookFanfic bookFanfic = bookFanficMapper.selectById(dto.getFanficId());
+        bookFanfic.setFanficContent(dto.getFanficContent());
+        bookFanfic.setUpdateTime(LocalDateTime.now());
+        bookFanficMapper.updateById(bookFanfic);
+        return RestResp.ok();
+    }
+
+    @Override
+    public RestResp<Void> deleteFanfic(Long fanficId) {
+        bookFanficMapper.deleteById(fanficId);
+        return RestResp.ok();
+    }
+
+    @Override
+    public RestResp<PageRespDto<BookFanficRespDto>> listBookFanfic(BookFanficReqDto dto) {
+        IPage<BookFanfic> page = new Page<>();
+        page.setCurrent(dto.getPageNum());
+        page.setSize(dto.getPageSize());
+        QueryWrapper<BookFanfic> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("book_id", dto.getBookId())
+                .orderByDesc("update_time");
+        IPage<BookFanfic> bookFanficPage = bookFanficMapper.selectPage(page, queryWrapper);
+        List<BookFanfic> bookFanfics = bookFanficMapper.selectList(queryWrapper);
+        List<Long> userIds = bookFanfics.stream().map(BookFanfic::getUserId).toList();
+        // Get user information
+        QueryWrapper<UserInfo> userInfoQueryWrapper = new QueryWrapper<>();
+        queryWrapper.in("id", userIds);
+        List<UserInfo> userInfos = userInfoMapper.selectList(userInfoQueryWrapper);
+        Map<Long, UserInfo> userInfoMap =userInfos.stream()
+                .collect(Collectors.toMap(UserInfo::getId, Function.identity()));
+        return RestResp.ok(PageRespDto.of(dto.getPageNum(), dto.getPageSize(), page.getTotal(),
+                bookFanficPage.getRecords().stream().map(bookFanfic ->
+                        BookFanficRespDto.builder()
+                                .id(bookFanfic.getId())
+                                .fanficContent(bookFanfic.getFanficContent())
+                                .fanficUserId(bookFanfic.getUserId())
+                                .fanficUserName(userInfoMap.get(bookFanfic.getUserId()).getUsername())
+                                .fanficUserImage(userInfoMap.get(bookFanfic.getUserId()).getUserPhoto())
+                                .fanficTime(bookFanfic.getUpdateTime())
+                                .build()).toList()));
+    }
+
+    @Override
+    public RestResp<PageRespDto<BookFanficRespDto>> listUserBookFanfic(BookFanficReqDto dto) {
+        IPage<BookFanfic> page = new Page<>();
+        page.setCurrent(dto.getPageNum());
+        page.setSize(dto.getPageSize());
+        QueryWrapper<BookFanfic> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("book_id", dto.getBookId())
+                .eq("user_id", dto.getUserId())
+                .orderByDesc("update_time");
+        IPage<BookFanfic> bookFanficPage = bookFanficMapper.selectPage(page, queryWrapper);
+        UserInfo userInfo = userInfoMapper.selectById(dto.getUserId());
+        return RestResp.ok(PageRespDto.of(dto.getPageNum(), dto.getPageSize(), page.getTotal(),
+                bookFanficPage.getRecords().stream().map(bookFanfic ->
+                        BookFanficRespDto.builder()
+                                .id(bookFanfic.getId())
+                                .fanficContent(bookFanfic.getFanficContent())
+                                .fanficUserId(bookFanfic.getUserId())
+                                .fanficUserName(userInfo.getUsername())
+                                .fanficUserImage(userInfo.getUserPhoto())
+                                .fanficTime(bookFanfic.getUpdateTime())
+                                .build()).toList()));
+    }
+
+    @Override
+    public RestResp<BookFanficRespDto> getBookFanficById(Long fanficId) {
+        BookFanfic bookFanfic = bookFanficMapper.selectById(fanficId);
+        UserInfo userInfo = userInfoMapper.selectById(bookFanfic.getUserId());
+        return RestResp.ok(
+                BookFanficRespDto.builder()
+                        .id(bookFanfic.getId())
+                        .fanficContent(bookFanfic.getFanficContent())
+                        .fanficUserId(bookFanfic.getUserId())
+                        .fanficUserName(userInfo.getUsername())
+                        .fanficUserImage(userInfo.getUserPhoto())
+                        .fanficTime(bookFanfic.getUpdateTime())
+                        .build()
         );
     }
 

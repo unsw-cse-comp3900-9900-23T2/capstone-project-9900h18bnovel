@@ -242,5 +242,18 @@ public class UserServiceImpl implements UserService {
                 }).toList());
     }
 
+    @Override
+    public RestResp<UserOtherInfoRespDto> getOtherUserInfo(Long userId) {
+        UserInfo userInfo = userInfoMapper.selectById(userId);
+        return RestResp.ok(
+                UserOtherInfoRespDto.builder()
+                        .username(userInfo.getUsername())
+                        .userPhoto(userInfo.getUserPhoto())
+                        .userSex(userInfo.getUserSex())
+                        .email(userInfo.getEmail())
+                        .build()
+        );
+    }
+
 
 }

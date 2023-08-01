@@ -199,4 +199,61 @@ public class BookController {
             @Parameter(description = "Chapter ID") @PathVariable("chapterId") Long chapterId) {
         return bookService.getNextChapterId(chapterId);
     }
+
+    /**
+     * Publish fan fiction interface
+     */
+    @Operation(summary = "Publish fan fiction interface")
+    @PostMapping("new_fanfic")
+    public RestResp<Void> publishFanfic(@Valid @RequestBody FanficPublishReqDto dto){
+        return bookService.publishFanfic(dto);
+    }
+
+    /**
+     * Update fan fiction interface
+     */
+    @Operation(summary = "Update fan fiction interface")
+    @PostMapping("update_fanfic")
+    public RestResp<Void> updateFanfic(@Valid @RequestBody FanficUpdateReqDto dto){
+        return bookService.updateFanfic(dto);
+    }
+
+    /**
+     * Delete fanfic interface
+     */
+    @Operation(summary = "Delete fanfic interface")
+    @DeleteMapping("delete_fanfic/{fanficId}")
+    public RestResp<Void> deleteFanfic(@Parameter(description = "Fanfic ID") @PathVariable Long fanficId) {
+        return bookService.deleteFanfic(fanficId);
+    }
+
+    /**
+     * Fanfic all list Query Interface
+     */
+    @Operation(summary = "Fanfic all list Query Interface")
+    @GetMapping("all_fanfic/list")
+    public RestResp<PageRespDto<BookFanficRespDto>> listBookFanfic(
+            @ParameterObject BookFanficReqDto dto) {
+        return bookService.listBookFanfic(dto);
+    }
+
+    /**
+     * Fanfic user list Query Interface
+     */
+    @Operation(summary = "Fanfic user list Query Interface")
+    @GetMapping("user_fanfic/list")
+    public RestResp<PageRespDto<BookFanficRespDto>> listUserBookFanfic(
+            @ParameterObject BookFanficReqDto dto) {
+        return bookService.listUserBookFanfic(dto);
+    }
+
+    /**
+     * Get Fanfic by id interface
+     */
+    @Operation(summary = "Get Fanfic by id interface")
+    @GetMapping("fanfic_info/{fanficId}")
+    public RestResp<BookFanficRespDto> getBookFanficById(
+            @Parameter(description = "Fanfic ID") @PathVariable("fanficId") Long fanficId) {
+        return bookService.getBookFanficById(fanficId);
+    }
 }

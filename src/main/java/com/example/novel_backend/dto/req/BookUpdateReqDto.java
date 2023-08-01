@@ -74,6 +74,6 @@ public class BookUpdateReqDto {
      * Book Status;0-Continued 1-Completed
      */
     @Schema(description = "Book Status;0-Continued 1-Completed")
-    @NotBlank
+    @NotNull
     private Integer bookStatus;
 }

@@ -76,4 +76,11 @@ public interface UserService {
      */
     RestResp<List<UserCollectBookRespDto>> listUserCollect(Long userId);
 
+    /**
+     * Get other user information
+     * @param userId user id
+     * @return other user information
+     */
+    RestResp<UserOtherInfoRespDto> getOtherUserInfo(Long userId);
+
 }
