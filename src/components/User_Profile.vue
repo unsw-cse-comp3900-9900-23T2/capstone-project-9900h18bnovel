@@ -417,7 +417,7 @@ export default {
           <h2 style="color: darkgray; margin: 2em auto; text-align: center;">You don't have any collection yet!</h2>
         </div>
           <div class="bookInfo" v-for="book in AllCollections" :key = "book.bookId" >
-            <img :src="book.picUrl" style="height: 250px; margin: 20px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);" />
+            <img :src="book.picUrl" style="height: 250px; width: 156px; margin: 20px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);" />
             <div class="bookContentDetail">
               <div style="display: flex; justify-content: space-between; align-items: center;">
                 <h1 style="display: flex; align-items: center;"> {{ book.bookName }}
