@@ -39,7 +39,6 @@ export default {
       isClickRank: false,
       isNewestRank: false,
       isUpdateRank: false,
-      isEnd: false,
     }
   },
   mounted() {
@@ -74,7 +73,6 @@ export default {
         this.count += 5;
         if (this.count >= this.rankBooks.length + 5) {
           ElMessage.error("There is no more books");
-          this.isEnd = true;
         }
       }, 500);
     },
@@ -119,7 +117,7 @@ export default {
 </script>
 
 <template>
-  <div v-infinite-scroll="load" :infinite-scroll-disabled="isEnd">
+  <div v-infinite-scroll="load">
     <div v-loading.lock="loading" :element-loading-spinner="svg" element-loading-svg-view-box="0, 5, 30, 40"
       element-loading-background="rgba(255, 255, 255, 255)"
       style="top:50%; left: 50%; transform: translate(-50%,-50%); position: absolute;"></div>
