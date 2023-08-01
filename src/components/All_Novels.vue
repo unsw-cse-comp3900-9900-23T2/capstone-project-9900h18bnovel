@@ -252,6 +252,7 @@ export default {
     clickedLoading() {
       this.clickedLoad = true;
       this.pageNum = 12;
+      this.isEnd = false;
       setTimeout(() => {
         this.getResultBooks();
         this.clickedLoad = false;
@@ -537,7 +538,7 @@ export default {
       <div style="height: 157px; width: 60%; display:flex; justify-content: center; margin: auto;" v-loading="loadMore"
         :element-loading-spinner="svg" element-loading-svg-view-box="0, 5, 30, 40"
         element-loading-background="rgba(255, 255, 255, 255)">
-        <div v-if="pageNum >= totalNum" @click="scrollToTop" style="width: 100%; text-align: center;">
+        <div v-if="pageNum >= totalNum" style="width: 100%; text-align: center;">
           <h3>
             <el-icon>
               <CaretTop />
