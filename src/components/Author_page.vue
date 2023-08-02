@@ -62,16 +62,9 @@ export default {
   },
 
   watch: {
-    'selectedBook': {
+    selectedBook: {
       handler() {
         this.getChapters();
-      },
-      deep: true,
-    },
-    '$store.state.token': {
-      handler() {
-        window.location.reload();
-        console.log('Hi')
       },
       deep: true,
     },

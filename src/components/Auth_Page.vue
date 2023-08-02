@@ -35,9 +35,51 @@ export default {
       countdown1: 0,
       countdown2: 0,
       verCodeIsNumbers: false,
+      password_length: 0,
+      contains_eight_characters: false,
+      contains_number: false,
+      contains_uppercase: false,
+      contains_special_character: false,
+      valid_password: false
     }
   },
   methods: {
+
+    checkPassword() {
+      this.password_length = this.password.length;
+      const format = /[ !@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/;
+
+      if (this.password_length > 8) {
+        this.contains_eight_characters = true;
+      } else {
+        this.contains_eight_characters = false;
+      }
+
+      this.contains_number = /\d/.test(this.password);
+      this.contains_uppercase = /[A-Z]/.test(this.password);
+      this.contains_special_character = format.test(this.password);
+
+      if (this.contains_eight_characters === true &&
+        this.contains_special_character === true &&
+        this.contains_uppercase === true &&
+        this.contains_number === true) {
+        this.valid_password = true;
+      } else {
+        this.valid_password = false;
+      }
+    },
+
+    resetPassReq() {
+      this.password = '';
+      this.confirmPass = '';
+      this.verCode = '';
+      this.contains_eight_characters = false;
+      this.contains_special_character = false;
+      this.contains_uppercase = false;
+      this.contains_number = false;
+      this.valid_password = false;
+    },
+
     validateIsNumbers() {
       const regex = /^[0-9]+$/;
       if (!regex.test(this.verCode)) {
@@ -50,38 +92,35 @@ export default {
         this.verCodeIsNumbers = true;
       }
     },
+
     closeLoginBox() {
       this.$emit('closeLoginBox');
     },
+
     showLogin() {
       this.$emit('showLogin');
     },
+
     toRegister() {
       this.isRegisterVisible = true;
       this.isForgetVisible = false;
       this.isLoginVisible = false;
-      this.password = '';
-      this.confirmPass = '';
-      this.verCode = '';
       this.username = '';
+      this.resetPassReq();
     },
 
     toLogin() {
       this.isRegisterVisible = false;
       this.isForgetVisible = false;
       this.isLoginVisible = true;
-      this.password = '';
-      this.confirmPass = '';
-      this.verCode = '';
+      this.resetPassReq();
     },
 
     toForget() {
       this.isForgetVisible = true;
       this.isLoginVisible = false;
       this.isRegisterVisible = false;
-      this.password = '';
-      this.confirmPass = '';
-      this.verCode = '';
+      this.resetPassReq();
     },
 
     isValidEmail(email) {
@@ -182,6 +221,10 @@ export default {
         ElMessageBox.alert('Verification code must be numbers', 'Error', {
           confirmButtonText: 'OK',
         })
+      } else if (situation === "passReqNa") {
+        ElMessageBox.alert('Password requirements not met', 'Error', {
+          confirmButtonText: 'OK',
+        })
       }
     },
 
@@ -191,14 +234,13 @@ export default {
       } else if (!this.isValidEmail(this.email)) {
         this.alertBox("emailInvalid");
       } else if (this.password === '') {
-        this.alertBox("passwordEmpty")
+        this.alertBox("passwordEmpty");
       } else if (/\s/.test(this.password)) {
-        /*因为发现如果输入六个空格也会向后端发请求，所以我这里就加了个这个 */
-        this.alertBox("passwordContainSpace")
+        this.alertBox("passwordContainSpace");
       } else if (this.verCode === '') {
-        this.alertBox("verCodeEmpty")
+        this.alertBox("verCodeEmpty");
       } else if (this.verCodeIsNumbers === false) {
-        this.alertBox("verCodeIsNotNumbers")
+        this.alertBox("verCodeIsNotNumbers");
       } else {
 
         const requestData = {
@@ -216,8 +258,7 @@ export default {
                 message: 'Welcome ' + data.data.userName,
                 type: 'success',
               });
-              console.log("在用户刚登录的时候，后台返回了：");
-              console.log(data);
+              this.closeLoginBox();
               localStorage.setItem('email', this.email);
               localStorage.setItem('token', data.data.token);
               localStorage.setItem('uid', data.data.uid);
@@ -226,7 +267,6 @@ export default {
               this.$store.dispatch('login', data.data.token);
               this.$store.dispatch('uid', data.data.uid);
               this.$store.dispatch('username', data.data.userName);
-              this.closeLoginBox();
             } else if (data.code === "A0201") {
               ElMessage({
                 message: "Email: " + this.email + " is not exists, please check again",
@@ -248,13 +288,10 @@ export default {
                 message: "Incorrect verification code",
                 type: 'error',
               });
-              this.password = '';
-              this.verCode = '';
               this.showLogin();
             } else if (data.code === "B0001") {
               ElMessage.error('System execution error');
               this.password = '';
-              this.confirmPass = '';
               this.verCode = '';
             }
           })
@@ -284,10 +321,12 @@ export default {
       } else if (/\s/.test(this.confirmPass)) {
         /* 理同上一个 */
         this.alertBox("conPassContainSpace")
-      } else if (this.verCode === '') {
-        this.alertBox("verCodeEmpty")
       } else if (this.confirmPass !== this.password) {
         this.alertBox("passDiff")
+      } else if (!this.valid_password) {
+        this.alertBox("passReqNa");
+      } else if (this.verCode === '') {
+        this.alertBox("verCodeEmpty")
       } else if (this.verCodeIsNumbers === false) {
         this.alertBox("verCodeIsNotNumbers")
       } else {
@@ -312,19 +351,12 @@ export default {
                 message: "Email: " + this.email + " already exists",
                 type: 'error',
               });
-              this.password = '';
-              this.confirmPass = '';
-              this.verCode = '';
+              this.resetPassReq();
             } else if (data.code === "A0240" || data.code === "A0400") {
               ElMessage.error('Incorrect Verification code');
-              this.password = '';
-              this.confirmPass = '';
-              this.verCode = '';
             } else if (data.code === "B0001") {
               ElMessage.error('System execution error');
-              this.password = '';
-              this.confirmPass = '';
-              this.verCode = '';
+              this.resetPassReq();
             }
           })
           .catch(error => {
@@ -347,10 +379,12 @@ export default {
         this.alertBox("conPassEmpty")
       } else if (/\s/.test(this.confirmPass)) {
         this.alertBox("conPassContainSpace")
-      } else if (this.verCode === '') {
-        this.alertBox("verCodeEmpty")
       } else if (this.confirmPass !== this.password) {
         this.alertBox("passDiff")
+      } else if (!this.valid_password) {
+        this.alertBox("passReqNa");
+      } else if (this.verCode === '') {
+        this.alertBox("verCodeEmpty")
       } else if (this.verCodeIsNumbers === false) {
         this.alertBox("verCodeIsNotNumbers")
       } else {
@@ -368,25 +402,16 @@ export default {
                 message: 'Password has been reset',
                 type: 'success',
               });
-              this.password = '';
-              this.confirmPass = '';
-              this.verCode = '';
+              this.resetPassReq();
               this.toLogin();
             } else if (data.code === "A0240" || data.code === "A0400") {
               ElMessage.error('Incorrect Verification code');
-              this.password = '';
-              this.confirmPass = '';
-              this.verCode = '';
             } else if (data.code === "A0201") {
               ElMessage.error("Email: " + this.email + " does not exists");
-              this.password = '';
-              this.confirmPass = '';
-              this.verCode = '';
+              this.resetPassReq();
             } else if (data.code === "B0001") {
               ElMessage.error('System execution error');
-              this.password = '';
-              this.confirmPass = '';
-              this.verCode = '';
+              this.resetPassReq();
             }
           })
           .catch(error => {
@@ -411,8 +436,8 @@ export default {
 <template>
   <div v-show="isLoginVisible" class="animate__bounceIn animate__faster">
     <div class="auth_form">
-      <el-button style="top:10px; right: 10px; position: absolute;" @click="closeLoginBox" :icon="Close"
-        circle link size="large"></el-button>
+      <el-button style="top:10px; right: 10px; position: absolute;" @click="closeLoginBox" :icon="Close" circle link
+        size="large"></el-button>
       <img src="..\logo1.png" class="logo">
       <div style="font-size: 22pt; font-weight: bold; padding-top: 10px;">Sign in</div>
       <br>
@@ -442,8 +467,8 @@ export default {
 
   <div v-show="isRegisterVisible" class="animate__bounceIn animate__faster">
     <div class="auth_form">
-      <el-button style="top:10px; right: 10px; position: absolute;" @click="closeLoginBox" :icon="Close"
-        circle link size="large"></el-button>
+      <el-button style="top:10px; right: 10px; position: absolute;" @click="closeLoginBox" :icon="Close" circle link
+        size="large"></el-button>
       <img src="..\logo1.png" class="logo">
       <div style="font-size: 22pt; font-weight: bold; padding-top: 10px;">Sign Up</div>
       <br>
@@ -457,8 +482,25 @@ export default {
         <div style="color: red;">&nbsp;*</div>
       </div>
 
+      <div class="passPopover">
+        <div class="input_container">
+          <ul>
+            <li v-bind:class="{ is_valid: contains_eight_characters }">8 Characters</li>
+            <li v-bind:class="{ is_valid: contains_number }">Contains Number</li>
+            <li v-bind:class="{ is_valid: contains_uppercase }">Contains Uppercase</li>
+            <li v-bind:class="{ is_valid: contains_special_character }">Contains Special Character</li>
+          </ul>
+          <div class="checkmark_container" v-bind:class="{ show_checkmark: valid_password }">
+            <svg width="50%" height="50%" viewBox="0 0 140 100">
+              <path class="checkmark" v-bind:class="{ checked: valid_password }" d="M10,50 l25,40 l95,-70" />
+            </svg>
+          </div>
+        </div>
+      </div>
+
       <div class="each_input_container">
-        <el-input placeholder="Password" v-model="password" show-password type="password" size="large" />
+        <el-input type="password" @input="checkPassword" v-model="password" autocomplete="off" placeholder="Password"
+          show-password size="large" />
         <div style="color: red;">&nbsp;*</div>
       </div>
 
@@ -486,8 +528,8 @@ export default {
 
   <div v-show="isForgetVisible" class="animate__bounceIn animate__faster">
     <div class="auth_form">
-      <el-button style="top:10px; right: 10px; position: absolute;" @click="closeLoginBox" :icon="Close"
-        circle link size="large"></el-button>
+      <el-button style="top:10px; right: 10px; position: absolute;" @click="closeLoginBox" :icon="Close" circle link
+        size="large"></el-button>
       <img src="..\logo1.png" class="logo">
       <div style="font-size: 22pt; font-weight: bold; padding-top: 10px;">Renew Password</div>
       <br>
@@ -497,8 +539,25 @@ export default {
         <div style="color: red;">&nbsp;*</div>
       </div>
 
+      <div class="passPopover">
+        <div class="input_container">
+          <ul>
+            <li v-bind:class="{ is_valid: contains_eight_characters }">8 Characters</li>
+            <li v-bind:class="{ is_valid: contains_number }">Contains Number</li>
+            <li v-bind:class="{ is_valid: contains_uppercase }">Contains Uppercase</li>
+            <li v-bind:class="{ is_valid: contains_special_character }">Contains Special Character</li>
+          </ul>
+          <div class="checkmark_container" v-bind:class="{ show_checkmark: valid_password }">
+            <svg width="50%" height="50%" viewBox="0 0 140 100">
+              <path class="checkmark" v-bind:class="{ checked: valid_password }" d="M10,50 l25,40 l95,-70" />
+            </svg>
+          </div>
+        </div>
+      </div>
+
       <div class="each_input_container">
-        <el-input placeholder="New Password" v-model="password" show-password type="password" size="large" />
+        <el-input placeholder="New Password" v-model="password" show-password type="password" size="large"
+          @input="checkPassword" autocomplete="off" />
         <div style="color: red;">&nbsp;*</div>
       </div>
 
@@ -560,6 +619,95 @@ export default {
   flex-direction: column;
   justify-content: center;
   align-items: center;
+}
+
+.passPopover {
+  margin-top: -20px;
+  margin-bottom: -15px;
+  margin-left: -70px;
+}
+
+.passPopover ul {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.passPopover li {
+  margin-bottom: 8px;
+  color: #525f7f;
+  position: relative;
+}
+
+.passPopover li:before {
+  content: "";
+  width: 0%;
+  height: 2px;
+  background: #2ecc71;
+  position: absolute;
+  left: 0;
+  top: 50%;
+  display: block;
+  transition: all .6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+
+/* Password Input --------- */
+
+.passPopover .input_container {
+  position: relative;
+}
+
+/* Checkmark & Strikethrough --------- */
+
+.passPopover .is_valid {
+  color: rgba(136, 152, 170, 0.8);
+}
+
+.passPopover .is_valid:before {
+  width: 100%;
+}
+
+.passPopover .checkmark_container {
+  border-radius: 50%;
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: #2ecc71;
+  width: 50px;
+  height: 50px;
+  visibility: hidden;
+  opacity: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: opacity .4s ease;
+}
+
+.passPopover .show_checkmark {
+  visibility: visible;
+  opacity: 1;
+}
+
+.passPopover .checkmark {
+  width: 100%;
+  height: 100%;
+  fill: none;
+  stroke: white;
+  stroke-width: 15;
+  stroke-linecap: round;
+  stroke-dasharray: 180;
+  stroke-dashoffset: 180;
+}
+
+.passPopover .checked {
+  animation: draw 0.5s ease forwards;
+}
+
+@keyframes draw {
+  to {
+    stroke-dashoffset: 0;
+  }
 }
 </style>
 
