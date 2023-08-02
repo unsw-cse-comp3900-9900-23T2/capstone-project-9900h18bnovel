@@ -69,6 +69,8 @@ export default {
       newUserName: '',
       CurrentPhoto: '',
       DefaultPhoto: 'https://img-qn.51miz.com/Element/00/88/60/42/ea5b40df_E886042_1992a532.png!/quality/90/unsharp/true/compress/true/format/png/fw/300',
+      DefaultFemalePhoto:'https://bpic.51yuansu.com/pic3/cover/02/84/17/5a5c92db641d9_610.jpg',
+      DefaultMalePhoto:'https://bpic.51yuansu.com/pic3/cover/03/47/83/5badd6731ddff_610.jpg',
       AllCollections: '',
       EachBook: '',
     }
@@ -86,7 +88,7 @@ export default {
   },
   mounted() {
       if (localStorage.getItem('userPhoto') === 'undefined' || !localStorage.getItem('userPhoto')) {
-        this.CurrentPhoto = this.DefaultPhoto;
+        this.CurrentPhoto = this.DefaultMalePhoto;
       } else{
         this.CurrentPhoto = this.userPhoto;
       }
@@ -100,12 +102,17 @@ export default {
             localStorage.setItem('userPhoto', response.data.data.userPhoto);
             this.$store.dispatch('photo', response.data.data.userPhoto);
           } else {
-            this.userPhoto = this.DefaultPhoto;
+            this.userPhoto = this.DefaultMalePhoto;
           }
           if (response.data.data.userSex) {
             localStorage.setItem('userSex', response.data.data.userSex);
             this.userSex = response.data.data.userSex;
             this.$store.dispatch('sex', response.data.data.userSex);
+            if(response.data.data.userSex === "1" && response.data.data.userPhoto === this.DefaultMalePhoto){
+              /*Female with make avatar should be modified*/
+              localStorage.setItem('userPhoto', this.DefaultFemalePhoto);
+              this.$store.dispatch('photo', this.DefaultFemalePhoto);
+            }
           } else {
             this.userSex = '';
           }
@@ -130,10 +137,24 @@ export default {
   },
   methods: {
     async UpdateGender() {
+      this.userPhoto = localStorage.getItem("userPhoto");
+      console.log("-----"+this.userPhoto);
       if (NewGender.value[0] === 'male') {/*.toLowerCase()*/
         this.userSex = 0;
+        if (this.userPhoto === this.DefaultMalePhoto || this.userPhoto === this.DefaultFemalePhoto) {
+          console.log("走男的这儿了？");
+          this.userPhoto = this.DefaultMalePhoto;
+          localStorage.setItem('userPhoto',this.DefaultMalePhoto);
+          this.$store.dispatch('photo',this.DefaultMalePhoto);
+        }
       } else if (NewGender.value[0] === 'female') {/*.toLowerCase()*/
         this.userSex = 1;
+        if (this.userPhoto === this.DefaultMalePhoto || this.userPhoto === this.DefaultFemalePhoto) {
+          console.log("走女的这儿了？");
+          this.userPhoto = this.DefaultFemalePhoto;
+          localStorage.setItem('userPhoto',this.DefaultFemalePhoto);
+          this.$store.dispatch('photo',this.DefaultFemalePhoto);
+        }
       } else {
         ElMessage.error('Please choose a provided gender!');
         if(this.userSex === 'undefined' || !localStorage.getItem('userSex')){
@@ -141,9 +162,6 @@ export default {
         }
         this.isGenderEditing = false;
         return;
-      }
-      if (!this.userPhoto || this.userPhoto === 'undefined'|| !localStorage.getItem('userPhoto')) {
-        this.userPhoto = '';
       }
       const requestData = {
         userId: parseInt(this.uid),
@@ -196,7 +214,9 @@ export default {
                 this.CurrentPhoto = requestData.userPhoto;
                 ElMessage.success("Avatar changed!");
                 localStorage.setItem('userPhoto',requestData.userPhoto);
+                this.userPhoto = requestData.userPhoto;
                 this.$store.dispatch('photo',requestData.userPhoto);
+                console.log("上传完后头像为："+this.userPhoto);
               } else {
                 console.log("User_Profile 203行有问题");
               }
@@ -239,9 +259,11 @@ export default {
     },
     StartEditGender() {
       this.isGenderEditing = true;
+      this.isNameEditing = false;
     },
     StartEditName(){
       this.isNameEditing = true;
+      this.isGenderEditing = false;
     },
     CancelNameInput(){
       this.isNameEditing = false;
