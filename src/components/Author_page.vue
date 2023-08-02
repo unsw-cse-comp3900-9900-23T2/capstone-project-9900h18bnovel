@@ -151,6 +151,8 @@ export default {
                   this.getAuthorBooks();
                   this.getChapters();
                   this.isCreateChapter = false;
+                  this.newChapterName = null;
+                  this.newChapterContent = null;
                 } else if (response.data.code === "B0001") {
                   ElMessage.error("Oops, something wrong");
                 }

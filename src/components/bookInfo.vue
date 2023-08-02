@@ -17,7 +17,8 @@ import {
   ArrowRight,
   Male,
   Female,
-  Memo,
+  Edit,
+  Upload,
 } from '@element-plus/icons-vue';
 import { ElMessage } from 'element-plus';
 import axios from 'axios';
@@ -103,6 +104,8 @@ export default {
       userFictionPageNum: 1,
       userFictionTotal: null,
       userFictionList: [],
+
+      isEditUserFiction: false,
     }
   },
   watch: {
@@ -163,6 +166,39 @@ export default {
   },
 
   methods: {
+
+    async updateUserFiction(fictionContent, fictionId) {
+      const reqBody = {
+        "fanficId": fictionId,
+        "fanficContent": fictionContent
+      }
+      await axios.post("http://localhost:8888/api/front/book/update_fanfic", reqBody)
+        .then(response => {
+          if (response.data.code === "00000") {
+            ElMessage.success("Fiction updated");
+            this.getAllFiction();
+            this.getUserFiction();
+          }
+        })
+        .catch(error => {
+          console.error(error);
+        });
+    },
+
+    async deleteUserFiction(fictionId) {
+      await axios.delete(`http://localhost:8888/api/front/book/delete_fanfic/${fictionId}`)
+        .then(response => {
+          if (response.data.code === "00000") {
+            ElMessage.success("Fiction Deleted");
+            this.getAllFiction();
+            this.getUserFiction();
+          }
+        })
+        .catch(error => {
+          console.error(error);
+        });
+    },
+
     async getUserFiction() {
       await axios.get(`http://localhost:8888/api/front/book/user_fanfic/list?userId=${this.$store.getters.GetUID}&bookId=${this.$route.params.bookId}&pageNum=${this.userFictionPageNum}&pageSize=5`)
         .then(response => {
@@ -481,14 +517,17 @@ export default {
     },
 
     chooseFiction() {
-      this.clickedLoad = true;
-      setTimeout(() => {
-        this.getAllFiction();
-        this.isShowComments = false;
-        this.isShowChapters = false;
-        this.isShowFiction = true;
-        this.clickedLoad = false;
-      }, 500);
+      this.$store.getters.isAuthenticated ?
+        (() => {
+          this.clickedLoad = true;
+          setTimeout(() => {
+            this.getAllFiction();
+            this.isShowComments = false;
+            this.isShowChapters = false;
+            this.isShowFiction = true;
+            this.clickedLoad = false;
+          }, 500);
+        })() : ElMessage.error("Please sign in to see fun fiction")
     },
 
     clickedLoading() {
@@ -540,6 +579,8 @@ export default {
       this.isUserFiction = true;
       this.getUserFiction();
     },
+
+
   },
 
   computed: {
@@ -794,7 +835,7 @@ export default {
 
         <div v-else-if="isShowFiction">
           <div style="width: 100%; display: flex; justify-content: space-between;margin-bottom: 10px;">
-            <el-button :icon="Memo" type="primary" @click="viewUsersFiction">View your own fiction</el-button>
+            <el-button :icon="Edit" type="primary" @click="viewUsersFiction">Edit your own fiction</el-button>
             <el-button :icon="Plus" type="primary" @click="createFicCheck">Create your own fiction</el-button>
           </div>
 
@@ -804,7 +845,10 @@ export default {
             <el-button type="primary" style="width: 100%; margin-top: 20px;" @click="createFiction">Create</el-button>
           </el-dialog>
 
-          <div v-for="item in fanficList" :key="item.id">
+          <h1 v-if="fanficList.length < 1">
+            There is no fiction
+          </h1>
+          <div v-else v-for="item in fanficList" :key="item.id">
             <div style="display: flex;">
               <div style="width: 50px; display: flex; justify-content: center; ">
                 <el-popover placement="top-start" :width="350" trigger="click" @show="getOtherUser(item.fanficUserId)"
@@ -942,19 +986,22 @@ export default {
 
         <el-dialog v-model="isUserFiction" title="My Fiction" width="50%">
           <div v-for="item in userFictionList" :key="item.id"
-            style="display: flex; height: 100px; text-align: center; border-bottom: 1px solid #e7e7e7; padding-top: 10px; position: relative;">
-            <div>{{ item.fanficContent }}</div>
-            <div style="bottom: 0; position: absolute;">{{ item.fanficTime }}</div>
+            style="display: flex; min-height: 100px; text-align: center; border-bottom: 1px solid #e7e7e7; padding-top: 10px; position: relative;">
+            <el-input v-model="item.fanficContent" :autosize="{ minRows: 3, maxRows: 3 }" type="textarea"/>
+            <div >
+              {{ item.fanficTime }}
+              <br><br>
+              <el-button type="primary" :icon="Upload" circle @click="updateUserFiction(item.fanficContent, item.id)" />
+              <el-button type="danger" :icon="Delete" circle @click="deleteUserFiction(item.id)" />
+            </div>
+
           </div>
           <el-pagination :hide-on-single-page="userFictionTotal <= 5" v-model:current-page="userFictionPageNum"
             :page-size="50" layout="prev, pager, next" :total="userFictionTotal * 10"
             style="width: 100%; display: flex; justify-content: center;" />
           <template #footer>
             <span>
-              <el-button @click="isUserFiction = false">Cancel</el-button>
-              <el-button type="primary" @click="isUserFiction = false">
-                Confirm
-              </el-button>
+              <el-button @click="isUserFiction = false">Close</el-button>
             </span>
           </template>
         </el-dialog>

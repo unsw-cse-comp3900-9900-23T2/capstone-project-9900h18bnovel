@@ -56,26 +56,10 @@ export default {
       }
     },
 
-    async showLogin() {
+    showLogin() {
       this.$store.dispatch("isLoginVisible", true);
-      try {
-        const response = await fetch("http://localhost:8888/api/front/user/img_verify_code", {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-        });
-        if (response.status == 200) {
-          const data = await response.json();
-          this.verImage = "data:image/png;base64," + data.data.img;
-          this.sessionId = data.data.sessionId;
-        } else {
-          console.log(response.status);
-        }
-      } catch (error) {
-        console.error(error);
-      }
     },
+    
     closeLoginBox() {
       this.$store.dispatch("isLoginVisible", false);
     },

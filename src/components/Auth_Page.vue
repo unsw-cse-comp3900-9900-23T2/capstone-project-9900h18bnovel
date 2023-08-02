@@ -40,9 +40,33 @@ export default {
       contains_number: false,
       contains_uppercase: false,
       contains_special_character: false,
-      valid_password: false
+      valid_password: false,
+      localVerImage: this.verImage,
+      localSessionId: this.sessionId,
     }
   },
+
+  watch: {
+    verCode: {
+      handler() {
+        if (this.verCode !== '') {
+          this.validateIsNumbers();
+        }
+      },
+      immediate: true
+    },
+    
+    isLoginVisible(newValue) {
+      if (newValue === true) {
+        this.getNewImgVer();
+      }
+    },
+  },
+
+  mounted() {
+    this.getNewImgVer();
+  },
+
   methods: {
 
     checkPassword() {
@@ -95,10 +119,6 @@ export default {
 
     closeLoginBox() {
       this.$emit('closeLoginBox');
-    },
-
-    showLogin() {
-      this.$emit('showLogin');
     },
 
     toRegister() {
@@ -247,7 +267,7 @@ export default {
           email: this.email,
           password: this.password,
           velCode: this.verCode,
-          sessionId: this.sessionId
+          sessionId: this.localSessionId
         };
 
         await axios.post("http://localhost:8888/api/front/user/login", requestData)
@@ -274,7 +294,7 @@ export default {
               });
               this.password = '';
               this.verCode = '';
-              this.showLogin();
+              this.getNewImgVer();
             } else if (data.code === "A0210") {
               ElMessage({
                 message: "Incorrect password",
@@ -282,17 +302,18 @@ export default {
               });
               this.password = '';
               this.verCode = '';
-              this.showLogin();
+              this.getNewImgVer();
             } else if (data.code === "A0240" || data.code === "A0400") {
               ElMessage({
                 message: "Incorrect verification code",
                 type: 'error',
               });
-              this.showLogin();
+              this.getNewImgVer();
             } else if (data.code === "B0001") {
               ElMessage.error('System execution error');
               this.password = '';
               this.verCode = '';
+              this.getNewImgVer();
             }
           })
           .catch(error => {
@@ -418,18 +439,20 @@ export default {
             console.error(error);
           });
       }
-    }
+    },
+
+    async getNewImgVer() {
+      await axios.get("http://localhost:8888/api/front/user/img_verify_code")
+        .then(response => {
+          const data = response.data;
+          this.localVerImage = "data:image/png;base64," + data.data.img;
+          this.localSessionId = data.data.sessionId;
+        })
+        .catch(error => {
+          console.error(error);
+        });
+    },
   },
-  watch: {
-    verCode: {
-      handler() {
-        if (this.verCode !== '') {
-          this.validateIsNumbers();
-        }
-      },
-      immediate: true
-    }
-  }
 };
 </script>
 
@@ -454,7 +477,7 @@ export default {
       <div class="each_input_container">
         <el-input placeholder="Verification Code" v-model="verCode" size="large" style="width: 60%;" />
         <div style="color: red;">&nbsp;*&nbsp;</div>
-        <img style="height: 100%; width: 80px;" :src="verImage" />
+        <img style="height: 100%; width: 80px;" :src="localVerImage" @click="getNewImgVer" />
       </div>
 
       <div class="other_options">
