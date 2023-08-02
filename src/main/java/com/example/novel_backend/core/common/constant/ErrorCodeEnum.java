@@ -79,7 +79,17 @@ public enum ErrorCodeEnum {
     /**
      * Book exists
      */
-    AUTHOR_BOOK_NAME_EXIST("A3001", "Book exists");
+    AUTHOR_BOOK_NAME_EXIST("A3001", "Book exists"),
+
+    /**
+     * User request service exception
+     */
+    USER_REQ_EXCEPTION("A0500", "User request service exception"),
+
+    /**
+     * Requests exceeding limits
+     */
+    USER_REQ_MANY("A0501", "Requests exceeding limits"),;
 
     /**
      * Error Code
