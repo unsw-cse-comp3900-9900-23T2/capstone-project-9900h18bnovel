@@ -43,6 +43,9 @@ export default {
       valid_password: false,
       localVerImage: this.verImage,
       localSessionId: this.sessionId,
+      DefaultFemalePhoto: 'https://bpic.51yuansu.com/pic3/cover/02/84/17/5a5c92db641d9_610.jpg',
+      DefaultMalePhoto: 'https://bpic.51yuansu.com/pic3/cover/03/47/83/5badd6731ddff_610.jpg',
+
     }
   },
 
@@ -55,7 +58,7 @@ export default {
       },
       immediate: true
     },
-    
+
     isLoginVisible(newValue) {
       if (newValue === true) {
         this.getNewImgVer();
@@ -279,10 +282,20 @@ export default {
                 type: 'success',
               });
               this.closeLoginBox();
+              console.log("登录之后返回的信息：\n");
+              console.log(data.data);
               localStorage.setItem('email', this.email);
               localStorage.setItem('token', data.data.token);
               localStorage.setItem('uid', data.data.uid);
               localStorage.setItem('username', data.data.userName);
+              if (data.data.userPhoto === null) {
+                localStorage.setItem('userPhoto', this.DefaultMalePhoto);
+                this.$store.dispatch('photo', this.DefaultMalePhoto);
+              }
+              else {
+                localStorage.setItem('userPhoto', data.data.userPhoto);
+                this.$store.dispatch('photo', data.data.userPhoto);
+              }
               this.$store.dispatch('email', data.data.email);
               this.$store.dispatch('login', data.data.token);
               this.$store.dispatch('uid', data.data.uid);
@@ -477,7 +490,7 @@ export default {
       <div class="each_input_container">
         <el-input placeholder="Verification Code" v-model="verCode" size="large" style="width: 60%;" />
         <div style="color: red;">&nbsp;*&nbsp;</div>
-        <img style="height: 100%; width: 80px;" :src="localVerImage" @click="getNewImgVer" />
+        <img style="height: 100%; width: 80px;" :src="localVerImage" @click="getNewImgVer" class="signInVerImg" />
       </div>
 
       <div class="other_options">
@@ -610,6 +623,10 @@ export default {
 
 
 <style >
+.signInVerImg:hover {
+  cursor: pointer;
+}
+
 .auth_form {
   display: flex;
   flex-direction: column;

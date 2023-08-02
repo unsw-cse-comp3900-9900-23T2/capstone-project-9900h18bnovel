@@ -166,7 +166,7 @@ export default {
         userName }}</h3> -->
       <el-dropdown trigger="click">
         <div>
-          <el-avatar :size="70" :src="$store.state.photo ? $store.state.photo : CurrentPhoto"
+          <el-avatar :size="70" :src="$store.state.photo ? $store.state.photo : DefaultPhoto"
             class="user_Avatar" />
         </div>
         <template #dropdown>
