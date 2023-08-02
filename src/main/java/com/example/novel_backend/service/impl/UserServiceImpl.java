@@ -136,6 +136,7 @@ public class UserServiceImpl implements UserService {
                         .uid(userInfo.getId())
                         .userName(userInfo.getUsername())
                         .userPhoto(userInfo.getUserPhoto())
+                        .userSex(userInfo.getUserSex())
                         .build()
         );
     }

@@ -23,6 +23,12 @@ public class UserLoginRespDto {
     private String token;
 
     /**
+     * User sex
+     * */
+    @Schema(description = "User sex")
+    private Integer userSex;
+
+    /**
      * User Photo
      * */
     @Schema(description = "User Photo")
