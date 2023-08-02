@@ -248,7 +248,7 @@ public class BookServiceImpl implements BookService {
         BookInfo bookInfo = bookInfoMapper.selectById(bookComment.getBookId());
         float score = 0.0f;
         if(bookInfo.getCommentCount() != 1) {
-            score = (bookInfo.getScore() * (bookInfo.getCommentCount() - 1))
+            score = (bookInfo.getScore() * (bookInfo.getCommentCount()) - bookComment.getScore())
                     / (bookInfo.getCommentCount() - 1);
         }
         bookInfo.setScore(score);

@@ -192,7 +192,7 @@ public class AuthorServiceImpl implements AuthorService {
             wordCount++;
         }
 
-        int chapterNum = 0;
+        int chapterNum = 1;
         QueryWrapper<BookChapter> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("book_id", dto.getBookId())
                 .orderByDesc("chapter_num").last("limit 1");

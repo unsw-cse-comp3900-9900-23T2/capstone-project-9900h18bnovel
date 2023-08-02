@@ -31,4 +31,5 @@ public class BookContentRespDto {
      */
     @Schema(description = "Chapter content")
     private String bookContent;
+
 }
