@@ -84,6 +84,15 @@ export default {
           return desc.slice(0, 100) + "... ...";
         }
       };
+    },
+    CutTitle(){
+      return function (title){
+        if (title.length <=20){
+          return title;
+        } else{
+          return title.slice(0,20) + " ...";
+        }
+      }
     }
   },
   mounted() {
@@ -442,7 +451,7 @@ export default {
             <img :src="book.picUrl" style="height: 250px; width: 156px; margin: 20px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);" />
             <div class="bookContentDetail">
               <div style="display: flex; justify-content: space-between; align-items: center;">
-                <h1 style="display: flex; align-items: center;"> {{ book.bookName }}
+                <h1 style="display: flex; align-items: center;"> {{ CutTitle(book.bookName) }}
                 </h1>
                 <el-tag style="font-size: 14pt; margin: 0px 10px;" size="large" effect="plain">{{ book.bookStatus === "1" ? "Completed" :
                     "Ongoing" }}</el-tag>
