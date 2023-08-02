@@ -15,6 +15,9 @@ import {
   CaretBottom,
   ArrowLeft,
   ArrowRight,
+  Male,
+  Female,
+  Memo,
 } from '@element-plus/icons-vue';
 import { ElMessage } from 'element-plus';
 import axios from 'axios';
@@ -51,6 +54,7 @@ export default {
       showBookInfo: false,
       isShowComments: true,
       isShowChapters: false,
+      isShowFiction: false,
       clickedLoad: false,
       isCollected: false,
       collectedBooksId: [],
@@ -80,6 +84,25 @@ export default {
       settingFontSize: 2,
       settingTheme: false,
       themeColor: "#ffffff",
+
+      otherUserName: null,
+      otherUserImg: null,
+      otherUserGender: null,
+      otherUserEmail: null,
+
+      isCreateFiction: false,
+      createFictionContent: null,
+      fictionPageNum: 1,
+
+      fanficList: [],
+      totalFiction: null,
+      fictionContent: {},
+      fictionContentDialogVisible: false,
+
+      isUserFiction: false,
+      userFictionPageNum: 1,
+      userFictionTotal: null,
+      userFictionList: [],
     }
   },
   watch: {
@@ -92,6 +115,18 @@ export default {
     'chapterPageNum': {
       handler() {
         this.chooseChapters();
+      },
+      deep: true
+    },
+    'fictionPageNum': {
+      handler() {
+        this.chooseFiction();
+      },
+      deep: true
+    },
+    'userFictionPageNum': {
+      handler() {
+        this.getUserFiction();
       },
       deep: true
     },
@@ -128,6 +163,76 @@ export default {
   },
 
   methods: {
+    async getUserFiction() {
+      await axios.get(`http://localhost:8888/api/front/book/user_fanfic/list?userId=${this.$store.getters.GetUID}&bookId=${this.$route.params.bookId}&pageNum=${this.userFictionPageNum}&pageSize=5`)
+        .then(response => {
+          const data = response.data;
+          this.userFictionList = data.data.list;
+          this.userFictionTotal = data.data.total;
+        })
+        .catch(error => {
+          console.error(error);
+        });
+    },
+
+    async getFictionContent(fictionId) {
+      await axios.get("http://localhost:8888/api/front/book/fanfic_info/" + fictionId)
+        .then(response => {
+          const data = response.data;
+          this.fictionContent = data.data;
+        })
+        .catch(error => {
+          console.error(error);
+        });
+    },
+
+    async getAllFiction() {
+      await axios.get(`http://localhost:8888/api/front/book/all_fanfic/list?userId=${this.$store.getters.GetUID}&bookId=${this.$route.params.bookId}&pageNum=${this.fictionPageNum}&pageSize=5`)
+        .then(response => {
+          const data = response.data;
+          this.fanficList = data.data.list;
+          this.totalFiction = data.data.total;
+        })
+        .catch(error => {
+          console.error(error);
+        });
+    },
+
+    async createFiction() {
+      const reqbody = {
+        "userId": this.$store.getters.GetUID,
+        "bookId": this.$route.params.bookId,
+        "fanficContent": this.createFictionContent
+      }
+      await axios.post("http://localhost:8888/api/front/book/new_fanfic", reqbody)
+        .then(response => {
+          response.data.code === "00000" ? (() => {
+            ElMessage.success("Fiction created");
+            this.isCreateFiction = false;
+            this.createFictionContent = null;
+            this.getAllFiction();
+          })()
+            : ElMessage.error("Oops, something wrong")
+        })
+        .catch(error => {
+          console.error(error);
+        });
+    },
+
+    async getOtherUser(userId) {
+      await axios.get("http://localhost:8888/api/front/user/get_other_userInfo?userId=" + userId)
+        .then(response => {
+          const data = response.data;
+          this.otherUserEmail = data.data.email;
+          this.otherUserImg = data.data.userPhoto;
+          this.otherUserGender = data.data.userSex;
+          this.otherUserName = data.data.username;
+        })
+        .catch(error => {
+          console.error(error);
+        });
+    },
+
     async getUserCollect() {
       await axios.get(`http://localhost:8888/api/front/user/user_collect?userId=${this.$store.getters.GetUID}`)
         .then(response => {
@@ -135,9 +240,7 @@ export default {
           this.collectedBooksId = data.data.map(item => item.bookId);
           this.isCollected = this.collectedBooksId.includes(this.$route.params.bookId) ? true : false;
           const thisBook = data.data.find(item => item.bookId === this.$route.params.bookId);
-          console.log(thisBook)
           this.prevChapterId = thisBook ? thisBook.preChapterId : null;
-          console.log(this.prevChapterId)
         })
         .catch(error => {
           console.error(error);
@@ -153,6 +256,7 @@ export default {
             const data = response.data;
             this.chapterId = data.data;
             this.getContent();
+            this.scrollToTop();
           })
           .catch(error => {
             console.error(error);
@@ -169,6 +273,7 @@ export default {
             const data = response.data;
             this.chapterId = data.data;
             this.getContent();
+            this.scrollToTop();
           })
           .catch(error => {
             console.error(error);
@@ -214,7 +319,7 @@ export default {
 
     async collect() {
       if (!this.$store.getters.isAuthenticated) {
-        ElMessage.error("Please log in to collect");
+        ElMessage.error("Please sign in to collect");
       } else if (this.totalChapters === "0") {
         ElMessage.error("There is no chapter in this book");
       } else {
@@ -278,7 +383,7 @@ export default {
 
     async postUserComment() {
       if (!this.$store.getters.isAuthenticated) {
-        ElMessage.error("Please log in to leave a comment");
+        ElMessage.error("Please sign in to leave a comment");
       } else if (!this.userComment || this.userComment.trim() === '') {
         ElMessage.error("Comment cannot be empty");
       } else {
@@ -332,7 +437,7 @@ export default {
 
     goToContent(chapterId, chapterName) {
       if (!this.$store.getters.isAuthenticated) {
-        ElMessage.error("Please log in to read the book");
+        ElMessage.error("Please sign in to read the book");
       } else {
         if (chapterId) {
           this.prevChapterId = chapterId;
@@ -347,21 +452,41 @@ export default {
       }
     },
 
+    scrollToTop() {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth', // 使用 smooth 动画滚动到顶部
+      });
+    },
+
     chooseComments() {
       this.clickedLoad = true;
       setTimeout(() => {
         this.isShowChapters = false;
         this.isShowComments = true;
+        this.isShowFiction = false;
         this.clickedLoad = false;
       }, 500);
     },
 
     chooseChapters() {
       this.clickedLoad = true;
-      setTimeout(async () => {
+      setTimeout(() => {
         this.getChapters();
         this.isShowComments = false;
         this.isShowChapters = true;
+        this.isShowFiction = false;
+        this.clickedLoad = false;
+      }, 500);
+    },
+
+    chooseFiction() {
+      this.clickedLoad = true;
+      setTimeout(() => {
+        this.getAllFiction();
+        this.isShowComments = false;
+        this.isShowChapters = false;
+        this.isShowFiction = true;
         this.clickedLoad = false;
       }, 500);
     },
@@ -393,12 +518,39 @@ export default {
         this.themeColor = '#ffffff';
       }
     },
+
+    cleanOtherUserInfo() {
+      this.otherUserEmail = null;
+      this.otherUserGender = null;
+      this.otherUserImg = null;
+      this.otherUserName = null;
+    },
+
+    createFicCheck() {
+      this.$store.getters.isAuthenticated ? this.isCreateFiction = true : ElMessage.error("Please sign in to create fiction")
+    },
+
+    goFictionContent(fictionId) {
+      this.fictionContentDialogVisible = true;
+      this.drawer = true;
+      this.getFictionContent(fictionId);
+    },
+
+    viewUsersFiction() {
+      this.isUserFiction = true;
+      this.getUserFiction();
+    },
   },
 
   computed: {
     fontSizeStyle() {
       const fontSizeList = ["12px", "16px", "20px", "24px", "28px"];
       return fontSizeList[this.settingFontSize];
+    },
+    getMaskedEmail() {
+      const [username, domain] = this.otherUserEmail.split("@");
+      const maskedUsername = username.substring(0, 4) + "XXXXX";
+      return `${maskedUsername}@${domain}`;
     },
   },
 }
@@ -498,6 +650,8 @@ export default {
             <h1 :class="isShowComments ? 'chooseOne' : 'noChoose'" @click="chooseComments"><span>Comments</span></h1>
             <h1>|</h1>
             <h1 :class="isShowChapters ? 'chooseOne' : 'noChoose'" @click="chooseChapters"><span>Chapters</span></h1>
+            <h1>|</h1>
+            <h1 :class="isShowFiction ? 'chooseOne' : 'noChoose'" @click="chooseFiction"><span>Fan Fiction</span></h1>
           </div>
         </div>
         <el-divider />
@@ -564,9 +718,32 @@ export default {
               <div v-for="comment in comments" :key="comment.id">
                 <div style="display: flex;">
                   <div style="width: 50px; display: flex; justify-content: center; ">
-                    <img
-                      :src="comment.commentUserImage ? comment.commentUserImage : 'https://img-qn.51miz.com/Element/00/88/60/42/ea5b40df_E886042_1992a532.png!/quality/90/unsharp/true/compress/true/format/png/fw/300'"
-                      style="border: 1px solid; border-radius: 30px; height: 30px; width: 30px; object-fit: cover;" />
+                    <el-popover placement="top-start" :width="350" trigger="click"
+                      @show="getOtherUser(comment.commentUserId)" @before-leave="cleanOtherUserInfo()">
+                      <template #reference>
+                        <img
+                          :src="comment.commentUserImage ? comment.commentUserImage : 'https://img-qn.51miz.com/Element/00/88/60/42/ea5b40df_E886042_1992a532.png!/quality/90/unsharp/true/compress/true/format/png/fw/300'"
+                          class="userAvatar" />
+                      </template>
+                      <div style="display: flex; align-items: center;">
+                        <img
+                          :src="otherUserImg ? otherUserImg : 'https://img-qn.51miz.com/Element/00/88/60/42/ea5b40df_E886042_1992a532.png!/quality/90/unsharp/true/compress/true/format/png/fw/300'"
+                          class="otherUserAvatar" />
+                        <div>
+                          <div>{{ otherUserEmail ? getMaskedEmail : "" }}</div>
+                          <div>{{ otherUserName }}</div>
+                          <div>
+                            <el-icon v-if="otherUserGender === '0'">
+                              <Male />
+                            </el-icon>
+                            <el-icon v-else>
+                              <Female />
+                            </el-icon>
+                          </div>
+                        </div>
+                      </div>
+                    </el-popover>
+
                   </div>
                   <div style="display: flex; flex-direction: column; width: 100%; position: relative;">
                     <div style="display: flex; align-items: center; justify-content: space-between; height: 30px;">
@@ -583,11 +760,11 @@ export default {
                 <el-divider />
               </div>
               <el-pagination :hide-on-single-page="totalComments <= 5" v-model:current-page="requestBody.pageNum"
-                :page-size="50" :disabled="disabled" :background="background" layout="prev, pager, next"
-                :total="totalComments * 10" style="width: 100%; display: flex; justify-content: center;" />
+                :page-size="50" :disabled="disabled" layout="prev, pager, next" :total="totalComments * 10"
+                style="width: 100%; display: flex; justify-content: center;" />
         </div>
 
-        <div v-if="isShowChapters">
+        <div v-else-if="isShowChapters">
           <div v-if="chapters.length > 0">
             <h1>{{ totalChapters }} Total</h1>
             <div style="display: flex; flex-wrap: wrap; justify-content: space-between;">
@@ -606,25 +783,90 @@ export default {
                 </div>
               </div>
               <el-pagination :hide-on-single-page="totalChapters <= 20" v-model:current-page="chapterPageNum"
-                :page-size="200" :disabled="disabled" :background="background" layout="prev, pager, next"
-                :total="totalChapters * 10" style="width: 100%; display: flex; justify-content: center;" />
+                :page-size="200" :disabled="disabled" layout="prev, pager, next" :total="totalChapters * 10"
+                style="width: 100%; display: flex; justify-content: center;" />
             </div>
           </div>
           <div v-else>
             There is no chapter in this book
           </div>
         </div>
+
+        <div v-else-if="isShowFiction">
+          <div style="width: 100%; display: flex; justify-content: space-between;margin-bottom: 10px;">
+            <el-button :icon="Memo" type="primary" @click="viewUsersFiction">View your own fiction</el-button>
+            <el-button :icon="Plus" type="primary" @click="createFicCheck">Create your own fiction</el-button>
+          </div>
+
+          <el-dialog v-model="isCreateFiction" title="Create Fiction">
+            <el-input v-model="createFictionContent" :autosize="{ minRows: 20, maxRows: 20 }" type="textarea"
+              placeholder="Please input" />
+            <el-button type="primary" style="width: 100%; margin-top: 20px;" @click="createFiction">Create</el-button>
+          </el-dialog>
+
+          <div v-for="item in fanficList" :key="item.id">
+            <div style="display: flex;">
+              <div style="width: 50px; display: flex; justify-content: center; ">
+                <el-popover placement="top-start" :width="350" trigger="click" @show="getOtherUser(item.fanficUserId)"
+                  @before-leave="cleanOtherUserInfo()">
+                  <template #reference>
+                    <img
+                      :src="item.fanficUserImage ? item.fanficUserImage : 'https://img-qn.51miz.com/Element/00/88/60/42/ea5b40df_E886042_1992a532.png!/quality/90/unsharp/true/compress/true/format/png/fw/300'"
+                      class="userAvatar" />
+                  </template>
+                  <div style="display: flex; align-items: center;">
+                    <img
+                      :src="otherUserImg ? otherUserImg : 'https://img-qn.51miz.com/Element/00/88/60/42/ea5b40df_E886042_1992a532.png!/quality/90/unsharp/true/compress/true/format/png/fw/300'"
+                      class="otherUserAvatar" />
+                    <div>
+                      <div>{{ otherUserEmail ? getMaskedEmail : "" }}</div>
+                      <div>{{ otherUserName }}</div>
+                      <div>
+                        <el-icon v-if="otherUserGender === '0'">
+                          <Male />
+                        </el-icon>
+                        <el-icon v-else>
+                          <Female />
+                        </el-icon>
+                      </div>
+                    </div>
+                  </div>
+                </el-popover>
+
+              </div>
+              <div style="display: flex; flex-direction: column; width: 100%; position: relative;">
+                <div style="display: flex; align-items: center; justify-content: space-between; height: 30px;">
+                  <div><b>{{ item.fanficUserName }}</b></div>
+                  <div>{{ item.fanficTime }}</div>
+                </div>
+                <div class="eachFiction" @click="goFictionContent(item.id)">
+                  {{ item.fanficContent }}
+                </div>
+              </div>
+            </div>
+            <el-divider />
+          </div>
+          <el-pagination :hide-on-single-page="totalFiction <= 5" v-model:current-page="fictionPageNum" :page-size="50"
+            :disabled="disabled" layout="prev, pager, next" :total="totalFiction * 10"
+            style="width: 100%; display: flex; justify-content: center;" />
+        </div>
+
         <div class="drawerContainer">
           <el-drawer size="100%" :with-header="false" v-model="drawer" direction="ttb" :style="{
             background: themeColor,
             color: !settingTheme ? '#333333' : '#ffffff',
-          }">
+          }" @closed="fictionContentDialogVisible = false">
             <div :style="{ fontSize: fontSizeStyle }">
               <h1 style="display: flex; align-items: center; justify-content: space-between;">
-                {{ chapterName }}
-                <div style="display: flex; justify-content:space-between; width: 35%">
-                  <el-progress style="width: 90%;" :stroke-width="14" striped striped-flow
-                    :duration="chapterNum / totalChapters * 60"
+                <div v-if="fictionContentDialogVisible">
+                  {{ fictionContent.fanficUserName }}
+                </div>
+                <div v-else>
+                  {{ chapterName }}
+                </div>
+                <div style="display: flex; justify-content: right; width: 35%;">
+                  <el-progress v-if="!fictionContentDialogVisible" style="width: 90%;" :stroke-width="14" striped
+                    striped-flow :duration="chapterNum / totalChapters * 60"
                     :percentage="Math.floor(chapterNum / totalChapters * 100)" />
                   <el-dropdown class="settingDropdown" trigger="click" :hide-on-click="false">
                     <div>
@@ -634,9 +876,10 @@ export default {
                     </div>
                     <template #dropdown>
                       <el-collapse style="width: 300px;" v-model="activeName" accordion>
-                        <el-collapse-item style="padding: 10px;" title="Font Size" name="1">
-                          <el-slider style="width: 90%; margin: auto;" v-model="settingFontSize" :min="0" :max="4"
-                            show-stops :show-tooltip="false" :marks="marksOnFontSize" />
+                        <el-collapse-item style="padding: 10px;" title="Font Size" name="1" class="silder1">
+                          <el-slider style="--el-slider-button-wrapper-offset: -9px; width: 90%; margin: auto;"
+                            v-model="settingFontSize" :min="0" :max="4" show-stops :show-tooltip="false"
+                            :marks="marksOnFontSize" />
                         </el-collapse-item>
                         <el-collapse-item style="padding: 10px;" title="Theme" name="2">
                           <div style="width: 100%; display: flex; justify-content: center;">
@@ -660,17 +903,24 @@ export default {
                 </div>
               </h1>
               <div style="display: flex;">
-                <div style="margin-left: -50px; position: relative"><el-button @click="prevChapter"
+                <div v-if="!fictionContentDialogVisible" style="margin-left: -50px; position: relative"><el-button
+                    @click="prevChapter"
                     style="height: 100%; width: 550px; top: 0; left: 0; position: absolute; border-color: rgba(0, 0, 0, 0); background-color: rgba(0, 0, 0, 0);">
                   </el-button>
                 </div>
-                <div style="line-height: 2; margin-left: 40px; margin-right: 40px;" v-html="chapterContent"></div>
-                <div style="margin-right: -50px; position: relative;"><el-button @click="nextChapter"
+                <div v-if="!fictionContentDialogVisible" style="line-height: 2; margin-left: 40px; margin-right: 40px;"
+                  v-html="chapterContent"></div>
+                <div v-else style="line-height: 2; margin-left: 40px; margin-right: 40px;">
+                  {{ fictionContent.fanficContent }}
+                </div>
+                <div v-if="!fictionContentDialogVisible" style="margin-right: -50px; position: relative;"><el-button
+                    @click="nextChapter"
                     style="height: 100%; width: 550px; top: 0; right: 0; position: absolute; border-color: rgba(0, 0, 0, 0); background-color: rgba(0, 0, 0, 0);">
                   </el-button>
                 </div>
               </div>
-              <div style="width: 100%; display: flex; justify-content: space-between; margin-top: 20px;">
+              <div v-if="!fictionContentDialogVisible"
+                style="width: 100%; display: flex; justify-content: space-between; margin-top: 20px;">
                 <el-button @click="prevChapter" size="large" link style="font-size: 16pt;"><el-icon>
                     <ArrowLeft />
                   </el-icon><el-icon>
@@ -689,6 +939,25 @@ export default {
             </div>
           </el-drawer>
         </div>
+
+        <el-dialog v-model="isUserFiction" title="My Fiction" width="50%">
+          <div v-for="item in userFictionList" :key="item.id"
+            style="display: flex; height: 100px; text-align: center; border-bottom: 1px solid #e7e7e7; padding-top: 10px; position: relative;">
+            <div>{{ item.fanficContent }}</div>
+            <div style="bottom: 0; position: absolute;">{{ item.fanficTime }}</div>
+          </div>
+          <el-pagination :hide-on-single-page="userFictionTotal <= 5" v-model:current-page="userFictionPageNum"
+            :page-size="50" layout="prev, pager, next" :total="userFictionTotal * 10"
+            style="width: 100%; display: flex; justify-content: center;" />
+          <template #footer>
+            <span>
+              <el-button @click="isUserFiction = false">Cancel</el-button>
+              <el-button type="primary" @click="isUserFiction = false">
+                Confirm
+              </el-button>
+            </span>
+          </template>
+        </el-dialog>
       </div>
     </div>
     <Global_Footer />
@@ -697,6 +966,44 @@ export default {
 
 
 <style>
+.eachFiction {
+  min-height: 50px;
+  margin-top: 5px;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 6;
+  overflow: hidden;
+  transform: scale(1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.eachFiction:hover {
+  cursor: pointer;
+  transform: scale(1.02);
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.1), 0 -4px 6px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.userAvatar {
+  border: 1px solid;
+  border-radius: 30px;
+  height: 30px;
+  width: 30px;
+  object-fit: cover;
+}
+
+.userAvatar:hover {
+  cursor: pointer;
+}
+
+.otherUserAvatar {
+  border: 1px solid;
+  border-radius: 50px;
+  height: 80px;
+  width: 80px;
+  object-fit: cover;
+  margin-right: 20px;
+}
+
 .highlighted {
   background-color: #949494;
 }
