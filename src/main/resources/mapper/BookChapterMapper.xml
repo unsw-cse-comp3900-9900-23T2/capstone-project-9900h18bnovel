@@ -3,7 +3,7 @@
 <mapper namespace="com.example.novel_backend.dao.mapper.BookChapterMapper">
 
     <select id="listChapters" resultType="com.example.novel_backend.dao.entity.BookChapter">
-        select id, chapter_name, word_count
+        select id, chapter_name, chapter_num, word_count
         from book_chapter
         where book_id = #{bookId}
         order by chapter_num

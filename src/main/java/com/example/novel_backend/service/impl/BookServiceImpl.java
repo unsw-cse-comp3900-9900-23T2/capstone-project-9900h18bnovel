@@ -142,6 +142,7 @@ public class BookServiceImpl implements BookService {
                 BookChapterRespDto.builder()
                         .id(bookChapter.getId())
                         .chapterName(bookChapter.getChapterName())
+                        .chapterNum(bookChapter.getChapterNum())
                         .chapterWordCount(bookChapter.getWordCount()).build()).toList()));
     }
 

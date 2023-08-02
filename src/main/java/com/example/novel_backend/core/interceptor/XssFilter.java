@@ -40,6 +40,7 @@ public class XssFilter implements Filter {
         filterChain.doFilter(xssRequest, servletResponse);
     }
 
+
     private boolean handleExcludeUrl(HttpServletRequest request) {
         if (CollectionUtils.isEmpty(xssProperties.excludes())) {
             return false;
