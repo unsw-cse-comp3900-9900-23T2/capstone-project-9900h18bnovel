@@ -1,3 +1,44 @@
+<script setup>
+import {
+  Male,
+  Female,
+} from '@element-plus/icons-vue';
+import axios from 'axios';
+</script >
+<script>
+export default {
+  data() {
+    return {
+      adminEmail: null,
+      adminName: null,
+      adminAva: null,
+      adminGender: null,
+    }
+  },
+  methods: {
+    async getAdminUser(userId) {
+      await axios.get("http://localhost:8888/api/front/user/get_other_userInfo?userId=" + userId)
+        .then(response => {
+          const data = response.data;
+          this.adminEmail = data.data.email;
+          this.adminAva = data.data.userPhoto;
+          this.adminGender = data.data.userSex;
+          this.adminName = data.data.username;
+        })
+        .catch(error => {
+          console.error(error);
+        });
+    },
+
+    cleanOtherUserInfo() {
+      this.adminEmail = null;
+      this.adminGender = null;
+      this.adminAva = null;
+      this.adminName = null;
+    },
+  },
+}
+</script>
 <template>
   <footer class="footer">
     <div class="footer-top">
@@ -9,27 +50,132 @@
       </div>
       <div class="footer-top-blocks">
         <h2>TEAMS</h2>
-        <div style="color: rgb(117, 117, 117); margin-bottom: 5px;">Mingjie Huang</div>
-        <div style="color: rgb(117, 117, 117); margin-bottom: 5px;">Yuyan Xiong</div>
-        <div style="color: rgb(117, 117, 117); margin-bottom: 5px;">Dazhi Gao</div>
-        <div style="color: rgb(117, 117, 117); margin-bottom: 5px;">Liuyi Chen</div>
-        <div style="color: rgb(117, 117, 117); margin-bottom: 5px;">Guoling Dong</div>
+        <el-popover placement="top-start" :width="350" trigger="click" @show="getAdminUser(1)"
+          @before-leave="cleanOtherUserInfo()">
+          <template #reference>
+            <div class="footer_Admin">Mingjie Huang</div>
+          </template>
+          <div style="display: flex; align-items: center;">
+            <img :src="adminAva" class="otherUserAvatar" />
+            <div>
+              <div>{{ adminEmail }}</div>
+              <div>{{ adminName }}</div>
+              <div>
+                <el-icon v-if="adminGender === '0'">
+                  <Male />
+                </el-icon>
+                <el-icon v-else>
+                  <Female />
+                </el-icon>
+              </div>
+            </div>
+          </div>
+        </el-popover>
+
+        <el-popover placement="top-start" :width="350" trigger="click" @show="getAdminUser(2)"
+          @before-leave="cleanOtherUserInfo()">
+          <template #reference>
+            <div class="footer_Admin">Yuyan Xiong</div>
+          </template>
+          <div style="display: flex; align-items: center;">
+            <img :src="adminAva" class="otherUserAvatar" />
+            <div>
+              <div>{{ adminEmail }}</div>
+              <div>{{ adminName }}</div>
+              <div>
+                <el-icon v-if="adminGender === '0'">
+                  <Male />
+                </el-icon>
+                <el-icon v-else>
+                  <Female />
+                </el-icon>
+              </div>
+            </div>
+          </div>
+        </el-popover>
+
+        <el-popover placement="top-start" :width="350" trigger="click" @show="getAdminUser(3)"
+          @before-leave="cleanOtherUserInfo()">
+          <template #reference>
+            <div class="footer_Admin">Dazhi Gao</div>
+          </template>
+          <div style="display: flex; align-items: center;">
+            <img :src="adminAva" class="otherUserAvatar" />
+            <div>
+              <div>{{ adminEmail }}</div>
+              <div>{{ adminName }}</div>
+              <div>
+                <el-icon v-if="adminGender === '0'">
+                  <Male />
+                </el-icon>
+                <el-icon v-else>
+                  <Female />
+                </el-icon>
+              </div>
+            </div>
+          </div>
+        </el-popover>
+
+        <el-popover placement="top-start" :width="350" trigger="click" @show="getAdminUser(4)"
+          @before-leave="cleanOtherUserInfo()">
+          <template #reference>
+            <div class="footer_Admin">Liuyi Chen</div>
+          </template>
+          <div style="display: flex; align-items: center;">
+            <img :src="adminAva" class="otherUserAvatar" />
+            <div>
+              <div>{{ adminEmail }}</div>
+              <div>{{ adminName }}</div>
+              <div>
+                <el-icon v-if="adminGender === '0'">
+                  <Male />
+                </el-icon>
+                <el-icon v-else>
+                  <Female />
+                </el-icon>
+              </div>
+            </div>
+          </div>
+        </el-popover>
+
+        <el-popover placement="top-start" :width="350" trigger="click" @show="getAdminUser(5)"
+          @before-leave="cleanOtherUserInfo()">
+          <template #reference>
+            <div class="footer_Admin">Guoling Dong</div>
+          </template>
+          <div style="display: flex; align-items: center;">
+            <img :src="adminAva" class="otherUserAvatar" />
+            <div>
+              <div>{{ adminEmail }}</div>
+              <div>{{ adminName }}</div>
+              <div>
+                <el-icon v-if="adminGender === '0'">
+                  <Male />
+                </el-icon>
+                <el-icon v-else>
+                  <Female />
+                </el-icon>
+              </div>
+            </div>
+          </div>
+        </el-popover>
+
       </div>
       <div class="footer-top-blocks">
         <h2>ABOUT</h2>
-        <el-popover placement="right" :width="215" trigger="click"
-          content="Front-end: Vue3 + VueX + Element-UI. Back-end: Spring Boot + Redis + Mysql.">
+        <el-popover placement="right" :width="230" trigger="click"
+          content="Front-end: Vue.js Ecosystem + Element Plus + Axios. Back-end: Spring Boot + Redis + Mysql.">
           <template #reference>
             <span class="footer-elements">How</span>
           </template>
         </el-popover>
-        <el-popover placement="right" :width="215" trigger="click"
+        <el-popover placement="right" :width="230" trigger="click"
           content="COMP9900, Postgraduate Capstone Project, UNSW">
           <template #reference>
             <span class="footer-elements">Why</span>
           </template>
         </el-popover>
-        <el-popover placement="right" :width="215" trigger="click"
+        <el-popover placement="right" :width="230" trigger="click"
           content="Sprint 1, June 15th 2023 - June 29th 2023. Sprint 2, June 29th 2023 - July 20th 2023. Sprint 3, July 20th 2023 - August 3rd 2023">
           <template #reference>
             <span class="footer-elements">When</span>
@@ -50,6 +196,16 @@
 </template>
 
 <style>
+.footer_Admin {
+  color: rgb(117, 117, 117);
+  margin-bottom: 5px;
+}
+
+.footer_Admin:hover {
+  cursor: pointer;
+  text-decoration: underline;
+}
+
 .footer {
   background-color: #f5f5f5;
   display: flex;

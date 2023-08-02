@@ -85,6 +85,7 @@ export default {
       settingFontSize: 2,
       settingTheme: false,
       themeColor: "#ffffff",
+      bookAuthorId: null,
 
       otherUserName: null,
       otherUserImg: null,
@@ -106,6 +107,9 @@ export default {
       userFictionList: [],
 
       isEditUserFiction: false,
+
+      penName: null,
+      signature: null,
     }
   },
   watch: {
@@ -153,7 +157,6 @@ export default {
   },
 
   mounted() {
-    window.scrollTo(0, 0);
     setTimeout(() => {
       this.getBookInfo();
       this.getChapters();
@@ -166,6 +169,23 @@ export default {
   },
 
   methods: {
+    async getAuthorInfo() {
+      await axios.get("http://localhost:8888/api/author/get_author_info?userId=" + this.bookAuthorId)
+        .then(response => {
+          const data = response.data;
+          if (data.code === "00000") {
+            if (data.data === null) {
+              this.penName = "Thanks for reading my book ,hope you enjoy it!";
+            } else {
+              this.penName = data.data.penName;
+              this.signature = data.data.signature;
+            }
+          }
+        })
+        .catch(error => {
+          console.error(error);
+        });
+    },
 
     async updateUserFiction(fictionContent, fictionId) {
       const reqBody = {
@@ -453,6 +473,7 @@ export default {
         .then(response => {
           const data = response.data;
           this.book = data.data;
+          this.bookAuthorId = data.data.authorId;
         })
         .catch(error => {
           console.error(error);
@@ -629,7 +650,14 @@ export default {
               <el-tag style="font-size: 14pt;" size="large" effect="plain" :type="book.bookStatus === '1' ? 'success'
                     : ''">{{ book.bookStatus === "1" ? "Completed" : "Ongoing" }}</el-tag>
             </div>
-            <div style="font-size: 14pt; margin-bottom: 15px;"> {{ book.authorName }}</div>
+
+            <el-popover placement="top" :width="250" trigger="click">
+              {{ penName }}
+              {{ signature }}
+              <template #reference>
+                <div style="font-size: 14pt; margin-bottom: 15px;" @click="getAuthorInfo"> {{ book.authorName }}</div>
+              </template>
+            </el-popover>
           </div>
 
           <div style="line-height: 1.5;"> {{
@@ -985,16 +1013,18 @@ export default {
         </div>
 
         <el-dialog v-model="isUserFiction" title="My Fiction" width="50%">
-          <div v-for="item in userFictionList" :key="item.id"
+          <h2 v-if="userFictionList.length < 1">You have no fiction</h2>
+          <div v-else v-for="item in userFictionList" :key="item.id"
             style="display: flex; min-height: 100px; text-align: center; border-bottom: 1px solid #e7e7e7; padding-top: 10px; position: relative;">
-            <el-input v-model="item.fanficContent" :autosize="{ minRows: 3, maxRows: 3 }" type="textarea" style=""/>
+            <el-input v-model="item.fanficContent" :autosize="{ minRows: 3, maxRows: 3 }" type="textarea" style="" />
             <div style="display: flex; flex-direction: column;">
               <span style="margin: 0 10px 10px 10px; height: 20px; display: inline-block;">
                 {{ item.fanficTime }}
               </span>
-              <div style = "display: flex; flex-direction: row; margin: 10px; justify-content: space-around;">
-                <el-button type="primary" :icon="Upload" circle @click="updateUserFiction(item.fanficContent, item.id)" style="margin: 5px;"/>
-                <el-button type="danger" :icon="Delete" circle @click="deleteUserFiction(item.id)" style="margin: 5px;"/>
+              <div style="display: flex; flex-direction: row; margin: 10px; justify-content: space-around;">
+                <el-button type="primary" :icon="Upload" circle @click="updateUserFiction(item.fanficContent, item.id)"
+                  style="margin: 5px;" />
+                <el-button type="danger" :icon="Delete" circle @click="deleteUserFiction(item.id)" style="margin: 5px;" />
               </div>
             </div>
 
@@ -1004,7 +1034,7 @@ export default {
             style="width: 100%; display: flex; justify-content: center;" />
           <template #footer>
             <span>
-              <el-button type = "primary" @click="isUserFiction = false">Close</el-button>
+              <el-button type="primary" @click="isUserFiction = false">Close</el-button>
             </span>
           </template>
         </el-dialog>

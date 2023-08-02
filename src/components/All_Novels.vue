@@ -549,13 +549,15 @@ export default {
           <el-divider />
         </div>
         <h3 v-else>
-          <el-icon>
-            <CaretBottom />
-          </el-icon>
-          Scroll down to see more
-          <el-icon>
-            <CaretBottom />
-          </el-icon>
+          <div @click="load" class="clickScroll">
+            <el-icon>
+              <CaretBottom />
+            </el-icon>
+            Click me or scroll down to see more
+            <el-icon>
+              <CaretBottom />
+            </el-icon>
+          </div>
         </h3>
       </div>
       <Global_Footer />
@@ -565,6 +567,10 @@ export default {
 
 
 <style>
+.clickScroll:hover{
+  cursor: pointer;
+}
+
 .slider .el-slider {
   --el-slider-button-wrapper-offset: -9px
 }
