@@ -60,7 +60,7 @@ export default {
     showLogin() {
       this.$store.dispatch("isLoginVisible", true);
     },
-    
+
     closeLoginBox() {
       this.$store.dispatch("isLoginVisible", false);
     },

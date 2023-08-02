@@ -985,16 +985,18 @@ export default {
         </div>
 
         <el-dialog v-model="isUserFiction" title="My Fiction" width="50%">
-          <div v-for="item in userFictionList" :key="item.id"
+          <h2 v-if="userFictionList.length < 1">You have no fiction</h2>
+          <div v-else v-for="item in userFictionList" :key="item.id"
             style="display: flex; min-height: 100px; text-align: center; border-bottom: 1px solid #e7e7e7; padding-top: 10px; position: relative;">
-            <el-input v-model="item.fanficContent" :autosize="{ minRows: 3, maxRows: 3 }" type="textarea" style=""/>
+            <el-input v-model="item.fanficContent" :autosize="{ minRows: 3, maxRows: 3 }" type="textarea" style="" />
             <div style="display: flex; flex-direction: column;">
               <span style="margin: 0 10px 10px 10px; height: 20px; display: inline-block;">
                 {{ item.fanficTime }}
               </span>
-              <div style = "display: flex; flex-direction: row; margin: 10px; justify-content: space-around;">
-                <el-button type="primary" :icon="Upload" circle @click="updateUserFiction(item.fanficContent, item.id)" style="margin: 5px;"/>
-                <el-button type="danger" :icon="Delete" circle @click="deleteUserFiction(item.id)" style="margin: 5px;"/>
+              <div style="display: flex; flex-direction: row; margin: 10px; justify-content: space-around;">
+                <el-button type="primary" :icon="Upload" circle @click="updateUserFiction(item.fanficContent, item.id)"
+                  style="margin: 5px;" />
+                <el-button type="danger" :icon="Delete" circle @click="deleteUserFiction(item.id)" style="margin: 5px;" />
               </div>
             </div>
 
@@ -1004,7 +1006,7 @@ export default {
             style="width: 100%; display: flex; justify-content: center;" />
           <template #footer>
             <span>
-              <el-button type = "primary" @click="isUserFiction = false">Close</el-button>
+              <el-button type="primary" @click="isUserFiction = false">Close</el-button>
             </span>
           </template>
         </el-dialog>

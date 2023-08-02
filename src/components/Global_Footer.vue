@@ -9,11 +9,43 @@
       </div>
       <div class="footer-top-blocks">
         <h2>TEAMS</h2>
-        <div style="color: rgb(117, 117, 117); margin-bottom: 5px;">Mingjie Huang</div>
-        <div style="color: rgb(117, 117, 117); margin-bottom: 5px;">Yuyan Xiong</div>
-        <div style="color: rgb(117, 117, 117); margin-bottom: 5px;">Dazhi Gao</div>
-        <div style="color: rgb(117, 117, 117); margin-bottom: 5px;">Liuyi Chen</div>
-        <div style="color: rgb(117, 117, 117); margin-bottom: 5px;">Guoling Dong</div>
+        <el-popover placement="top-start" :width="200" trigger="click">
+          <template #reference>
+            <div class="footer_Admin">Mingjie Huang</div>
+          </template>
+        </el-popover>
+
+        <el-popover placement="top-start" title="Title" :width="200" trigger="click"
+          content="this is content, this is content, this is content">
+          <template #reference>
+            <div class="footer_Admin">Yuyan Xiong</div>
+          </template>
+        </el-popover>
+
+        <el-popover placement="top-start" title="Title" :width="200" trigger="click"
+          content="this is content, this is content, this is content">
+          <template #reference>
+            <div class="footer_Admin">Dazhi Gao</div>
+          </template>
+        </el-popover>
+
+        <el-popover placement="top-start" title="Title" :width="200" trigger="click"
+          content="this is content, this is content, this is content">
+          <template #reference>
+            <div class="footer_Admin">Liuyi Chen</div>
+          </template>
+        </el-popover>
+
+        <el-popover placement="top-start" title="Title" :width="200" trigger="click"
+          content="this is content, this is content, this is content">
+          <template #reference>
+            <div class="footer_Admin">Guoling Dong</div>
+          </template>
+        </el-popover>
+
+
+
+
       </div>
       <div class="footer-top-blocks">
         <h2>ABOUT</h2>
@@ -50,6 +82,16 @@
 </template>
 
 <style>
+.footer_Admin {
+  color: rgb(117, 117, 117);
+  margin-bottom: 5px;
+}
+
+.footer_Admin:hover {
+  cursor: pointer;
+  text-decoration: underline;
+}
+
 .footer {
   background-color: #f5f5f5;
   display: flex;

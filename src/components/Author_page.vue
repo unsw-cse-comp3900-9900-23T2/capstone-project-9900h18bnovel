@@ -956,16 +956,15 @@ export default {
                 </el-tab-pane>
 
                 <el-tab-pane label="Chapter">
-                  <el-button :icon="Plus" type="primary" @click="isCreateChapter = true" style="width: 100%;"
-                    :disabled="!editing">Create Chapter</el-button>
+                  <el-button :icon="Plus" type="primary" @click="isCreateChapter = true" style="width: 100%;">Create
+                    Chapter</el-button>
 
                   <div v-if="chapters.length > 0">
                     <h2>{{ totalChapters }} Total</h2>
                     <el-collapse accordion>
-                      <el-collapse-item v-for="(item, index) in chapters" :key="index" @click="getContent(item.id)"
-                        style="position: relative;">
+                      <el-collapse-item v-for="(item, index) in chapters" :key="index" style="position: relative;">
                         <template #title>
-                          <h3>{{ item.chapterName }}</h3>
+                          <h3 style="width:100%;" @click="getContent(item.id)">{{ item.chapterName }}</h3>
                         </template>
                         <div style="right:40px; top:6px; position: absolute;">
                           <el-button v-show="editing" @click="isEditChapter = true" type="primary" :icon="Edit" circle />
