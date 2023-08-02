@@ -85,6 +85,7 @@ export default {
       settingFontSize: 2,
       settingTheme: false,
       themeColor: "#ffffff",
+      bookAuthorId: null,
 
       otherUserName: null,
       otherUserImg: null,
@@ -106,6 +107,9 @@ export default {
       userFictionList: [],
 
       isEditUserFiction: false,
+
+      penName: null,
+      signature: null,
     }
   },
   watch: {
@@ -153,7 +157,6 @@ export default {
   },
 
   mounted() {
-    window.scrollTo(0, 0);
     setTimeout(() => {
       this.getBookInfo();
       this.getChapters();
@@ -166,6 +169,23 @@ export default {
   },
 
   methods: {
+    async getAuthorInfo() {
+      await axios.get("http://localhost:8888/api/author/get_author_info?userId=" + this.bookAuthorId)
+        .then(response => {
+          const data = response.data;
+          if (data.code === "00000") {
+            if (data.data === null) {
+              this.penName = "Thanks for reading my book ,hope you enjoy it!";
+            } else {
+              this.penName = data.data.penName;
+              this.signature = data.data.signature;
+            }
+          }
+        })
+        .catch(error => {
+          console.error(error);
+        });
+    },
 
     async updateUserFiction(fictionContent, fictionId) {
       const reqBody = {
@@ -453,6 +473,7 @@ export default {
         .then(response => {
           const data = response.data;
           this.book = data.data;
+          this.bookAuthorId = data.data.authorId;
         })
         .catch(error => {
           console.error(error);
@@ -629,7 +650,14 @@ export default {
               <el-tag style="font-size: 14pt;" size="large" effect="plain" :type="book.bookStatus === '1' ? 'success'
                     : ''">{{ book.bookStatus === "1" ? "Completed" : "Ongoing" }}</el-tag>
             </div>
-            <div style="font-size: 14pt; margin-bottom: 15px;"> {{ book.authorName }}</div>
+
+            <el-popover placement="top" :width="250" trigger="click">
+              {{ penName }}
+              {{ signature }}
+              <template #reference>
+                <div style="font-size: 14pt; margin-bottom: 15px;" @click="getAuthorInfo"> {{ book.authorName }}</div>
+              </template>
+            </el-popover>
           </div>
 
           <div style="line-height: 1.5;"> {{
