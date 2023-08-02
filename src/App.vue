@@ -36,7 +36,7 @@ export default {
       this.$store.dispatch('login', localStorage.getItem("token"));
       this.$store.dispatch('username', localStorage.getItem("username"));
       this.$store.dispatch('uid', localStorage.getItem("uid"));
-      this.$store.dispatch('uid', localStorage.getItem("photo"));
+      this.$store.dispatch('photo', localStorage.getItem("userPhoto"));
     }
     this.searchInput = this.$store.getters.getSearchInput ? this.$store.getters.getSearchInput : null;
     setTimeout(() => {
