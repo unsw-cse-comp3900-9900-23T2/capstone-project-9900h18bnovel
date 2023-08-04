@@ -62,8 +62,10 @@ com
         |   |   +- constant -- General constants 
         |   |   +- req -- Generic request data format encapsulation, e.g. paging request data
         |   |   +- resp -- Interface response tools and response data format encapsulation
-        |   |     
-        +- controller -- The main purpose is to handle various Http requests, various basic parameter checks, or simple processing of non-reusable business, returning JSON data, etc.
+        |   |   +- exception -- Common excetion class
+        |   +- config -- Business-agnostic generic modules
+        |   +- interceptor -- Interceptor, Xss filter and flow control
+        |   +- util -- Business utils
         +- dto -- Data transfer objects, including encapsulation of various Http request and response data
         |   +- req -- Http Request data encapsulation
         |   +- resp -- Http Response data encapsulation
@@ -76,6 +78,7 @@ com
         +- service -- Relatively specific business logic service layers
         +- controller -- The main purpose is to handle various Http requests, various basic parameter checks, or simple processing of non-reusable business, returning JSON data, etc.
         |   +- front -- Fiction related interfaces
+        |   +- author -- Author related interfaces
 
 
 ```
