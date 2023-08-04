@@ -17,11 +17,11 @@ public class XssHttpServletRequestWrapper extends HttpServletRequestWrapper {
     private static final Map<String, String> REPLACE_RULE = new HashMap<>();
 
     static {
-//        REPLACE_RULE.put("&", "&amp;");
+        REPLACE_RULE.put("&", "&amp;");
         REPLACE_RULE.put("<", "&lt;");
         REPLACE_RULE.put(">", "&gt;");
-//        REPLACE_RULE.put("\"", "&quot;");
-//        REPLACE_RULE.put("'", "&apos;");
+        REPLACE_RULE.put("\"", "&quot;");
+        REPLACE_RULE.put("'", "&apos;");
     }
 
     public XssHttpServletRequestWrapper(HttpServletRequest request) {
