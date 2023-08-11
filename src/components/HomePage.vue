@@ -72,11 +72,26 @@ export default {
         .then(response => {
           const data = response.data;
           this.weekly_books_info = data.data.filter(item => item.type === '0');
-          this.hottest_books_info = data.data.filter(item => item.type === '1');
-          this.best_books_info = data.data.filter(item => item.type === '2');
-          this.click_rank_info = data.data.filter(item => item.type === '3');
-          this.newest_rank_info = data.data.filter(item => item.type === '4');
-          this.update_rank_info = data.data.filter(item => item.type === '5');
+          this.hottest_books_info = data.data.filter(item => item.type === '1').map(item => ({
+            ...item,
+            score: parseFloat(item.score)
+          }));
+          this.best_books_info = data.data.filter(item => item.type === '2').map(item => ({
+            ...item,
+            score: parseFloat(item.score)
+          }));
+          this.click_rank_info = data.data.filter(item => item.type === '3').map(item => ({
+            ...item,
+            score: parseFloat(item.score)
+          }));
+          this.newest_rank_info = data.data.filter(item => item.type === '4').map(item => ({
+            ...item,
+            score: parseFloat(item.score)
+          }));
+          this.update_rank_info = data.data.filter(item => item.type === '5').map(item => ({
+            ...item,
+            score: parseFloat(item.score)
+          }));
         })
         .catch(error => {
           console.error(error);
@@ -112,7 +127,8 @@ export default {
 </script>
 
 <template>
-  <div v-loading.fullscreen="loading" element-loading-spinner=" " element-loading-background="rgba(122, 122, 122, 0.8)"></div>
+  <div v-loading.fullscreen="loading" element-loading-spinner=" " element-loading-background="rgba(122, 122, 122, 0.8)">
+  </div>
   <div v-if="showHomePage">
     <div class="flex-center">
       <div class="homeBody">

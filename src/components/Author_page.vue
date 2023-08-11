@@ -353,6 +353,12 @@ export default {
       this.selectedBook = JSON.parse(JSON.stringify(book));
     },
 
+    handleUploadClick() {
+      this.$nextTick(() => {
+        this.$refs.fileInput.click();
+      });
+    },
+
     handleFileChange(event) {
       const file = event.target.files[0];
       if (file) {
@@ -419,10 +425,8 @@ export default {
 <template>
   <div v-loading.fullscreen.lock="loading" element-loading-background="rgba(255, 255, 255, 255)"
     element-loading-spinner=" "></div>
-  <div v-loading.fullscreen.lock="loadingRegist"
-    :element-loading-text="'Welcome to join us ' + penName + ', things will get ready for you shortly'"
-    :element-loading-spinner="svg" element-loading-svg-view-box="0, 5, 30, 40"
-    element-loading-background="rgba(255, 255, 255, 255)"></div>
+  <div v-loading.fullscreen.lock="loadingRegist" element-loading-background="rgba(255, 255, 255, 255)"
+    element-loading-spinner=" "></div>
   <div v-if="noLogin">
     <div class="background">
       <h1
@@ -802,7 +806,7 @@ export default {
                 </div>
 
                 <input type="file" ref="fileInput" @change="handleFileChange" accept="image/*" style="display: none" />
-                <el-button type="primary" :icon="Upload" @click="this.$refs.fileInput.click();">
+                <el-button type="primary" :icon="Upload" @click="handleUploadClick">
                   UPLOAD
                 </el-button>
               </div>

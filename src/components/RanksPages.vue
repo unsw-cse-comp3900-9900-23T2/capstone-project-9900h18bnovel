@@ -50,7 +50,10 @@ export default {
       await axios.get("http://localhost:8888/api/front/book/" + whichrank)
         .then(response => {
           const data = response.data;
-          this.rankBooks = data.data;
+          this.rankBooks = data.data.map(item => ({
+            ...item,
+            score: parseFloat(item.score)
+          }));
         })
         .catch(error => {
           console.error(error);

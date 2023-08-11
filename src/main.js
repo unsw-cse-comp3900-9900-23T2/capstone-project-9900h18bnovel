@@ -20,7 +20,7 @@ function isUserLoggedIn() {
   // 判断用户是否已登录的逻辑
   // 返回 true 表示已登录，返回 false 表示未登录
   // 这里仅为示例，你需要根据实际情况进行判断
-  console.log(localStorage.getItem('token'));
+  // console.log(localStorage.getItem('token'));
   return localStorage.getItem('token') !== null;
 }
 
@@ -62,17 +62,17 @@ export const router = createRouter({
 });
 router.beforeEach((to, from, next) => {
   if (to.meta.requiresAuth && !isUserLoggedIn()) {
-    console.log(to.meta.requiresAuth);
-    console.log(isUserLoggedIn());
-    console.log('用户未登录，重定向到登录页面或其他处理逻辑');
-    console.log('from.path:', from.path);
+    // console.log(to.meta.requiresAuth);
+    // console.log(isUserLoggedIn());
+    // console.log('用户未登录，重定向到登录页面或其他处理逻辑');
+    // console.log('from.path:', from.path);
     next(from.path ? from.path : '/home');
   } else {
-    console.log(to.meta.requiresAuth);
-    console.log(isUserLoggedIn());
-    console.log('用户已登录或无需验证，允许访问');
-    console.log('to.path:', to.path);
-    console.log('from.path:', from.path);
+    // console.log(to.meta.requiresAuth);
+    // console.log(isUserLoggedIn());
+    // console.log('用户已登录或无需验证，允许访问');
+    // console.log('to.path:', to.path);
+    // console.log('from.path:', from.path);
     next();
   }
 });

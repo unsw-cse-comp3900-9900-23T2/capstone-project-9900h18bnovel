@@ -95,7 +95,6 @@ export default {
       userId: localStorage.getItem('uid') ? localStorage.getItem('uid') : ''
     })
       .then(response => {
-        console.log(response);
         if (response.data.code === "00000") {
           if (response.data.data.userPhoto) {
             localStorage.setItem('userPhoto', response.data.data.userPhoto);
@@ -141,11 +140,11 @@ export default {
   methods: {
     async UpdateGender() {
       this.userPhoto = localStorage.getItem("userPhoto");
-      console.log("-----" + this.userPhoto);
+      // console.log("-----" + this.userPhoto);
       if (NewGender.value[0] === 'male') {/*.toLowerCase()*/
         this.userSex = 0;
         if (this.userPhoto === this.DefaultMalePhoto || this.userPhoto === this.DefaultFemalePhoto) {
-          console.log("走男的这儿了？");
+          // console.log("走男的这儿了？");
           this.userPhoto = this.DefaultMalePhoto;
           localStorage.setItem('userPhoto', this.DefaultMalePhoto);
           this.$store.dispatch('photo', this.DefaultMalePhoto);
@@ -153,7 +152,7 @@ export default {
       } else if (NewGender.value[0] === 'female') {/*.toLowerCase()*/
         this.userSex = 1;
         if (this.userPhoto === this.DefaultMalePhoto || this.userPhoto === this.DefaultFemalePhoto) {
-          console.log("走女的这儿了？");
+          // console.log("走女的这儿了？");
           this.userPhoto = this.DefaultFemalePhoto;
           localStorage.setItem('userPhoto', this.DefaultFemalePhoto);
           this.$store.dispatch('photo', this.DefaultFemalePhoto);
@@ -181,7 +180,7 @@ export default {
               localStorage.setItem('userSex', this.userSex);
               this.$store.dispatch('sex', this.userSex);
               ElMessage.success("Gender changed!");
-              console.log("Change gender successful!")
+              // console.log("Change gender successful!")
             }
           }
         })
@@ -212,16 +211,16 @@ export default {
       await axios.put("http://localhost:8888/api/front/user/modify_userInfo", requestData)
         .then(response => {
           if (response.status === 200) {
-            console.log(response);
+            // console.log(response);
             if (response.data.code === '00000') {
               this.CurrentPhoto = requestData.userPhoto;
               ElMessage.success("Avatar changed!");
               localStorage.setItem('userPhoto', requestData.userPhoto);
               this.userPhoto = requestData.userPhoto;
               this.$store.dispatch('photo', requestData.userPhoto);
-              console.log("上传完后头像为：" + this.userPhoto);
+              // console.log("上传完后头像为：" + this.userPhoto);
             } else {
-              console.log("User_Profile 203行有问题");
+              // console.log("User_Profile 203行有问题");
             }
           }
         })
@@ -244,7 +243,7 @@ export default {
       await axios.put("http://localhost:8888/api/front/user/modify_userInfo", requestData)
         .then(response => {
           if (response.status === 200) {
-            console.log(response);
+            // console.log(response);
             if (response.data.code === '00000') {
               ElMessage.success("Username changed!");
               this.isNameEditing = false;
@@ -252,7 +251,7 @@ export default {
               localStorage.setItem('username', this.newUserName);
               this.$store.dispatch('username', this.newUserName);
             } else {
-              console.log("User_Profile 228行有问题");
+              // console.log("User_Profile 228行有问题");
             }
           }
         })
@@ -285,16 +284,16 @@ export default {
           userId: this.$store.getters.GetUID,
           bookId: bookId,
         };
-        console.log(reqbody);
+        // console.log(reqbody);
         await axios.post('http://localhost:8888/api/front/book/cancel_collect', reqbody)
           .then(response => {
             if (response.status === 200) {
               ElMessage.success("Collection Removed");
               this.AllCollections = this.AllCollections.filter(book => book.bookId !== bookId)
-              console.log(response);
+              // console.log(response);
             }
             else {
-              console.log("User_Profile 262行有问题");
+              // console.log("User_Profile 262行有问题");
             }
           })
           .catch(error => {
