@@ -7,16 +7,7 @@ import {
 } from '@element-plus/icons-vue';
 import { ElMessage } from 'element-plus';
 import axios from 'axios';
-import { getItemColor } from '../utils'
-const svg = `
-<path class="path" d="
-          M 10 40
-          L 10 15
-          L 30 40
-          L 30 15
-import { Linter } from 'eslint';
-        " style="stroke-width: 5px; fill: rgba(0, 0, 0, 0); animation: none;"/>
-      `
+import { getItemColor, svg } from '../utils'
 </script >
 
 <script>

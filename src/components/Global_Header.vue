@@ -195,8 +195,6 @@ export default {
 }
 
 .logo {
-  border: 1px solid #c7c7c7;
-  border-radius: 20px;
   height: 60px;
   width: 60px;
   object-fit: cover;

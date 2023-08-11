@@ -22,15 +22,7 @@ import {
 } from '@element-plus/icons-vue';
 import { ElMessage } from 'element-plus';
 import axios from 'axios';
-import { getItemColor } from '../utils'
-const svg = `
-<path class="path" d="
-          M 10 40
-          L 10 15
-          L 30 40
-          L 30 15
-        " style="stroke-width: 5px; fill: rgba(0, 0, 0, 0); animation: none;"/>
-      `
+import { getItemColor, svg } from '../utils'
 const marksOnFontSize = ({
   0: 'XS',
   1: 'S',
@@ -714,14 +706,12 @@ export default {
         </div>
       </div>
       <div class="chapterDetail">
-        <div class="container">
-          <div class="list">
-            <h1 :class="isShowComments ? 'chooseOne' : 'noChoose'" @click="chooseComments"><span>Comments</span></h1>
-            <h1>|</h1>
-            <h1 :class="isShowChapters ? 'chooseOne' : 'noChoose'" @click="chooseChapters"><span>Chapters</span></h1>
-            <h1>|</h1>
-            <h1 :class="isShowFiction ? 'chooseOne' : 'noChoose'" @click="chooseFiction"><span>Fan Fiction</span></h1>
-          </div>
+        <div class="list">
+          <h1 :class="isShowComments ? 'chooseOne' : 'noChoose'" @click="chooseComments"><span>Comments</span></h1>
+          &nbsp;&nbsp;<h1>|</h1>&nbsp;&nbsp;
+          <h1 :class="isShowChapters ? 'chooseOne' : 'noChoose'" @click="chooseChapters"><span>Chapters</span></h1>
+          &nbsp;&nbsp;<h1>|</h1>&nbsp;&nbsp;
+          <h1 :class="isShowFiction ? 'chooseOne' : 'noChoose'" @click="chooseFiction"><span>Fan Fiction</span></h1>
         </div>
         <el-divider />
         <div v-loading.fullscreen="clickedLoad" :element-loading-spinner="svg"
@@ -1046,6 +1036,11 @@ export default {
 
 
 <style>
+.list {
+  display: flex;
+  color: #949494;
+}
+
 .eachFiction {
   min-height: 50px;
   margin-top: 5px;
@@ -1108,67 +1103,6 @@ export default {
   height: 40px;
 }
 
-.chapterDetail .container {
-  font-family: 'Roboto Condensed', sans-serif;
-  margin-bottom: -20px;
-  color: #b7b7b7;
-}
-
-.chapterDetail .container .list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.chapterDetail .container h1 {
-  display: inline-block;
-  padding: 0 10px;
-}
-
-.chapterDetail .container span {
-  position: relative;
-  display: block;
-  cursor: pointer;
-}
-
-.chapterDetail .container span {
-
-  &:before,
-  &:after {
-    content: '';
-    position: absolute;
-    width: 0%;
-    height: 2px;
-    bottom: -2px;
-    margin-top: -0.5px;
-    background: #fff;
-  }
-
-  &:before {
-    left: -2.5px;
-  }
-
-  &:after {
-    right: 2.5px;
-    background: #fff;
-    transition: width 0.5s cubic-bezier(0.22, 0.61, 0.36, 1);
-  }
-
-  &:hover {
-    &:before {
-      background: #949494;
-      width: 100%;
-      transition: width 0.5s cubic-bezier(0.22, 0.61, 0.36, 1);
-    }
-
-    &:after {
-      background: transparent;
-      width: 100%;
-      transition: 0s;
-    }
-  }
-}
-
 .settingDropdown:hover {
   cursor: pointer;
 }
@@ -1201,6 +1135,11 @@ export default {
 
 .noChoose {
   color: #b7b7b7;
+}
+
+.noChoose:hover {
+  text-decoration: underline;
+  cursor: pointer;
 }
 
 .chooseOne {

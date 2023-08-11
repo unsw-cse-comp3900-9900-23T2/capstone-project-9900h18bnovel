@@ -8,14 +8,7 @@ import {
   Delete,
 } from '@element-plus/icons-vue';
 import { ElMessage } from 'element-plus';
-const svg = `
-<path class="path" d="
-          M 10 40
-          L 10 15
-          L 30 40
-          L 30 15
-        " style="stroke-width: 5px; fill: rgba(0, 0, 0, 0); animation: none;"/>
-      `
+import { svg } from '../utils'
 </script>
 <script>
 export default {

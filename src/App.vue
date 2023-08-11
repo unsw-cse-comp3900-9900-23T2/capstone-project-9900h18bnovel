@@ -2,14 +2,7 @@
 import {
   CaretTop,
 } from '@element-plus/icons-vue';
-const svg = `
-<path class="path" d="
-          M 10 40
-          L 10 15
-          L 30 40
-          L 30 15
-        " style="stroke-width: 5px; fill: rgba(0, 0, 0, 0); animation: none;"/>
-      `
+import { svg } from '../src/utils'
 </script>
 
 <script>
@@ -101,6 +94,10 @@ export default {
 </template>
 
 <style>
+.el-button .el-button--primary {
+  --el-button-bg-color: linear-gradient(to right, #1989fa, #7c87ff) !important;
+}
+
 .fade-enter,
 .fade-leave-to {
   opacity: 0;

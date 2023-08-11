@@ -74,3 +74,12 @@ export function logout(if_in_userprofile) {
         router.go(-1);
     }
 }
+
+export const svg = `
+<path class="path" d="
+          M 10 40
+          L 10 15
+          L 30 40
+          L 30 15
+        " style="stroke-width: 5px; fill: linear-gradient(#1989fa, #7c87ff); animation: none;"/>
+      `

@@ -1,4 +1,3 @@
-<!-- 1.修复了nav bar不跟着url走的问题 -->
 <script setup>
 import {
   UserFilled,
@@ -7,16 +6,7 @@ import {
   StarFilled,
 } from '@element-plus/icons-vue';
 import axios from 'axios';
-import { getItemColor } from '../utils'
-// import { ElMessage } from 'element-plus';
-const svg = `
-<path class="path" d="
-          M 10 40
-          L 10 15
-          L 30 40
-          L 30 15
-        " style="stroke-width: 5px; fill: rgba(0, 0, 0, 0); animation: none;"/>
-      `
+import { getItemColor, svg } from '../utils'
 </script>
 <script>
 import Global_Footer from './Global_Footer.vue';
@@ -101,15 +91,15 @@ export default {
       this.$router.push('/userprofile');
     },
 
-    goClickRank(){
+    goClickRank() {
       this.$router.push("/clickrank");
     },
 
-    goNewestRank(){
+    goNewestRank() {
       this.$router.push("/newestrank")
     },
 
-    goUpdateRank(){
+    goUpdateRank() {
       this.$router.push("/updaterank")
     },
   },
@@ -123,10 +113,9 @@ export default {
 
 <template>
   <div v-loading.lock="loading" :element-loading-spinner="svg" element-loading-svg-view-box="0, 5, 30, 40"
-    element-loading-background="rgba(255, 255, 255, 255)"
-    style="top:50%; left: 50%; transform: translate(-50%,-50%); position: absolute;"></div>
+    element-loading-background="rgba(255, 255, 255, 255)" class="page-center"></div>
   <div v-if="showHomePage">
-    <div style="display: flex; justify-content: center;">
+    <div class="flex-center">
       <div class="homeBody">
         <div class="weekly_collect_books_container">
           <div class="weekly_books">
@@ -212,8 +201,7 @@ export default {
         <h2></h2>
         <div class="recomm_books_container">
           <div class="hottest_books">
-            <h2 style=" border-bottom: 1px solid; width: 100%; border-color: rgb(206, 204, 204); padding-bottom: 10px;">
-              Hottest Books
+            <h2 style="text-align: center;">Hottest Books
               <el-popover placement="right" :width="275" trigger="hover"
                 content="The Hottest Books list features the most popular and sought-after literary gems based on the number of times they have been collected by readers">
                 <template #reference>
@@ -281,8 +269,7 @@ export default {
             </el-carousel>
           </div>
           <div class="best_books">
-            <h2 style="border-bottom: 1px solid; width: 100%; border-color: rgb(206, 204, 204);  padding-bottom: 10px;">
-              Best Books
+            <h2 style="text-align: center;">Best Books
               <el-popover placement="right" :width="265" trigger="hover"
                 content="The Best Books list showcases the most highly-rated and acclaimed literary works based on their scores">
                 <template #reference>
@@ -351,7 +338,7 @@ export default {
           </div>
         </div>
         <h2
-          style=" border-bottom: 1px solid; border-color: rgb(223, 223, 223); padding-bottom: 10px; margin-bottom: 22px; margin-top: 30px; width: 100%; text-align: center;">
+          style=" border-bottom: 1px solid; border-color: rgb(223, 223, 223); padding-bottom: 10px; margin-bottom: 22px; margin-top: 40px; width: 100%;">
           Ranking of Books</h2>
         <div class="rank_books_container">
           <div class="rank_container">
@@ -449,6 +436,18 @@ export default {
 </template>
 
 <style>
+.flex-center {
+  display: flex;
+  justify-content: center;
+}
+
+.page-center {
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  position: absolute;
+}
+
 .tag {
   bottom: 30px;
   position: absolute;
@@ -624,8 +623,7 @@ export default {
 }
 
 .recomm_books_container {
-  margin-top: -10px;
-  margin-bottom: -5px;
+  margin-top: 20px;
   width: 100%;
   display: flex;
   justify-content: space-between;
@@ -752,9 +750,8 @@ export default {
 .rank_books_container {
   margin-bottom: 15px;
   display: flex;
-  justify-content: center;
-  align-items: center;
-  padding-left: 100px;
+  justify-content: space-between;
+  width: 100%;
   height: 500px;
 }
 
@@ -762,6 +759,7 @@ export default {
   /* background-color: aliceblue; */
   padding-left: 10px;
   margin-right: 10px;
+  width: 32%;
 }
 
 .rank_name {
@@ -769,7 +767,7 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #1989fa;
+  background: linear-gradient(to right, #1989fa, #7c87ff);
   width: 200px;
   color: white;
   box-shadow: 10px 8px 0 orange;
