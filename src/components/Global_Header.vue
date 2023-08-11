@@ -195,8 +195,8 @@ export default {
 }
 
 .logo {
-  height: 60px;
-  width: 60px;
+  height: 70px;
+  width: 70px;
   object-fit: cover;
   margin-right: 10px;
 }

@@ -1,7 +1,7 @@
 <script setup>
 import { ElMessage } from 'element-plus';
 import axios from 'axios';
-import { getItemColor, svg } from '../utils';
+import { getItemColor } from '../utils';
 import {
   StarFilled,
   CaretTop,
@@ -318,9 +318,8 @@ export default {
 
 <template>
   <div v-infinite-scroll="load" :infinite-scroll-disabled="isEnd">
-    <div v-loading.lock="loading" :element-loading-spinner="svg" element-loading-svg-view-box="0, 5, 30, 40"
-      element-loading-background="rgba(255, 255, 255, 255)"
-      style="top:50%; left: 50%; transform: translate(-50%,-50%); position: absolute;"></div>
+    <div v-loading.fullscreen="loading" element-loading-spinner=" " element-loading-background="rgba(122, 122, 122, 0.8)">
+    </div>
     <div v-if="showAllNovelPage">
       <div style="display: flex; justify-content: center;">
         <div class="allnovel_body">
@@ -465,8 +464,8 @@ export default {
               </div>
             </div>
           </div>
-          <div class="novels_container" v-loading.fullscreen="clickedLoad" :element-loading-spinner="svg"
-            element-loading-svg-view-box="0, 5, 30, 40">
+          <div class="novels_container" v-loading.fullscreen="clickedLoad" element-loading-spinner=" "
+            element-loading-background="rgba(122, 122, 122, 0.8)">
             <h3 v-if="keyword" style="width: 100%;">Search result for "{{ keyword }}"</h3>
             <h1 v-if="novels.length === 0" style="width: 100%; text-align: center;">No Results</h1>
             <div v-for="(item) in novels" :key="item.bookName" class="each_novel_container">
@@ -525,9 +524,8 @@ export default {
           </div>
         </div>
       </div>
-      <div style="height: 157px; width: 60%; display:flex; justify-content: center; margin: auto;" v-loading="loadMore"
-        :element-loading-spinner="svg" element-loading-svg-view-box="0, 5, 30, 40"
-        element-loading-background="rgba(255, 255, 255, 255)">
+      <div style="height: 157px; width: 60%; display:flex; justify-content: center; margin: auto;"
+        v-loading="loadMore" element-loading-spinner=" ">
         <div v-if="pageNum >= totalNum" style="width: 100%; text-align: center;">
           <h3>
             <el-icon>
@@ -557,7 +555,7 @@ export default {
 
 
 <style>
-.clickScroll:hover{
+.clickScroll:hover {
   cursor: pointer;
 }
 

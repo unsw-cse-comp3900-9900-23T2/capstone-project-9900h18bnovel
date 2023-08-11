@@ -611,9 +611,8 @@ export default {
 </script>
 
 <template>
-  <div v-loading.lock="loading" :element-loading-spinner="svg" element-loading-svg-view-box="0, 5, 30, 40"
-    element-loading-background="rgba(255, 255, 255, 255)"
-    style="top:50%; left: 50%; transform: translate(-50%,-50%); position: absolute;"></div>
+  <div v-loading.fullscreen="loading" element-loading-spinner=" " element-loading-background="rgba(122, 122, 122, 0.8)">
+  </div>
   <div v-if="showBookInfo">
     <div class="bookInfoBody">
       <div class="bookDetail">

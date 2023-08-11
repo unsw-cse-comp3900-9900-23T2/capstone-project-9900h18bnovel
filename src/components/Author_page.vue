@@ -8,7 +8,6 @@ import {
   Delete,
 } from '@element-plus/icons-vue';
 import { ElMessage } from 'element-plus';
-import { svg } from '../utils'
 </script>
 <script>
 export default {
@@ -418,8 +417,8 @@ export default {
 }
 </script>
 <template>
-  <div v-loading.fullscreen.lock="loading" element-loading-text="Is great that we have you" :element-loading-spinner="svg"
-    element-loading-svg-view-box="0, 5, 30, 40" element-loading-background="rgba(255, 255, 255, 255)"></div>
+  <div v-loading.fullscreen.lock="loading" element-loading-background="rgba(255, 255, 255, 255)"
+    element-loading-spinner=" "></div>
   <div v-loading.fullscreen.lock="loadingRegist"
     :element-loading-text="'Welcome to join us ' + penName + ', things will get ready for you shortly'"
     :element-loading-spinner="svg" element-loading-svg-view-box="0, 5, 30, 40"

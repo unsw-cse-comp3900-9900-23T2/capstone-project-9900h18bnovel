@@ -10,7 +10,7 @@ import {
   Delete,
   Close,
 } from '@element-plus/icons-vue';
-import { getItemColor, svg } from '../utils';
+import { getItemColor } from '../utils';
 import { computed } from 'vue'
 const iconStyle = computed(() => {
   const marginMap = {
@@ -308,8 +308,8 @@ export default {
 }
 </script>
 <template>
-  <div v-loading.lock="loading" :element-loading-spinner="svg" element-loading-svg-view-box="0, 5, 30, 40"
-    element-loading-background="rgba(255, 255, 255, 255)" class="page-center"></div>
+  <div v-loading.fullscreen="loading" element-loading-spinner=" " element-loading-background="rgba(122, 122, 122, 0.8)">
+  </div>
   <div v-if="showPage">
     <div class="ProfileBody">
       <div class="ProfileContainer">
@@ -318,8 +318,7 @@ export default {
         <el-divider />
         <div style="display: flex; align-items: center; margin: auto;">
           <div class="AvatarContainer">
-            <span class="el-avatar el-avatar--circle"
-              style="height: 200px; width: 200px; margin: 3em;"><img
+            <span class="el-avatar el-avatar--circle" style="height: 200px; width: 200px; margin: 3em;"><img
                 :src="this.$store.state.photo ? this.$store.state.photo : CurrentPhoto"
                 style="object-fit: contain;"></span>
             <input type="file" ref="fileInput" @change="CollectNewPhoto" style="display: none" />

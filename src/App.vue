@@ -2,7 +2,6 @@
 import {
   CaretTop,
 } from '@element-plus/icons-vue';
-import { svg } from '../src/utils'
 </script>
 
 <script>
@@ -64,9 +63,8 @@ export default {
 
 <template>
   <div v-if="$route.path !== '/author'">
-    <div v-loading.fullscreen.lock="loading" element-loading-text="Welcome to NovelHub, novels will ready for you ASAP"
-      :element-loading-spinner="svg" element-loading-svg-view-box="0, 5, 30, 40"
-      element-loading-background="rgba(255, 255, 255, 255)"></div>
+    <div v-loading.fullscreen.lock="loading" element-loading-background="rgba(255, 255, 255, 255)"
+      element-loading-spinner=" "></div>
     <div v-if="isLoadFinished" :class="{ 'blur': $store.state.isLoginVisible }">
       <Global_Header @clearSearch="clearSearch" @handleSearch="handleSearch" @showLogin="showLogin"
         @closeLoginBox="closeLoginBox" :verImage="verImage" :sessionId="sessionId" />
@@ -94,8 +92,13 @@ export default {
 </template>
 
 <style>
-.el-button .el-button--primary {
-  --el-button-bg-color: linear-gradient(to right, #1989fa, #7c87ff) !important;
+.el-loading-spinner {
+  background-image: url(spinner.gif);
+  background-repeat: no-repeat;
+  background-size: 70px 70px;
+  height: 70px;
+  width: 100%;
+  background-position: center;
 }
 
 .fade-enter,

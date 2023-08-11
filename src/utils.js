@@ -81,5 +81,5 @@ export const svg = `
           L 10 15
           L 30 40
           L 30 15
-        " style="stroke-width: 5px; fill: linear-gradient(#1989fa, #7c87ff); animation: none;"/>
+        " style="stroke-width: 5px; fill: rgb(0,0,0,0); animation: none;"/>
       `
