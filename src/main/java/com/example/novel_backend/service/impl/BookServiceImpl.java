@@ -432,6 +432,7 @@ public class BookServiceImpl implements BookService {
                 .eq("user_id", dto.getUserId())
                 .orderByDesc("update_time");
         IPage<BookFanfic> bookFanficPage = bookFanficMapper.selectPage(page, queryWrapper);
+        // 
         UserInfo userInfo = userInfoMapper.selectById(dto.getUserId());
         return RestResp.ok(PageRespDto.of(dto.getPageNum(), dto.getPageSize(), page.getTotal(),
                 bookFanficPage.getRecords().stream().map(bookFanfic ->
