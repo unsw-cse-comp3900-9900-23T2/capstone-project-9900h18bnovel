@@ -17,7 +17,7 @@ export default {
   },
   methods: {
     async getAdminUser(userId) {
-      await axios.get("http://localhost:8888/api/front/user/get_other_userInfo?userId=" + userId)
+      await axios.get("/api/front/user/get_other_userInfo?userId=" + userId)
         .then(response => {
           const data = response.data;
           this.adminEmail = data.data.email;
@@ -43,7 +43,7 @@ export default {
   <footer class="footer">
     <div class="footer-top">
       <div class="logo_container">
-        <img src="..\logo1.png" class="logo">
+        <img src="..\assets\logo1.png" class="logo">
         <h1
           style="font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif; color: rgb(68, 68, 68); text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4); margin-right: 50px;">
           NovelHub</h1>

@@ -11,7 +11,7 @@ import { ElMessage } from 'element-plus';
 <script>
 import { logout } from '../utils';
 export default {
-  emits: ['clearSearch', 'handleSearch', 'showLogin', 'closeLoginBox'],
+  emits: ['clearSearch', 'handleSearch', 'showLogin'],
   props: {
     isLoginVisible: {
       type: Boolean,
@@ -33,32 +33,20 @@ export default {
       login_button: 'Sign in',
       isSearchActive: false,
       searchInput: '',
-      uid: localStorage.getItem('uid') ? localStorage.getItem('uid') : '',
-      email: localStorage.getItem('email') || '',
-      userName: localStorage.getItem('username') || '',
-      userPhoto: '',
+      userPhoto: this.$store.getters.GetPhoto,
       userSex: '',
-      CurrentPhoto: '',
-      DefaultPhoto: 'https://img-qn.51miz.com/Element/00/88/60/42/ea5b40df_E886042_1992a532.png!/quality/90/unsharp/true/compress/true/format/png/fw/300',
       activeIndex: "/home",
     }
   },
 
   mounted() {
     document.addEventListener('click', this.searchGlobalClick);
-    if (localStorage.getItem('userPhoto') === 'undefined' || !localStorage.getItem('userPhoto')) {
-      this.CurrentPhoto = this.DefaultPhoto;
-    } else {
-      this.CurrentPhoto = localStorage.getItem('userPhoto');
-    }
   },
-  /*watch(){
-    '$store.state.userName'(newValue, oldValue) {
-      // 在 userName 发生变化时执行的逻辑
-      console.log('userName 发生变化:', newValue);
-    }
-  },*/
+
   watch: {
+    '$store.getters.GetPhoto'(photo) {
+      this.userPhoto = photo;
+    },
     '$store.getters.getSearchInput'(searchInput) {
       this.searchInput = searchInput;
     },
@@ -90,9 +78,6 @@ export default {
     showLogin() {
       this.$emit('showLogin');
     },
-    closeLoginBox() {
-      this.$emit('closeLoginBox');
-    },
     ShowUserProfile() {
       this.$router.push('/userprofile');
     },
@@ -116,13 +101,13 @@ export default {
 
 </script>
 <template>
-  <div
+  <!-- <div
     style="width: 100%; height: 81px; background-color: #ffffff; border-bottom: 1px solid #e7e7e7; position: absolute; z-index: -10;">
-  </div>
+  </div> -->
   <div class="header_container">
     <!-- Click here will return to Home page in any circumstances -->
     <div class="logo_container" @click="goHome">
-      <img src="..\logo1.png" class="logo">
+      <img src="..\assets\logo1.png" class="logo">
       <h1
         style="font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif; color: rgb(68, 68, 68); text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);">
         NovelHub</h1>
@@ -131,7 +116,7 @@ export default {
       <el-menu-item route index="/home"><el-icon>
           <HomeFilled />
         </el-icon>Home</el-menu-item>
-      <el-menu-item route index="/allnovels"><el-icon>
+      <el-menu-item route index="/browse"><el-icon>
           <Platform />
         </el-icon>Browse</el-menu-item>
       <el-sub-menu index="2">
@@ -155,8 +140,7 @@ export default {
       </div>
     </div>
 
-    <div v-if="!$store.state.token"
-      style="display: flex; align-items: center; justify-content: flex-end; width: 200px;">
+    <div v-if="!$store.state.token" style="display: flex; align-items: center; justify-content: flex-end; width: 200px;">
       <el-button class="login_button" type="primary" @click="showLogin"><el-icon>
           <User />
         </el-icon>{{ login_button }}</el-button>
@@ -166,8 +150,8 @@ export default {
         userName }}</h3> -->
       <el-dropdown trigger="click">
         <div>
-          <el-avatar :size="70" :src="$store.state.photo ? $store.state.photo : DefaultPhoto"
-            class="user_Avatar" />
+          <el-avatar v-if="userPhoto !== null" :size="70" :src="userPhoto" class="user_Avatar" />
+          <el-avatar v-else :size="70" class="user_Avatar"> {{ $store.getters.GetUsername }} </el-avatar>
         </div>
         <template #dropdown>
           <el-dropdown-menu>
@@ -182,12 +166,13 @@ export default {
   </div>
 </template>
 
-<style >
+<style>
 .logo_container {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-right: 5px;
+  margin-right: 20px;
+  margin-left: 20px;
 }
 
 .logo_container:hover {
@@ -207,7 +192,7 @@ export default {
   display: flex;
   justify-content: right;
   align-items: center;
-  right: 100px;
+  right: 120px;
   position: absolute;
 }
 
@@ -260,11 +245,11 @@ export default {
 
 .search>div>input:focus,
 .search>div>input:not(:placeholder-shown) {
-  width: 280px;
+  width: 200px;
 }
 
 .login_button {
-  right: 0px;
+  right: 20px;
   position: absolute;
   width: 100px;
 }
@@ -272,7 +257,7 @@ export default {
 .logout_section {
   display: flex;
   align-items: center;
-  right: 0px;
+  right: 20px;
   position: absolute;
 }
 
@@ -281,6 +266,7 @@ export default {
   border-radius: 60px;
   width: 70px;
   height: 70px;
+  margin-right: 20px;
 }
 
 .user_Avatar:hover {
@@ -294,7 +280,6 @@ export default {
   background-color: #ffffff;
   border-bottom: 1px solid #e7e7e7;
   height: 81px;
-  width: 1152px;
   margin: auto;
   position: relative;
 }
@@ -318,7 +303,7 @@ export default {
 
 .header_container .el-menu--horizontal .el-menu-item:not(.is-disabled):hover,
 .header_container .el-menu--horizontal .el-menu-item:not(.is-disabled):focus,
-.header_container .el-menu--horizontal>.el-sub-menu .el-sub-menu__title:hover{
+.header_container .el-menu--horizontal>.el-sub-menu .el-sub-menu__title:hover {
   background-color: rgb(0, 0, 0, 0);
 }
 
@@ -327,5 +312,116 @@ export default {
 .header_container .el-menu--horizontal>.el-sub-menu .el-sub-menu__title {
   color: #717174;
   font-weight: bold;
+}
+</style>
+
+<style>
+@media screen and (max-width:415px) {
+  .header_container {
+    margin: 0;
+    display: flex;
+    align-items: center;
+    background-color: #ffffff;
+    border-bottom: 1px solid #e7e7e7;
+    height: 81px;
+    width: 100vw;
+    margin: auto;
+    position: relative;
+  }
+
+  .header_container .el-menu--horizontal {
+    border-bottom: none;
+    background-color: #ffffff;
+    width: 10vw;
+  }
+
+  .logo {
+    height: 40px;
+    width: 40px;
+    object-fit: cover;
+    margin-right: 10px;
+  }
+
+  .flexbox {
+    width: 20vw;
+    height: 100%;
+    display: flex;
+    justify-content: right;
+    align-items: center;
+    right: 100px;
+    position: absolute;
+  }
+
+  .search {
+    margin: -20px;
+  }
+
+  .search>div {
+    display: inline-block;
+    position: relative;
+  }
+
+  .search>div:after {
+    content: "";
+    background: rgb(139, 139, 139);
+    width: 2px;
+    height: 10px;
+    position: absolute;
+    top: 16px;
+    right: 0px;
+    transform: rotate(135deg);
+  }
+
+  .search>div>input {
+    color: rgb(0, 0, 0);
+    font-size: 6px;
+    background: transparent;
+    width: 10px;
+    height: 10px;
+    padding: 8px;
+    border: solid 2px rgb(139, 139, 139);
+    outline: none;
+    border-radius: 20px;
+    transition: width 0.5s;
+  }
+
+  .search>div>input:hover {
+    cursor: pointer;
+  }
+
+  .search>div>input::placeholder {
+    color: rgb(139, 139, 139);
+    opacity: 0;
+    transition: opacity 0.5s ease-out;
+  }
+
+  .search>div>input:focus::placeholder {
+    opacity: 1;
+  }
+
+  .search>div>input:focus,
+  .search>div>input:not(:placeholder-shown) {
+    width: 30vw;
+  }
+
+  .login_button {
+    right: 0px;
+    position: absolute;
+    width: 70px;
+  }
+
+  .logout_section {
+    display: flex;
+    align-items: center;
+    right: 0px;
+    position: absolute;
+  }
+
+  .user_Avatar {
+    border: 2px solid white;
+    border-radius: 60px;
+    width: 50px;
+    height: 50px;
+  }
 }
 </style>

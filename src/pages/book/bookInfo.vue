@@ -22,7 +22,7 @@ import {
 } from '@element-plus/icons-vue';
 import { ElMessage } from 'element-plus';
 import axios from 'axios';
-import { getItemColor, svg } from '../utils'
+import { getItemColor } from '@/utils'
 const marksOnFontSize = ({
   0: 'XS',
   1: 'S',
@@ -32,12 +32,7 @@ const marksOnFontSize = ({
 })
 </script>
 <script >
-import Global_Footer from './Global_Footer.vue';
-
 export default {
-  components: {
-    Global_Footer,
-  },
   data() {
     return {
       isLoginVisible: false,
@@ -162,7 +157,7 @@ export default {
 
   methods: {
     async getAuthorInfo() {
-      await axios.get("http://localhost:8888/api/author/get_author_info?userId=" + this.bookAuthorId)
+      await axios.get("/api/author/get_author_info?userId=" + this.bookAuthorId)
         .then(response => {
           const data = response.data;
           if (data.code === "00000") {
@@ -184,7 +179,7 @@ export default {
         "fanficId": fictionId,
         "fanficContent": fictionContent
       }
-      await axios.post("http://localhost:8888/api/front/book/update_fanfic", reqBody)
+      await axios.post("/api/front/book/update_fanfic", reqBody)
         .then(response => {
           if (response.data.code === "00000") {
             ElMessage.success("Fiction updated");
@@ -198,7 +193,7 @@ export default {
     },
 
     async deleteUserFiction(fictionId) {
-      await axios.delete(`http://localhost:8888/api/front/book/delete_fanfic/${fictionId}`)
+      await axios.delete(`/api/front/book/delete_fanfic/${fictionId}`)
         .then(response => {
           if (response.data.code === "00000") {
             ElMessage.success("Fiction Deleted");
@@ -212,7 +207,7 @@ export default {
     },
 
     async getUserFiction() {
-      await axios.get(`http://localhost:8888/api/front/book/user_fanfic/list?userId=${this.$store.getters.GetUID}&bookId=${this.$route.params.bookId}&pageNum=${this.userFictionPageNum}&pageSize=5`)
+      await axios.get(`/api/front/book/user_fanfic/list?userId=${this.$store.getters.GetUID}&bookId=${this.$route.params.bookId}&pageNum=${this.userFictionPageNum}&pageSize=5`)
         .then(response => {
           const data = response.data;
           this.userFictionList = data.data.list;
@@ -224,7 +219,7 @@ export default {
     },
 
     async getFictionContent(fictionId) {
-      await axios.get("http://localhost:8888/api/front/book/fanfic_info/" + fictionId)
+      await axios.get("/api/front/book/fanfic_info/" + fictionId)
         .then(response => {
           const data = response.data;
           this.fictionContent = data.data;
@@ -235,7 +230,7 @@ export default {
     },
 
     async getAllFiction() {
-      await axios.get(`http://localhost:8888/api/front/book/all_fanfic/list?userId=${this.$store.getters.GetUID}&bookId=${this.$route.params.bookId}&pageNum=${this.fictionPageNum}&pageSize=5`)
+      await axios.get(`/api/front/book/all_fanfic/list?userId=${this.$store.getters.GetUID}&bookId=${this.$route.params.bookId}&pageNum=${this.fictionPageNum}&pageSize=5`)
         .then(response => {
           const data = response.data;
           this.fanficList = data.data.list;
@@ -252,7 +247,7 @@ export default {
         "bookId": this.$route.params.bookId,
         "fanficContent": this.createFictionContent
       }
-      await axios.post("http://localhost:8888/api/front/book/new_fanfic", reqbody)
+      await axios.post("/api/front/book/new_fanfic", reqbody)
         .then(response => {
           response.data.code === "00000" ? (() => {
             ElMessage.success("Fiction created");
@@ -268,7 +263,7 @@ export default {
     },
 
     async getOtherUser(userId) {
-      await axios.get("http://localhost:8888/api/front/user/get_other_userInfo?userId=" + userId)
+      await axios.get("/api/front/user/get_other_userInfo?userId=" + userId)
         .then(response => {
           const data = response.data;
           this.otherUserEmail = data.data.email;
@@ -282,7 +277,7 @@ export default {
     },
 
     async getUserCollect() {
-      await axios.get(`http://localhost:8888/api/front/user/user_collect?userId=${this.$store.getters.GetUID}`)
+      await axios.get(`/api/front/user/user_collect?userId=${this.$store.getters.GetUID}`)
         .then(response => {
           const data = response.data;
           this.collectedBooksId = data.data.map(item => item.bookId);
@@ -299,7 +294,7 @@ export default {
       if (this.chapterNum === "1") {
         ElMessage.error("There is no previous chapter");
       } else {
-        await axios.get(`http://localhost:8888/api/front/book/pre_chapter_id/${this.chapterId}`)
+        await axios.get(`/api/front/book/pre_chapter_id/${this.chapterId}`)
           .then(response => {
             const data = response.data;
             this.chapterId = data.data;
@@ -316,7 +311,7 @@ export default {
       if (this.chapterNum === this.totalChapters) {
         ElMessage.error("There is no next chapter");
       } else {
-        await axios.get(`http://localhost:8888/api/front/book/next_chapter_id/${this.chapterId}`)
+        await axios.get(`/api/front/book/next_chapter_id/${this.chapterId}`)
           .then(response => {
             const data = response.data;
             this.chapterId = data.data;
@@ -330,7 +325,7 @@ export default {
     },
 
     async addVisit() {
-      await axios.get(`http://localhost:8888/api/front/book/add_visit?bookId=${this.$route.params.bookId}`)
+      await axios.get(`/api/front/book/add_visit?bookId=${this.$route.params.bookId}`)
         .catch(error => {
           console.error(error);
         });
@@ -338,7 +333,7 @@ export default {
     },
 
     async getContent() {
-      await axios.get(`http://localhost:8888/api/front/book/get_content?chapterId=${this.chapterId}&userId=${this.$store.getters.GetUID}`)
+      await axios.get(`/api/front/book/get_content?chapterId=${this.chapterId}&userId=${this.$store.getters.GetUID}`)
         .then(response => {
           const data = response.data;
           this.chapterContent = data.data.bookContent;
@@ -357,7 +352,7 @@ export default {
         userId: this.$store.getters.GetUID,
         bookId: this.$route.params.bookId,
       };
-      await axios.post('http://localhost:8888/api/front/book/cancel_collect', reqbody)
+      await axios.post('/api/front/book/cancel_collect', reqbody)
         .catch(error => {
           console.error(error);
         });
@@ -375,12 +370,12 @@ export default {
           userId: this.$store.getters.GetUID,
           bookId: this.$route.params.bookId,
         };
-        await axios.post('http://localhost:8888/api/front/book/collect', reqbody)
+        await axios.post('/api/front/book/collect', reqbody)
           .then(response => {
             const data = response.data;
             if (data.code === "00000") {
-              ElMessage.success("Book Collected");
               this.clickedLoading();
+              ElMessage.success("Book Collected");
             }
           })
           .catch(error => {
@@ -396,7 +391,7 @@ export default {
         ElMessage.error("Comment cannot be empty");
       } else {
         this.requestBody.commentContent = this.userComment;
-        await axios.post('http://localhost:8888/api/front/book/update_comment', this.requestBody)
+        await axios.post('/api/front/book/update_comment', this.requestBody)
           .catch(error => {
             console.error(error);
           });
@@ -408,7 +403,7 @@ export default {
     },
 
     async deleteUserComment() {
-      await axios.delete(`http://localhost:8888/api/front/book/comment/${this.userCommented.id}`)
+      await axios.delete(`/api/front/book/comment/${this.userCommented.id}`)
         .catch(error => {
           console.error(error);
         });
@@ -419,10 +414,13 @@ export default {
     },
 
     async getUserComment() {
-      await axios.post('http://localhost:8888/api/front/book/get_comment', this.requestBody)
+      await axios.post('/api/front/book/get_comment', this.requestBody)
         .then(response => {
           const data = response.data;
           this.userCommented = data.data;
+          if (this.userCommented && this.userCommented.score) {
+            this.userCommented.score = parseFloat(this.userCommented.score);
+          }
         })
         .catch(error => {
           console.error(error);
@@ -437,7 +435,7 @@ export default {
       } else {
         this.requestBody.commentContent = this.userComment;
 
-        await axios.post('http://localhost:8888/api/front/book/new_comment', this.requestBody)
+        await axios.post('/api/front/book/new_comment', this.requestBody)
           .catch(error => {
             console.error(error);
           });
@@ -449,10 +447,13 @@ export default {
     },
 
     async getAllComments() {
-      await axios.post('http://localhost:8888/api/front/book/all_comments', this.requestBody)
+      await axios.post('/api/front/book/all_comments', this.requestBody)
         .then(response => {
           const data = response.data;
-          this.comments = data.data.list;
+          this.comments = data.data.list.map(item => ({
+            ...item,
+            score: parseFloat(item.score)
+          }));
           this.totalComments = data.data.total;
         })
         .catch(error => {
@@ -461,10 +462,13 @@ export default {
     },
 
     async getBookInfo() {
-      await axios.get(`http://localhost:8888/api/front/book/${this.$route.params.bookId}`)
+      await axios.get(`/api/front/book/${this.$route.params.bookId}`)
         .then(response => {
           const data = response.data;
           this.book = data.data;
+          if (this.book && this.book.score) {
+            this.book.score = parseFloat(this.book.score);
+          }
           this.bookAuthorId = data.data.authorId;
         })
         .catch(error => {
@@ -473,7 +477,7 @@ export default {
     },
 
     async getChapters() {
-      await axios.get(`http://localhost:8888/api/front/book/chapter/list?bookId=${this.$route.params.bookId}&pageNum=${this.chapterPageNum}&pageSize=20`)
+      await axios.get(`/api/front/book/chapter/list?bookId=${this.$route.params.bookId}&pageNum=${this.chapterPageNum}&pageSize=20`)
         .then(response => {
           const data = response.data;
           this.chapters = data.data.list;
@@ -611,7 +615,7 @@ export default {
 </script>
 
 <template>
-  <div v-loading.fullscreen="loading" element-loading-spinner=" " element-loading-background="rgba(122, 122, 122, 0.8)">
+  <div v-loading.fullscreen="loading" element-loading-spinner=" ">
   </div>
   <div v-if="showBookInfo">
     <div class="bookInfoBody">
@@ -713,8 +717,7 @@ export default {
           <h1 :class="isShowFiction ? 'chooseOne' : 'noChoose'" @click="chooseFiction"><span>Fan Fiction</span></h1>
         </div>
         <el-divider />
-        <div v-loading.fullscreen="clickedLoad" :element-loading-spinner="svg"
-          element-loading-svg-view-box="0, 5, 30, 40"></div>
+        <div v-loading.fullscreen="clickedLoad" element-loading-spinner=" "></div>
         <div v-if="isShowComments">
           <div v-if="userCommented">
             <el-card>
@@ -818,7 +821,7 @@ export default {
                 <el-divider />
               </div>
               <el-pagination :hide-on-single-page="totalComments <= 5" v-model:current-page="requestBody.pageNum"
-                :page-size="50" :disabled="disabled" layout="prev, pager, next" :total="totalComments * 10"
+                :page-size="50" layout="prev, pager, next" :total="totalComments * 10"
                 style="width: 100%; display: flex; justify-content: center;" />
         </div>
 
@@ -841,7 +844,7 @@ export default {
                 </div>
               </div>
               <el-pagination :hide-on-single-page="totalChapters <= 20" v-model:current-page="chapterPageNum"
-                :page-size="200" :disabled="disabled" layout="prev, pager, next" :total="totalChapters * 10"
+                :page-size="200" layout="prev, pager, next" :total="totalChapters * 10"
                 style="width: 100%; display: flex; justify-content: center;" />
             </div>
           </div>
@@ -908,7 +911,7 @@ export default {
             <el-divider />
           </div>
           <el-pagination :hide-on-single-page="totalFiction <= 5" v-model:current-page="fictionPageNum" :page-size="50"
-            :disabled="disabled" layout="prev, pager, next" :total="totalFiction * 10"
+            layout="prev, pager, next" :total="totalFiction * 10"
             style="width: 100%; display: flex; justify-content: center;" />
         </div>
 
@@ -1029,7 +1032,6 @@ export default {
         </el-dialog>
       </div>
     </div>
-    <Global_Footer />
   </div>
 </template>
 

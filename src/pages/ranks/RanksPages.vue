@@ -7,15 +7,11 @@ import {
 } from '@element-plus/icons-vue';
 import { ElMessage } from 'element-plus';
 import axios from 'axios';
-import { getItemColor, svg } from '../utils'
+import { getItemColor } from '@/utils'
 </script >
 
 <script>
-import Global_Footer from './Global_Footer.vue';
 export default {
-  components: {
-    Global_Footer,
-  },
   data() {
     return {
       update_book_info: {},
@@ -47,7 +43,7 @@ export default {
   methods: {
     async getRanks() {
       const whichrank = this.isNewestRank ? "newest_rank" : this.isClickRank ? "visit_rank" : this.isUpdateRank ? "update_rank" : null;
-      await axios.get("http://localhost:8888/api/front/book/" + whichrank)
+      await axios.get("/api/front/book/" + whichrank)
         .then(response => {
           const data = response.data;
           this.rankBooks = data.data.map(item => ({
@@ -112,7 +108,7 @@ export default {
 
 <template>
   <div v-infinite-scroll="load">
-    <div v-loading.fullscreen="loading" element-loading-spinner=" " element-loading-background="rgba(122, 122, 122, 0.8)">
+    <div v-loading.fullscreen="loading" element-loading-spinner=" ">
     </div>
     <div v-if="showNewestUpdatePage">
       <div style="display: flex; flex-direction: column;  align-items: center;">
@@ -162,8 +158,7 @@ export default {
                 </div>
           </li>
           <div style="height: 100px; margin-top: 20px; width: 100%; display:flex; justify-content: center;"
-            v-loading="loadMore" :element-loading-spinner="svg" element-loading-svg-view-box="0, 5, 30, 40"
-            element-loading-background="rgba(255, 255, 255, 255)">
+            v-loading="loadMore" element-loading-spinner=" ">
             <div v-if="count >= rankBooks.length + 5" @click="scrollToTop" style="text-align: center; width: 100%;">
               <h3>
                 <el-icon>
@@ -188,7 +183,6 @@ export default {
           </div>
         </ul>
       </div>
-      <Global_Footer />
     </div>
   </div>
 </template>

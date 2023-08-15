@@ -9,16 +9,7 @@ import 'animate.css';
 
 <script>
 export default {
-  props: {
-    verImage: {
-      type: String,
-      default: ''
-    },
-    sessionId: {
-      type: String,
-      default: ''
-    }
-  },
+  emits: ['closeLoginBox'],
   data() {
     return {
       login_form: "login_form",
@@ -41,11 +32,8 @@ export default {
       contains_uppercase: false,
       contains_special_character: false,
       valid_password: false,
-      localVerImage: this.verImage,
-      localSessionId: this.sessionId,
-      DefaultFemalePhoto: 'https://bpic.51yuansu.com/pic3/cover/02/84/17/5a5c92db641d9_610.jpg',
-      DefaultMalePhoto: 'https://bpic.51yuansu.com/pic3/cover/03/47/83/5badd6731ddff_610.jpg',
-
+      localVerImage: null,
+      localSessionId: null,
     }
   },
 
@@ -190,7 +178,7 @@ export default {
       const requestData = {
         email: this.email
       };
-      await axios.post("http://localhost:8888/api/front/user/email_verify_code", requestData)
+      await axios.post("/api/front/user/email_verify_code", requestData)
         .catch(error => {
           console.error(error);
         });
@@ -273,7 +261,7 @@ export default {
           sessionId: this.localSessionId
         };
 
-        await axios.post("http://localhost:8888/api/front/user/login", requestData)
+        await axios.post("/api/front/user/login", requestData)
           .then(response => {
             const data = response.data;
             if (data.code === "00000") {
@@ -282,24 +270,18 @@ export default {
                 type: 'success',
               });
               this.closeLoginBox();
-              console.log("登录之后返回的信息：\n");
-              console.log(data.data);
+              // console.log("登录之后返回的信息：\n");
+              // console.log(data.data);
               localStorage.setItem('email', this.email);
               localStorage.setItem('token', data.data.token);
               localStorage.setItem('uid', data.data.uid);
               localStorage.setItem('username', data.data.userName);
-              if (data.data.userPhoto === null) {
-                localStorage.setItem('userPhoto', this.DefaultMalePhoto);
-                this.$store.dispatch('photo', this.DefaultMalePhoto);
-              }
-              else {
-                localStorage.setItem('userPhoto', data.data.userPhoto);
-                this.$store.dispatch('photo', data.data.userPhoto);
-              }
+              localStorage.setItem('userPhoto', data.data.userPhoto);
               this.$store.dispatch('email', data.data.email);
               this.$store.dispatch('login', data.data.token);
               this.$store.dispatch('uid', data.data.uid);
               this.$store.dispatch('username', data.data.userName);
+              this.$store.dispatch('photo', data.data.userPhoto);
             } else if (data.code === "A0201") {
               ElMessage({
                 message: "Email: " + this.email + " is not exists, please check again",
@@ -371,7 +353,7 @@ export default {
           velCode: this.verCode
         };
 
-        await axios.post("http://localhost:8888/api/front/user/register", requestData)
+        await axios.post("/api/front/user/register", requestData)
           .then(response => {
             const data = response.data;
             if (data.code === "00000") {
@@ -427,7 +409,7 @@ export default {
           velCode: this.verCode,
           newPassword: this.password,
         };
-        await axios.post("http://localhost:8888/api/front/user/reset_password", requestData)
+        await axios.post("/api/front/user/reset_password", requestData)
           .then(response => {
             const data = response.data;
             console.log(data);
@@ -455,7 +437,7 @@ export default {
     },
 
     async getNewImgVer() {
-      await axios.get("http://localhost:8888/api/front/user/img_verify_code")
+      await axios.get("/api/front/user/img_verify_code")
         .then(response => {
           const data = response.data;
           this.localVerImage = "data:image/png;base64," + data.data.img;
@@ -474,7 +456,7 @@ export default {
     <div class="auth_form">
       <el-button style="top:10px; right: 10px; position: absolute;" @click="closeLoginBox" :icon="Close" circle link
         size="large"></el-button>
-      <img src="..\logo1.png" class="logo">
+      <img src="..\assets\logo1.png" class="logo">
       <div style="font-size: 22pt; font-weight: bold; padding-top: 10px;">Sign in</div>
       <br>
       <div class="each_input_container">
@@ -505,7 +487,7 @@ export default {
     <div class="auth_form">
       <el-button style="top:10px; right: 10px; position: absolute;" @click="closeLoginBox" :icon="Close" circle link
         size="large"></el-button>
-      <img src="..\logo1.png" class="logo">
+      <img src="..\assets\logo1.png" class="logo">
       <div style="font-size: 22pt; font-weight: bold; padding-top: 10px;">Sign Up</div>
       <br>
       <div class="each_input_container">
@@ -566,7 +548,7 @@ export default {
     <div class="auth_form">
       <el-button style="top:10px; right: 10px; position: absolute;" @click="closeLoginBox" :icon="Close" circle link
         size="large"></el-button>
-      <img src="..\logo1.png" class="logo">
+      <img src="..\assets\logo1.png" class="logo">
       <div style="font-size: 22pt; font-weight: bold; padding-top: 10px;">Renew Password</div>
       <br>
 
@@ -637,7 +619,7 @@ export default {
   box-shadow: 0 0 40px 0 #6bb4fc;
   padding: 30px 50px 30px 50px;
   background-color: white;
-  background: url(../AuthBG.jpg);
+  background: url(../assets/AuthBG.jpg);
   background-size: cover;
   background-position: 40% 60%;
   margin: 0 auto;

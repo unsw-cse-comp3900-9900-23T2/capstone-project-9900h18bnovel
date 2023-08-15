@@ -1,7 +1,7 @@
 <script setup>
 import { ElMessage } from 'element-plus';
 import axios from 'axios';
-import { getItemColor } from '../utils';
+import { getItemColor } from '@/utils.js';
 import {
   StarFilled,
   CaretTop,
@@ -27,11 +27,7 @@ const marks = ({
 </script>
 
 <script>
-import Global_Footer from './Global_Footer.vue';
 export default {
-  components: {
-    Global_Footer,
-  },
   data() {
     return {
       genreChecked: [false, false, false, false, false, false, false, false, false, false, false],
@@ -132,7 +128,7 @@ export default {
     },
 
     updateAllNovelsRoute(newURL) {
-      this.$router.replace(`/allnovels/${newURL}`);
+      this.$router.replace(`/browse/${newURL}`);
     },
 
     genreonChange(index) {
@@ -256,7 +252,7 @@ export default {
     },
 
     async getResultBooks() {
-      let url = "http://localhost:8888/api/front/book/books?";
+      let url = "/api/front/book/books?";
       url += this.keyword !== null ? "keyword=" + this.keyword + "&" : "";
       url += this.workDirection !== null ? "workDirection=" + this.workDirection + "&" : "";
       url += this.categoryId !== null ? "categoryId=" + this.categoryId + "&" : "";
@@ -318,7 +314,7 @@ export default {
 
 <template>
   <div v-infinite-scroll="load" :infinite-scroll-disabled="isEnd">
-    <div v-loading.fullscreen="loading" element-loading-spinner=" " element-loading-background="rgba(122, 122, 122, 0.8)">
+    <div v-loading.fullscreen="loading" element-loading-spinner=" ">
     </div>
     <div v-if="showAllNovelPage">
       <div style="display: flex; justify-content: center;">
@@ -464,8 +460,7 @@ export default {
               </div>
             </div>
           </div>
-          <div class="novels_container" v-loading.fullscreen="clickedLoad" element-loading-spinner=" "
-            element-loading-background="rgba(122, 122, 122, 0.8)">
+          <div class="novels_container" v-loading="clickedLoad" element-loading-spinner=" ">
             <h3 v-if="keyword" style="width: 100%;">Search result for "{{ keyword }}"</h3>
             <h1 v-if="novels.length === 0" style="width: 100%; text-align: center;">No Results</h1>
             <div v-for="(item) in novels" :key="item.bookName" class="each_novel_container">
@@ -524,8 +519,8 @@ export default {
           </div>
         </div>
       </div>
-      <div style="height: 157px; width: 60%; display:flex; justify-content: center; margin: auto;"
-        v-loading="loadMore" element-loading-spinner=" ">
+      <div style="height: 157px; width: 60%; display:flex; justify-content: center; margin: auto;" v-loading="loadMore"
+        element-loading-spinner=" ">
         <div v-if="pageNum >= totalNum" style="width: 100%; text-align: center;">
           <h3>
             <el-icon>
@@ -548,7 +543,6 @@ export default {
           </div>
         </h3>
       </div>
-      <Global_Footer />
     </div>
   </div>
 </template>

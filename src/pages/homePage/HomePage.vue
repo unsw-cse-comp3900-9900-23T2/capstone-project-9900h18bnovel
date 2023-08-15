@@ -6,10 +6,9 @@ import {
   StarFilled,
 } from '@element-plus/icons-vue';
 import axios from 'axios';
-import { getItemColor } from '../utils'
+import { getItemColor } from  '@/utils.js';
 </script>
 <script>
-import Global_Footer from './Global_Footer.vue';
 export default {
   data() {
     return {
@@ -29,9 +28,6 @@ export default {
       loading: true,
       collectedBooks: [],
     }
-  },
-  components: {
-    Global_Footer,
   },
   watch: {
     '$store.getters.GetUID': {
@@ -57,7 +53,7 @@ export default {
     },
 
     async getUserCollect() {
-      await axios.get(`http://localhost:8888/api/front/user/user_collect?userId=${this.$store.getters.GetUID}`)
+      await axios.get(`/api/front/user/user_collect?userId=${this.$store.getters.GetUID}`)
         .then(response => {
           const data = response.data;
           this.collectedBooks = data.data ? data.data : [];
@@ -68,7 +64,7 @@ export default {
     },
 
     async getHomeBooks() {
-      await axios.get("http://localhost:8888/api/front/home/books")
+      await axios.get("/api/front/home/books")
         .then(response => {
           const data = response.data;
           this.weekly_books_info = data.data.filter(item => item.type === '0');
@@ -127,7 +123,7 @@ export default {
 </script>
 
 <template>
-  <div v-loading.fullscreen="loading" element-loading-spinner=" " element-loading-background="rgba(122, 122, 122, 0.8)">
+  <div v-loading.fullscreen="loading" element-loading-spinner=" ">
   </div>
   <div v-if="showHomePage">
     <div class="flex-center">
@@ -213,7 +209,7 @@ export default {
             </div>
           </div>
         </div>
-        <h2></h2>
+        <el-divider />
         <div class="recomm_books_container">
           <div class="hottest_books">
             <h2 style="text-align: center;">Hottest Books
@@ -226,7 +222,7 @@ export default {
                 </template>
               </el-popover>
             </h2>
-            <el-carousel height="600px" style="width: 570px;" direction="vertical" type="card" :autoplay="true">
+            <el-carousel height="600px" class="hot_best_carousel" direction="vertical" type="card" :autoplay="true">
               <el-carousel-item style="border-radius: 15px;" v-for="item in hottest_books_info.slice(0, 6)"
                 :key="item.bookName">
                 <el-row class="carousel_container">
@@ -234,10 +230,9 @@ export default {
                     <span class="carousel_left_title" @click="goBookInfo(item.bookId)">
                       <b>{{ item.bookName }}</b>
                     </span>
-                    <span style="font-size: 12pt;">{{ item.authorName }}</span>
-                    <span
-                      style="font-size: 10pt; line-height: 1.5; margin-top: 10px; margin-right: 10px; display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 7; overflow: hidden;">{{
-                        item.bookDesc }}</span>
+                    <span class="carousel_left_author">{{ item.authorName }}</span>
+                    <span class="carousel_left_desc">{{
+                      item.bookDesc }}</span>
                     <el-tag class="tag" effect="plain" :style="getItemColor(item.categoryName)">{{
                       item.categoryName
                     }}</el-tag>
@@ -294,7 +289,7 @@ export default {
                 </template>
               </el-popover>
             </h2>
-            <el-carousel height="600px" style="width: 570px;" direction="vertical" type="card" :autoplay="true">
+            <el-carousel height="600px" class="hot_best_carousel" direction="vertical" type="card" :autoplay="true">
               <el-carousel-item style="border-radius: 15px;" v-for="item in best_books_info.slice(0, 6)"
                 :key="item.bookName">
                 <el-row class="carousel_container">
@@ -302,10 +297,9 @@ export default {
                     <span class="carousel_left_title" @click="goBookInfo(item.bookId)">
                       <b>{{ item.bookName }}</b>
                     </span>
-                    <span style="font-size: 12pt;">{{ item.authorName }}</span>
-                    <span
-                      style="font-size: 10pt; line-height: 1.5; margin-top: 10px; margin-right: 10px; display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 7;overflow: hidden;">{{
-                        item.bookDesc }}</span>
+                    <span class="carousel_left_author">{{ item.authorName }}</span>
+                    <span class="carousel_left_desc">{{
+                      item.bookDesc }}</span>
                     <el-tag class="tag" effect="plain" :style="getItemColor(item.categoryName)">{{
                       item.categoryName
                     }}</el-tag>
@@ -352,9 +346,7 @@ export default {
             </el-carousel>
           </div>
         </div>
-        <h2
-          style=" border-bottom: 1px solid; border-color: rgb(223, 223, 223); padding-bottom: 10px; margin-bottom: 22px; margin-top: 40px; width: 100%;">
-          Ranking of Books</h2>
+        <el-divider />
         <div class="rank_books_container">
           <div class="rank_container">
             <div style="display: flex;">
@@ -370,7 +362,7 @@ export default {
             </div>
             <div class="rank_items" v-for="(item, index) in click_rank_info.slice(0, 5)" :key="item.title">
               <div class="rank_image">
-                <img style="height: 80px;" :src="item.picUrl" @click="goBookInfo(item.bookId)" />
+                <img class="rank_img" :src="item.picUrl" @click="goBookInfo(item.bookId)" />
               </div>
               <div class="rank_rank" :class="{ 'red': index === 0, 'orange': index === 1, 'green': index === 2 }">
                 0{{ index + 1 }}
@@ -378,10 +370,10 @@ export default {
               <div class="rank_info">
                 <el-text truncated class="rank_title" @click="goBookInfo(item.bookId)">{{ item.bookName }}</el-text>
                 <br />
-                <el-text truncated style="font-size: 10pt;">{{ item.authorName }}</el-text>
+                <el-text truncated class="rank_author">{{ item.authorName }}</el-text>
                 <br />
-                <el-text truncated style="font-size: 10pt; width: 250px;"><el-rate v-model="item.score" disabled
-                    show-score text-color="#ff9900" size="small" score-template="{value} points" /></el-text>
+                <el-text truncated class="rank_score"><el-rate v-model="item.score" disabled show-score
+                    text-color="#ff9900" size="small" score-template="{value}" /></el-text>
               </div>
             </div>
           </div>
@@ -399,7 +391,7 @@ export default {
             </div>
             <div class="rank_items" v-for="(item, index) in newest_rank_info.slice(0, 5)" :key="item">
               <div class="rank_image">
-                <img style="height: 80px;" :src="item.picUrl" @click="goBookInfo(item.bookId)" />
+                <img class="rank_img" :src="item.picUrl" @click="goBookInfo(item.bookId)" />
               </div>
               <div class="rank_rank" :class="{ 'red': index === 0, 'orange': index === 1, 'green': index === 2 }">
                 0{{ index + 1 }}
@@ -407,10 +399,10 @@ export default {
               <div class="rank_info">
                 <el-text truncated class="rank_title" @click="goBookInfo(item.bookId)">{{ item.bookName }}</el-text>
                 <br />
-                <el-text truncated style="font-size: 10pt;">{{ item.authorName }}</el-text>
+                <el-text truncated class="rank_author">{{ item.authorName }}</el-text>
                 <br />
-                <el-text truncated style="font-size: 10pt; width: 250px;"><el-rate v-model="item.score" disabled
-                    show-score text-color="#ff9900" size="small" score-template="{value} points" /></el-text>
+                <el-text truncated class="rank_score"><el-rate v-model="item.score" disabled show-score
+                    text-color="#ff9900" size="small" score-template="{value}" /></el-text>
               </div>
             </div>
           </div>
@@ -428,7 +420,7 @@ export default {
             </div>
             <div class="rank_items" v-for="(item, index) in update_rank_info.slice(0, 5)" :key="item">
               <div class="rank_image">
-                <img style="height: 80px; width: 50px;" :src="item.picUrl" @click="goBookInfo(item.bookId)" />
+                <img class="rank_img" :src="item.picUrl" @click="goBookInfo(item.bookId)" />
               </div>
               <div class="rank_rank" :class="{ 'red': index === 0, 'orange': index === 1, 'green': index === 2 }">
                 0{{ index + 1 }}
@@ -436,17 +428,16 @@ export default {
               <div class="rank_info">
                 <el-text truncated class="rank_title" @click="goBookInfo(item.bookId)">{{ item.bookName }}</el-text>
                 <br />
-                <el-text truncated style="font-size: 10pt;">{{ item.authorName }}</el-text>
+                <el-text truncated class="rank_author">{{ item.authorName }}</el-text>
                 <br />
-                <el-text truncated style="font-size: 10pt; width: 250px;"><el-rate v-model="item.score" disabled
-                    show-score text-color="#ff9900" size="small" score-template="{value} points" /></el-text>
+                <el-text truncated class="rank_score"><el-rate v-model="item.score" disabled show-score
+                    text-color="#ff9900" size="small" score-template="{value}" /></el-text>
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-    <Global_Footer />
   </div>
 </template>
 
@@ -471,7 +462,8 @@ export default {
 }
 
 .weekly_collect_books_container {
-  margin-top: 15px;
+  margin-top: 20px;
+  margin-bottom: 20px;
   width: 100%;
   display: flex;
   justify-content: space-between;
@@ -635,6 +627,7 @@ export default {
   width: 100%;
   display: flex;
   justify-content: space-between;
+  margin-bottom: 20px;
 }
 
 .hottest_books {
@@ -664,6 +657,10 @@ export default {
 
 .recomm_books_container .el-carousel__button {
   background-color: #676767;
+}
+
+.hot_best_carousel {
+  width: 570px;
 }
 
 .carousel_container {
@@ -699,9 +696,23 @@ export default {
   text-decoration: underline;
 }
 
+.carousel_left_author {
+  font-size: 12pt;
+}
+
+.carousel_left_desc {
+  font-size: 10pt;
+  line-height: 1.5;
+  margin-top: 10px;
+  margin-right: 10px;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 7;
+  overflow: hidden;
+}
+
 .carousel_image_container {
   height: 100%;
-
   transform: scale(1);
   transition: transform 0.3s ease;
 }
@@ -757,6 +768,7 @@ export default {
 
 .rank_books_container {
   margin-bottom: 15px;
+  margin-top: 20px;
   display: flex;
   justify-content: space-between;
   width: 100%;
@@ -765,9 +777,7 @@ export default {
 
 .rank_container {
   /* background-color: aliceblue; */
-  padding-left: 10px;
-  margin-right: 10px;
-  width: 32%;
+  width: 33%;
 }
 
 .rank_name {
@@ -794,6 +804,8 @@ export default {
 }
 
 .rank_image img {
+  height: 80px;
+  width: 50px;
   border-radius: 4px;
   margin-right: 10px;
   transform: translateY(0);
@@ -836,5 +848,179 @@ export default {
 .rank_title:hover {
   cursor: pointer;
   text-decoration: underline;
+}
+
+.rank_author {
+  font-size: 10pt;
+}
+
+.rank_score {
+  font-size: 10pt;
+  width: 250px;
+}
+</style>
+
+<style>
+@media screen and (max-width:415px) {
+  .homeBody {
+    width: 100vw;
+    min-width: 100vw;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .weekly_collect_books_container {
+    width: 90%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .weekly_books {
+    width: 100%;
+    margin: auto;
+  }
+
+  .collected_novel_container {
+    margin-top: 20px;
+    width: 100%;
+    min-height: 300px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    margin: auto;
+  }
+
+  .recomm_books_container {
+    margin-top: 20px;
+    width: 90%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .hottest_books {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .best_books {
+    width: 100%;
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .hot_best_carousel {
+    width: 100%;
+  }
+
+  .carousel_weekly_image {
+    width: 125px;
+    height: 200px;
+    object-fit: contain;
+    box-shadow: 6px 4px 6px white;
+    border-radius: 8px;
+    transition: transform 0.3s ease;
+  }
+
+  .carousel_weekly_text_container {
+    width: 60%;
+    border: 1px soild;
+    height: 300px;
+  }
+
+  .carousel_weekly_text {
+    margin-top: 50px;
+  }
+
+  .carousel_weekly_text_title {
+    font-size: 14pt;
+  }
+
+  .carousel_weekly_text_author {
+    font-size: 10pt;
+  }
+
+  .carousel_weekly_text_descr {
+    font-size: 8pt;
+    line-height: 1.5;
+    padding-right: 10px;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 5;
+    overflow: hidden;
+  }
+
+  .carousel_left_container {
+    width: 35%;
+    margin-left: 0px;
+  }
+
+  .carousel_left_title {
+    font-size: 12pt;
+    -webkit-line-clamp: 1;
+  }
+
+  .carousel_left_author {
+    font-size: 10pt;
+  }
+
+  .carousel_left_desc {
+    font-size: 8pt;
+    line-height: 1.5;
+    margin-right: 0px;
+    -webkit-line-clamp: 9;
+  }
+
+  .carousel_image_container {
+    margin-left: 25px;
+  }
+
+  .carousel_right_container {
+    display: none;
+  }
+
+
+  .rank_books_container {
+    display: flex;
+    width: 95%;
+  }
+
+  .rank_name {
+    font-size: 10pt;
+    width: 90px;
+    color: white;
+  }
+
+  .rank_image img {
+    height: 65px;
+    width: 40.625px;
+    margin-right: 5px;
+  }
+
+  .rank_rank {
+    margin-right: 5px;
+    font-size: 5pt;
+  }
+
+  .rank_info {
+    font-size: 5pt;
+    width: 60px;
+  }
+
+  .rank_info .rank_title {
+    font-size: 6pt;
+    width: 60px;
+  }
+
+  .rank_info .rank_author {
+    font-size: 3pt;
+    width: 60px;
+  }
+
+  .rank_info .rank_score {
+    font-size: 5pt;
+  }
 }
 </style>

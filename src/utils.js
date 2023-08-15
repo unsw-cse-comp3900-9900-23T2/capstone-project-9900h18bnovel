@@ -1,6 +1,6 @@
 import { ElMessage } from 'element-plus';
-import store from './store';
-import { router } from './main';
+import store from '@/store';
+import { router } from '@/main';
 
 export function getItemColor(categoryName) {
     switch (categoryName) {
@@ -75,11 +75,11 @@ export function logout(if_in_userprofile) {
     }
 }
 
-export const svg = `
-<path class="path" d="
-          M 10 40
-          L 10 15
-          L 30 40
-          L 30 15
-        " style="stroke-width: 5px; fill: rgb(0,0,0,0); animation: none;"/>
-      `
+// export const svg = `
+// <path class="path" d="
+//           M 10 40
+//           L 10 15
+//           L 30 40
+//           L 30 15
+//         " style="stroke-width: 5px; fill: rgb(0,0,0,0); animation: none;"/>
+//       `

@@ -111,7 +111,7 @@ export default createStore({
     username({ commit }, userName) {
       commit('setUserName', userName);
     },
-    clearusername({ commit }) {
+    clearUserName({ commit }) {
       commit('clearUserName');
     },
     uid({ commit }, uid) {

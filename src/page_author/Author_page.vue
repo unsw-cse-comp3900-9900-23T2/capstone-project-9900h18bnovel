@@ -82,7 +82,7 @@ export default {
 
   methods: {
     async deleteChapter() {
-      await axios.delete('http://localhost:8888/api/author/delete_chapter/' + this.editChapterId)
+      await axios.delete('/api/author/delete_chapter/' + this.editChapterId)
         .catch(error => {
           console.error(error);
         });
@@ -97,7 +97,7 @@ export default {
         "chapterName": this.editChapterName,
         "chapterContent": this.editChapterContent
       }
-      await axios.post('http://localhost:8888/api/author/update_chapter', reqbody)
+      await axios.post('/api/author/update_chapter', reqbody)
         .then(response => {
           if (response.data.code === "00000") {
             ElMessage.success("Updated")
@@ -114,7 +114,7 @@ export default {
     },
 
     async getContent(id) {
-      await axios.get(`http://localhost:8888/api/front/book/get_content?chapterId=${id}`)
+      await axios.get(`/api/front/book/get_content?chapterId=${id}`)
         .then(response => {
           const data = response.data;
           this.chapterContent = data.data.bookContent;
@@ -136,7 +136,7 @@ export default {
               "chapterName": this.newChapterName,
               "chapterContent": this.newChapterContent,
             }
-            await axios.post("http://localhost:8888/api/author/publish_chapter", reqbody)
+            await axios.post("/api/author/publish_chapter", reqbody)
               .then(response => {
                 if (response.data.code === "00000") {
                   ElMessage.success("Chapter Created")
@@ -170,7 +170,7 @@ export default {
               "bookDesc": this.selectedBook.bookDesc,
               "bookStatus": this.selectedBook.bookStatus
             }
-            await axios.post("http://localhost:8888/api/author/update_book", reqbody)
+            await axios.post("/api/author/update_book", reqbody)
               .then(response => {
                 if (response.data.code === "00000") {
                   ElMessage.success("Updated")
@@ -189,7 +189,7 @@ export default {
     },
 
     async getChapters() {
-      await axios.get(`http://localhost:8888/api/front/book/chapter/list?bookId=${this.selectedBook.id}`)
+      await axios.get(`/api/front/book/chapter/list?bookId=${this.selectedBook.id}`)
         .then(response => {
           const data = response.data;
           this.chapters = data.data.list;
@@ -215,7 +215,7 @@ export default {
                   "bookName": this.bookName,
                   "bookDesc": this.bookDesc,
                 }
-                await axios.post("http://localhost:8888/api/author/publish_book", reqbody)
+                await axios.post("/api/author/publish_book", reqbody)
                   .then(response => {
                     response.data.code === "A3001" ? ElMessage.error("You already have this book") : response.data.code === "A0400" ? ElMessage.error("Oops, something wrong") :
                       (() => {
@@ -239,7 +239,7 @@ export default {
     },
 
     async getAuthorBooks() {
-      await axios.get("http://localhost:8888/api/author/get_books?authorId=" + this.authorId)
+      await axios.get("/api/author/get_books?authorId=" + this.authorId)
         .then(response => {
           this.authorBooks = response.data.data.list;
         })
@@ -258,7 +258,7 @@ export default {
               "penName": this.updatePenName,
               "signature": this.signature,
             }
-            await axios.post("http://localhost:8888/api/author/update", reqbody)
+            await axios.post("/api/author/update", reqbody)
               .catch(error => {
                 console.error(error);
               });
@@ -272,7 +272,7 @@ export default {
       const reqbody = {
         "userId": this.$store.getters.GetUID
       }
-      await axios.post("http://localhost:8888/api/front/user/get_userInfo", reqbody)
+      await axios.post("/api/front/user/get_userInfo", reqbody)
         .then(response => {
           const data = response.data;
           this.avatar = data.data.userPhoto;
@@ -283,7 +283,7 @@ export default {
     },
 
     async checkisAuthor() {
-      await axios.get("http://localhost:8888/api/author/get_author_info?userId=" + this.$store.getters.GetUID)
+      await axios.get("/api/author/get_author_info?userId=" + this.$store.getters.GetUID)
         .then(response => {
           const data = response.data;
           if (data === null) {
@@ -311,7 +311,7 @@ export default {
               "penName": this.penName,
               "signature": this.signature,
             }
-            await axios.post("http://localhost:8888/api/author/register", reqbody)
+            await axios.post("/api/author/register", reqbody)
               .catch(error => {
                 console.error(error);
               });
@@ -656,7 +656,7 @@ export default {
       <!-- ↑↑↑↑↑Do not touch↑↑↑↑↑ -->
       <div v-if="!isAuthor" class="registerForm">
         <div class="logo_container">
-          <img src="..\logo1.png" class="logo">
+          <img src="..\assets\logo1.png" class="logo">
           <h1
             style="font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif; color: rgb(68, 68, 68); text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4); margin-right: 50px;">
             NovelHub</h1>
@@ -863,7 +863,7 @@ export default {
                     <input type="file" ref="fileInput" @change="handleFileChange" accept="image/*"
                       style="display: none" />
                     <el-button type="primary" style="width: 100%; margin-top: 10px;" :icon="Upload"
-                      @click="this.$refs.fileInput.click();">
+                      @click="handleUploadClick">
                       REPLACE COVER
                     </el-button>
                   </div>

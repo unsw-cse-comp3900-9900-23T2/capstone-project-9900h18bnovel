@@ -1,53 +1,40 @@
 import { createApp } from 'vue';
 import { createRouter, createWebHistory } from 'vue-router';
-import App from './App.vue';
-import HomePage from './components/HomePage.vue';
-import All_Novels from './components/All_Novels.vue';
-import Profile from './components/User_Profile.vue';
-import ranksPages from './components/RanksPages.vue';
-import bookInfo from './components/bookInfo.vue';
-import notFoundPage from './components/NotFoundPage.vue';
-import author_page from './components/Author_page.vue';
-import store from './store';
+import App from '@/App.vue';
+import HomePage from '@/pages/homePage/HomePage.vue';
+import browse from '@/pages/browse/All_Novels.vue';
+import Profile from '@/pages/user/User_Profile.vue';
+import ranksPages from '@/pages/ranks/RanksPages.vue';
+import bookInfo from '@/pages/book/bookInfo.vue';
+import notFoundPage from '@/pages/404/NotFoundPage.vue';
+import author_page from '@/page_author/Author_page.vue';
+import store from '@/store';
 import ElementPlus from 'element-plus';
 import 'element-plus/theme-chalk/index.css';
 
-// import AuthorApp from "./AuthorApp.vue"
+// import axios from 'axios';
+// axios.defaults.baseURL = "http://192.168.1.18:8888"
+
+
 const app = createApp(App);
 app.use(ElementPlus);
 
-function isUserLoggedIn() {
-  // 判断用户是否已登录的逻辑
-  // 返回 true 表示已登录，返回 false 表示未登录
-  // 这里仅为示例，你需要根据实际情况进行判断
-  // console.log(localStorage.getItem('token'));
-  return localStorage.getItem('token') !== null;
-}
-
-// Rounter address here
 const routes = [
   { path: '/', redirect: '/home' },
   { path: '/home', component: HomePage },
   {
-    path: '/allnovels',
-    component: All_Novels,
+    path: '/browse',
+    component: browse,
   },
   {
-    path: '/allnovels/:currentURL',
-    component: All_Novels,
+    path: '/browse/:currentURL',
+    component: browse,
     beforeEnter: (to, from, next) => {
       to.params.currentURL = store.getters.getCurrentURL;
       next();
     },
   },
-  {
-    path: '/userprofile',
-    component: Profile,
-    name: 'UserProfile',
-    meta: {
-      requiresAuth: true,
-    },
-  },
+  { path: '/userprofile', component: Profile, },
   { path: '/newestrank', component: ranksPages },
   { path: '/clickrank', component: ranksPages },
   { path: '/updaterank', component: ranksPages },
@@ -59,22 +46,6 @@ const routes = [
 export const router = createRouter({
   history: createWebHistory(),
   routes
-});
-router.beforeEach((to, from, next) => {
-  if (to.meta.requiresAuth && !isUserLoggedIn()) {
-    // console.log(to.meta.requiresAuth);
-    // console.log(isUserLoggedIn());
-    // console.log('用户未登录，重定向到登录页面或其他处理逻辑');
-    // console.log('from.path:', from.path);
-    next(from.path ? from.path : '/home');
-  } else {
-    // console.log(to.meta.requiresAuth);
-    // console.log(isUserLoggedIn());
-    // console.log('用户已登录或无需验证，允许访问');
-    // console.log('to.path:', to.path);
-    // console.log('from.path:', from.path);
-    next();
-  }
 });
 
 app.use(store);

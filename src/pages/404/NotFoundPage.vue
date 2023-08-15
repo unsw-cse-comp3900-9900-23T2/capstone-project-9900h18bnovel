@@ -1,9 +1,5 @@
 <script>
-import Global_Footer from './Global_Footer.vue';
 export default {
-  components: {
-    Global_Footer,
-  },
 }
 </script>
 <template>
@@ -375,7 +371,6 @@ export default {
       </p>
     </div>
   </div>
-  <Global_Footer />
 </template>
 <style>
 .section-center {

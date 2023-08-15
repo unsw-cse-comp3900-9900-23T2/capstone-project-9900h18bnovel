@@ -5,21 +5,21 @@ import {
 </script>
 
 <script>
-import Global_Header from './components/Global_Header.vue';
-import Login from './components/Auth_Page.vue';
-import Author_page from './components/Author_page.vue';
+import Global_Header from '@/components/Global_Header.vue';
+import Global_Footer from '@/components/Global_Footer.vue';
+import Login from '@/components/Auth_Page.vue';
+import Author_page from '@/page_author/Author_page.vue';
 export default {
   data() {
     return {
       searchInput: null,
-      verImage: null,
-      sessionId: null,
       loading: true,
       isLoadFinished: false,
     }
   },
   components: {
     Global_Header,
+    Global_Footer,
     Login,
     Author_page,
   },
@@ -44,8 +44,8 @@ export default {
     },
     handleSearch(searchInput) {
       this.$store.dispatch('setSearchInput', searchInput);
-      if (!this.$router.currentRoute.value.path.includes('/allnovels')) {
-        this.$router.push('/allnovels');
+      if (!this.$router.currentRoute.value.path.includes('/browse')) {
+        this.$router.push('/browse');
       }
     },
 
@@ -66,10 +66,10 @@ export default {
     <div v-loading.fullscreen.lock="loading" element-loading-background="rgba(255, 255, 255, 255)"
       element-loading-spinner=" "></div>
     <div v-if="isLoadFinished" :class="{ 'blur': $store.state.isLoginVisible }">
-      <Global_Header @clearSearch="clearSearch" @handleSearch="handleSearch" @showLogin="showLogin"
-        @closeLoginBox="closeLoginBox" :verImage="verImage" :sessionId="sessionId" />
+      <Global_Header @clearSearch="clearSearch" @handleSearch="handleSearch" @showLogin="showLogin" />
       <router-view>
       </router-view>
+      <Global_Footer />
       <!-- Go to top floating buttom -->
       <el-backtop :bottom="100">
         <div class="goTopButton">
@@ -78,11 +78,10 @@ export default {
           </el-icon>
         </div>
       </el-backtop>
-
     </div>
     <transition name="fade">
       <div v-if="$store.state.isLoginVisible" class="loginSection">
-        <Login class="login" :verImage="verImage" :sessionId="sessionId" @closeLoginBox="closeLoginBox" />
+        <Login class="login" @closeLoginBox="closeLoginBox" />
       </div>
     </transition>
   </div>
@@ -93,7 +92,7 @@ export default {
 
 <style>
 .el-loading-spinner {
-  background-image: url(spinner.gif);
+  background-image: url(./assets/spinner.gif);
   background-repeat: no-repeat;
   background-size: 70px 70px;
   height: 70px;
