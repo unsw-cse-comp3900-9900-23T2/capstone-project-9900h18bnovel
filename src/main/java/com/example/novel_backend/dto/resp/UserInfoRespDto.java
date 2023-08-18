@@ -4,6 +4,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Data;
 
+import java.time.LocalDateTime;
+
 /**
  * User information Response DTO
  *
@@ -31,5 +33,17 @@ public class UserInfoRespDto {
      * */
     @Schema(description = "User sex")
     private Integer userSex;
+
+    /**
+     * User email
+     * */
+    @Schema(description = "User email")
+    private String userEmail;
+
+    /**
+     * Creation time
+     */
+    @Schema(description = "Creation time")
+    private LocalDateTime createTime;
 
 }

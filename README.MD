@@ -3,6 +3,11 @@
 novel is a set of **front and back-end separation** based on the latest **Java** technology stack Spring Boot 3 + Vue 3.
 novel project, including novel recommendation, work search, novel ranking, novel reading, novel review, author area, news release and other functions.
 
+## Website
+
+- [NovelHub](http://192.9.173.234/)
+
+
 ## Development Environment
 
 - MySQL 8.0

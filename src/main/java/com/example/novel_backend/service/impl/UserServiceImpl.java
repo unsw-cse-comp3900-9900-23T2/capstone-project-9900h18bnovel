@@ -173,6 +173,8 @@ public class UserServiceImpl implements UserService {
                         .username(userInfo.getUsername())
                         .userPhoto(userInfo.getUserPhoto())
                         .userSex(userInfo.getUserSex())
+                        .userEmail(userInfo.getEmail())
+                        .createTime(userInfo.getCreateTime())
                         .build()
         );
     }
