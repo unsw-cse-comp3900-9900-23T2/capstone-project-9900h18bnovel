@@ -657,11 +657,10 @@ export default {
       <div v-if="!isAuthor" class="registerForm">
         <div class="logo_container">
           <img src="..\assets\logo1.png" class="logo">
-          <h1
-            style="font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif; color: rgb(68, 68, 68); text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4); margin-right: 50px;">
+          <h1 class="novelhub_name">
             NovelHub</h1>
         </div>
-        <h1 style="display: flex; justify-content: space-between; align-items: center;">
+        <h1 style=" display: flex; justify-content: space-between; align-items: center;">
           Author Register
           <img :src="avatar"
             style="border: 1px solid; border-radius: 50px; height: 60px; width: 60px; object-fit: cover;" />

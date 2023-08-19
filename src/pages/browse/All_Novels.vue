@@ -301,7 +301,7 @@ export default {
       return function (word) {
         const wordCount = parseInt(word);
         if (wordCount >= 10000) {
-          const simplified = Math.floor(wordCount / 1000) + 'k+';
+          const simplified = Math.floor(wordCount / 1000) + 'k';
           return simplified;
         } else {
           return wordCount.toString();
@@ -426,20 +426,21 @@ export default {
           </div>
           <!-- <h2 style="margin-top: -30px;">Results</h2> -->
           <el-divider />
-          <div style="display: flex; justify-content: space-between; position: relative;">
+          <div class="sort_row">
             <div class="sortby">
               <!-- 如果是Popular, 就传visit_count, 如果是Collection就传collect_count,如果是Score就传score,如果是更新时间就传last_chapter_update_time -->
-              <span style="padding-bottom: 4px; display: flex; align-items: center; font-size: 14pt;"><b>Sort
-                  By</b></span>&nbsp;&nbsp;&nbsp;
-              <el-check-tag class="tags" :checked="sortChecked[0]" @click="sortonChange(0)">Popular</el-check-tag>
-              <el-check-tag class="tags" :checked="sortChecked[1]" @click="sortonChange(1)">Most
-                Collections</el-check-tag>
-              <el-check-tag class="tags" :checked="sortChecked[2]" @click="sortonChange(2)">Score</el-check-tag>
-              <el-check-tag class="tags" :checked="sortChecked[3]" @click="sortonChange(3)">Time
-                updated</el-check-tag>
+              <div class="sortby_word"><b>Sort By</b></div>
+              <div>
+                <el-check-tag class="tags" :checked="sortChecked[0]" @click="sortonChange(0)">Popular</el-check-tag>
+                <el-check-tag class="tags" :checked="sortChecked[1]" @click="sortonChange(1)">Most
+                  Collections</el-check-tag>
+                <el-check-tag class="tags" :checked="sortChecked[2]" @click="sortonChange(2)">Score</el-check-tag>
+                <el-check-tag class="tags" :checked="sortChecked[3]" @click="sortonChange(3)">Time
+                  updated</el-check-tag>
+              </div>
             </div>
-            <div style="display: flex;">
-              <div style="display: flex; margin-top: -8px; height:fit-content;">
+            <div class="clear-totalNum">
+              <div style="display: flex; margin-top: -8px; height:fit-content; justify-content: space-between;">
                 <el-button :disabled="!keyword" text type="danger" @click="clearSearch">
                   Clear search
                 </el-button>
@@ -455,8 +456,7 @@ export default {
                 </el-button>
               </div>
               <div style="margin-top: -2px; font-size: 14pt; width: 110px; text-align: right;">
-                <b>{{
-                  totalNum }} {{ novels.length <= 1 ? "book" : "books" }} </b>
+                <b>{{ totalNum }} {{ novels.length <= 1 ? "book" : "books" }} </b>
               </div>
             </div>
           </div>
@@ -469,7 +469,7 @@ export default {
                   <div>
                     <img :src="item.picUrl" class="novel_img" @click="goBookInfo(item.id)" />
                   </div>
-                  <div style="display: flex; flex-direction: column; margin-left: 20px;">
+                  <div class="each-card-right">
                     <span class="novel_title" @click="goBookInfo(item.id)">
                       <b>{{ item.bookName }}</b>
                     </span>
@@ -482,11 +482,11 @@ export default {
                         item.categoryName
                       }}</el-tag>
                     </div>
-                    <div style="margin-left: 2px; bottom: 20px; position: absolute; display: flex;">
+                    <div
+                      style="margin-left: 2px; bottom: 20px; position: absolute; display: flex; overflow: hidden; height: 17px;">
                       Last update: {{ item.lastChapterUpdateTime }}
                     </div>
-                    <div
-                      style="bottom: 0; position: absolute; width: 228px; display: flex; justify-content: space-between;">
+                    <div class="book-comm">
                       <div style="display: flex; align-items: center;">
                         <el-icon>
                           <StarFilled />
@@ -536,7 +536,7 @@ export default {
             <el-icon>
               <CaretBottom />
             </el-icon>
-            Click me or scroll down to see more
+            MORE
             <el-icon>
               <CaretBottom />
             </el-icon>
@@ -549,6 +549,18 @@ export default {
 
 
 <style>
+.book-comm {
+  bottom: 0;
+  position: absolute;
+  width: 228px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.clear-totalNum {
+  display: flex;
+}
+
 .clickScroll:hover {
   cursor: pointer;
 }
@@ -701,5 +713,106 @@ body .el-tag {
 .novel_title:hover {
   cursor: pointer;
   text-decoration: underline;
+}
+
+.sort_row {
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+}
+
+.sortby_word {
+  padding-bottom: 4px;
+  display: flex;
+  align-items: center;
+  font-size: 14pt;
+  margin-right: 10px;
+}
+
+.each-card-right {
+  display: flex;
+  flex-direction: column;
+  margin-left: 20px;
+}
+</style>
+<style>
+@media screen and (max-width:431px) {
+  .allnovel_body {
+    width: 100vw;
+    min-width: 100vw;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 20px;
+  }
+
+  .picker_content {
+    width: 90%;
+  }
+
+  .filter_container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .picker_left {
+    width: 100%;
+  }
+
+  .picker_right {
+    width: 100%;
+  }
+
+  .tags {
+    margin-right: 2px;
+    margin-bottom: 2px;
+
+  }
+
+  .sort_row {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+    width: 90%;
+  }
+
+  .sortby_word {
+    padding-bottom: 4px;
+    display: block;
+    align-items: center;
+    font-size: 14pt;
+  }
+
+  .sortby {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    margin-top: -6px;
+    margin-bottom: 8px;
+  }
+
+  .clear-totalNum {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .novels_container {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+  }
+
+  .each_novel_container {
+    width: 100%;
+    height: 200px;
+    margin-right: 3.82px;
+    margin-bottom: 3.82px;
+  }
+
+  .book-comm {
+    width: 195px;
+  }
 }
 </style>

@@ -44,158 +44,163 @@ export default {
     <div class="footer-top">
       <div class="logo_container">
         <img src="..\assets\logo1.png" class="logo">
-        <h1
-          style="font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif; color: rgb(68, 68, 68); text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4); margin-right: 50px;">
+        <h1 class="novelhub_name">
           NovelHub</h1>
       </div>
-      <div class="footer-top-blocks">
-        <h2>TEAMS</h2>
-        <el-popover placement="top-start" :width="350" trigger="click" @show="getAdminUser(1)"
-          @before-leave="cleanOtherUserInfo()">
-          <template #reference>
-            <div class="footer_Admin">Mingjie Huang</div>
-          </template>
-          <div style="display: flex; align-items: center;">
-            <img :src="adminAva" class="otherUserAvatar" />
-            <div>
-              <div>{{ adminEmail }}</div>
-              <div>{{ adminName }}</div>
+      <div class="footer-right">
+        <div class="footer-top-blocks">
+          <h2>TEAMS</h2>
+          <el-popover placement="top-start" :width="350" trigger="click" @show="getAdminUser(1)"
+            @before-leave="cleanOtherUserInfo()">
+            <template #reference>
+              <div class="footer_Admin">Mingjie Huang</div>
+            </template>
+            <div style="display: flex; align-items: center;">
+              <img :src="adminAva" class="otherUserAvatar" />
               <div>
-                <el-icon v-if="adminGender === '0'">
-                  <Male />
-                </el-icon>
-                <el-icon v-else>
-                  <Female />
-                </el-icon>
+                <div>{{ adminEmail }}</div>
+                <div>{{ adminName }}</div>
+                <div>
+                  <el-icon v-if="adminGender === '0'">
+                    <Male />
+                  </el-icon>
+                  <el-icon v-else>
+                    <Female />
+                  </el-icon>
+                </div>
               </div>
             </div>
-          </div>
-        </el-popover>
+          </el-popover>
 
-        <el-popover placement="top-start" :width="350" trigger="click" @show="getAdminUser(2)"
-          @before-leave="cleanOtherUserInfo()">
-          <template #reference>
-            <div class="footer_Admin">Yuyan Xiong</div>
-          </template>
-          <div style="display: flex; align-items: center;">
-            <img :src="adminAva" class="otherUserAvatar" />
-            <div>
-              <div>{{ adminEmail }}</div>
-              <div>{{ adminName }}</div>
+          <el-popover placement="top-start" :width="350" trigger="click" @show="getAdminUser(2)"
+            @before-leave="cleanOtherUserInfo()">
+            <template #reference>
+              <div class="footer_Admin">Yuyan Xiong</div>
+            </template>
+            <div style="display: flex; align-items: center;">
+              <img :src="adminAva" class="otherUserAvatar" />
               <div>
-                <el-icon v-if="adminGender === '0'">
-                  <Male />
-                </el-icon>
-                <el-icon v-else>
-                  <Female />
-                </el-icon>
+                <div>{{ adminEmail }}</div>
+                <div>{{ adminName }}</div>
+                <div>
+                  <el-icon v-if="adminGender === '0'">
+                    <Male />
+                  </el-icon>
+                  <el-icon v-else>
+                    <Female />
+                  </el-icon>
+                </div>
               </div>
             </div>
-          </div>
-        </el-popover>
+          </el-popover>
 
-        <el-popover placement="top-start" :width="350" trigger="click" @show="getAdminUser(3)"
-          @before-leave="cleanOtherUserInfo()">
-          <template #reference>
-            <div class="footer_Admin">Dazhi Gao</div>
-          </template>
-          <div style="display: flex; align-items: center;">
-            <img :src="adminAva" class="otherUserAvatar" />
-            <div>
-              <div>{{ adminEmail }}</div>
-              <div>{{ adminName }}</div>
+          <el-popover placement="top-start" :width="350" trigger="click" @show="getAdminUser(3)"
+            @before-leave="cleanOtherUserInfo()">
+            <template #reference>
+              <div class="footer_Admin">Dazhi Gao</div>
+            </template>
+            <div style="display: flex; align-items: center;">
+              <img :src="adminAva" class="otherUserAvatar" />
               <div>
-                <el-icon v-if="adminGender === '0'">
-                  <Male />
-                </el-icon>
-                <el-icon v-else>
-                  <Female />
-                </el-icon>
+                <div>{{ adminEmail }}</div>
+                <div>{{ adminName }}</div>
+                <div>
+                  <el-icon v-if="adminGender === '0'">
+                    <Male />
+                  </el-icon>
+                  <el-icon v-else>
+                    <Female />
+                  </el-icon>
+                </div>
               </div>
             </div>
-          </div>
-        </el-popover>
+          </el-popover>
 
-        <el-popover placement="top-start" :width="350" trigger="click" @show="getAdminUser(4)"
-          @before-leave="cleanOtherUserInfo()">
-          <template #reference>
-            <div class="footer_Admin">Liuyi Chen</div>
-          </template>
-          <div style="display: flex; align-items: center;">
-            <img :src="adminAva" class="otherUserAvatar" />
-            <div>
-              <div>{{ adminEmail }}</div>
-              <div>{{ adminName }}</div>
+          <el-popover placement="top-start" :width="350" trigger="click" @show="getAdminUser(4)"
+            @before-leave="cleanOtherUserInfo()">
+            <template #reference>
+              <div class="footer_Admin">Liuyi Chen</div>
+            </template>
+            <div style="display: flex; align-items: center;">
+              <img :src="adminAva" class="otherUserAvatar" />
               <div>
-                <el-icon v-if="adminGender === '0'">
-                  <Male />
-                </el-icon>
-                <el-icon v-else>
-                  <Female />
-                </el-icon>
+                <div>{{ adminEmail }}</div>
+                <div>{{ adminName }}</div>
+                <div>
+                  <el-icon v-if="adminGender === '0'">
+                    <Male />
+                  </el-icon>
+                  <el-icon v-else>
+                    <Female />
+                  </el-icon>
+                </div>
               </div>
             </div>
-          </div>
-        </el-popover>
+          </el-popover>
 
-        <el-popover placement="top-start" :width="350" trigger="click" @show="getAdminUser(5)"
-          @before-leave="cleanOtherUserInfo()">
-          <template #reference>
-            <div class="footer_Admin">Guoling Dong</div>
-          </template>
-          <div style="display: flex; align-items: center;">
-            <img :src="adminAva" class="otherUserAvatar" />
-            <div>
-              <div>{{ adminEmail }}</div>
-              <div>{{ adminName }}</div>
+          <el-popover placement="top-start" :width="350" trigger="click" @show="getAdminUser(5)"
+            @before-leave="cleanOtherUserInfo()">
+            <template #reference>
+              <div class="footer_Admin">Guoling Dong</div>
+            </template>
+            <div style="display: flex; align-items: center;">
+              <img :src="adminAva" class="otherUserAvatar" />
               <div>
-                <el-icon v-if="adminGender === '0'">
-                  <Male />
-                </el-icon>
-                <el-icon v-else>
-                  <Female />
-                </el-icon>
+                <div>{{ adminEmail }}</div>
+                <div>{{ adminName }}</div>
+                <div>
+                  <el-icon v-if="adminGender === '0'">
+                    <Male />
+                  </el-icon>
+                  <el-icon v-else>
+                    <Female />
+                  </el-icon>
+                </div>
               </div>
             </div>
-          </div>
-        </el-popover>
+          </el-popover>
 
-      </div>
-      <div class="footer-top-blocks">
-        <h2>ABOUT</h2>
-        <el-popover placement="right" :width="230" trigger="click"
-          content="Front-end: Vue.js Ecosystem + Element Plus + Axios. Back-end: Spring Boot + Redis + Mysql.">
-          <template #reference>
-            <span class="footer-elements">How</span>
-          </template>
-        </el-popover>
-        <el-popover placement="right" :width="230" trigger="click"
-          content="COMP9900, Postgraduate Capstone Project, UNSW">
-          <template #reference>
-            <span class="footer-elements">Why</span>
-          </template>
-        </el-popover>
-        <el-popover placement="right" :width="230" trigger="click"
-          content="Sprint 1, June 15th 2023 - June 29th 2023. Sprint 2, June 29th 2023 - July 20th 2023. Sprint 3, July 20th 2023 - August 3rd 2023">
-          <template #reference>
-            <span class="footer-elements">When</span>
-          </template>
-        </el-popover>
-      </div>
-      <div class="footer-top-blocks">
-        <h2>REFERRALS</h2>
-        <a class="footer-elements" href="https://www.inkitt.com/genres/scifi">Inkitt</a>
-        <a class="footer-elements" href="https://www.webnovel.com/">WebNovel</a>
-        <a class="footer-elements" href="https://www.novelnow.com/">NovelNow</a>
+        </div>
+        <div class="footer-top-blocks">
+          <h2>ABOUT</h2>
+          <el-popover placement="top-start" :width="230" trigger="click"
+            content="Front-end: Vue.js Ecosystem + Element Plus + Axios. Back-end: Spring Boot + Redis + Mysql.">
+            <template #reference>
+              <span class="footer-elements">How</span>
+            </template>
+          </el-popover>
+          <el-popover placement="top-start" :width="230" trigger="click"
+            content="COMP9900, Postgraduate Capstone Project, UNSW">
+            <template #reference>
+              <span class="footer-elements">Why</span>
+            </template>
+          </el-popover>
+          <el-popover placement="top-start" :width="230" trigger="click"
+            content="Sprint 1, June 15th 2023 - June 29th 2023. Sprint 2, June 29th 2023 - July 20th 2023. Sprint 3, July 20th 2023 - August 3rd 2023">
+            <template #reference>
+              <span class="footer-elements">When</span>
+            </template>
+          </el-popover>
+        </div>
+        <div class="footer-top-blocks">
+          <h2>REFERRALS</h2>
+          <a class="footer-elements" href="https://www.inkitt.com/genres/scifi">Inkitt</a>
+          <a class="footer-elements" href="https://www.webnovel.com/">WebNovel</a>
+          <a class="footer-elements" href="https://www.novelnow.com/">NovelNow</a>
+        </div>
       </div>
     </div>
-    <div style="margin-top: 20px;">
+    <div class="footer-down">
       © 2023 NovelHub. All rights reserved.
     </div>
   </footer>
 </template>
 
 <style>
+.footer-down {
+  margin-top: 20px;
+}
+
 .footer_Admin {
   color: rgb(117, 117, 117);
   margin-bottom: 5px;
@@ -225,7 +230,6 @@ export default {
   display: flex;
   flex-direction: column;
   margin-right: 60px;
-
 }
 
 .footer-elements {
@@ -237,5 +241,38 @@ export default {
 .footer-elements:hover {
   cursor: pointer;
   text-decoration: underline;
+}
+
+.footer-right {
+  margin-left: 20px;
+  display: flex;
+}
+</style>
+<style>
+@media screen and (max-width:431px) {
+
+  .footer-top .logo_container {
+    margin-left: -40px;
+  }
+
+  .footer-top {
+    flex-direction: column;
+    padding-left: 20px;
+    font-size: 10pt;
+  }
+
+  .footer-top-blocks {
+    display: flex;
+    margin-right: 20px;
+  }
+
+  .footer-right {
+    margin-left: 0px;
+    display: flex;
+  }
+
+  .footer-down {
+    font-size: 10pt;
+  }
 }
 </style>

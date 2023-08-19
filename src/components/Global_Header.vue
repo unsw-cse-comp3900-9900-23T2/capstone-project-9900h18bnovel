@@ -108,8 +108,7 @@ export default {
     <!-- Click here will return to Home page in any circumstances -->
     <div class="logo_container" @click="goHome">
       <img src="..\assets\logo1.png" class="logo">
-      <h1
-        style="font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif; color: rgb(68, 68, 68); text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);">
+      <h1 class="novelhub_name">
         NovelHub</h1>
     </div>
     <el-menu :default-active="activeIndex" mode="horizontal" router>
@@ -167,6 +166,12 @@ export default {
 </template>
 
 <style>
+.novelhub_name {
+  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+  color: rgb(68, 68, 68);
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
+}
+
 .logo_container {
   display: flex;
   justify-content: center;
@@ -316,7 +321,19 @@ export default {
 </style>
 
 <style>
-@media screen and (max-width:415px) {
+@media screen and (max-width:431px) {
+  .logo_container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 0px;
+    margin-left: 0px;
+  }
+
+  .novelhub_name {
+    font-size: 15pt;
+  }
+
   .header_container {
     margin: 0;
     display: flex;
@@ -336,10 +353,9 @@ export default {
   }
 
   .logo {
-    height: 40px;
-    width: 40px;
+    height: 60px;
+    width: 60px;
     object-fit: cover;
-    margin-right: 10px;
   }
 
   .flexbox {
@@ -348,7 +364,8 @@ export default {
     display: flex;
     justify-content: right;
     align-items: center;
-    right: 100px;
+    right: 40px;
+    top: 60px;
     position: absolute;
   }
 
@@ -374,7 +391,7 @@ export default {
 
   .search>div>input {
     color: rgb(0, 0, 0);
-    font-size: 6px;
+    font-size: 10pt;
     background: transparent;
     width: 10px;
     height: 10px;
@@ -401,11 +418,11 @@ export default {
 
   .search>div>input:focus,
   .search>div>input:not(:placeholder-shown) {
-    width: 30vw;
+    width: 90vw;
   }
 
   .login_button {
-    right: 0px;
+    right: 10px;
     position: absolute;
     width: 70px;
   }
@@ -415,13 +432,6 @@ export default {
     align-items: center;
     right: 0px;
     position: absolute;
-  }
-
-  .user_Avatar {
-    border: 2px solid white;
-    border-radius: 60px;
-    width: 50px;
-    height: 50px;
   }
 }
 </style>

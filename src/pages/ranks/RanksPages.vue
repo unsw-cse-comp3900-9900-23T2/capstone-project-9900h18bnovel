@@ -127,8 +127,7 @@ export default {
           </h1>
           <li v-for="(item, index) in filteredBooks" :key="item.id" class="infinite-list-item"
             @click="goBookInfo(item.id)">
-            <div style="font-size: 14pt; font-weight: bold; width: 90px; text-align: center;"
-              :class="{ 'red': index === 0, 'orange': index === 1, 'green': index === 2 }">
+            <div class="update_book_rank" :class="{ 'red': index === 0, 'orange': index === 1, 'green': index === 2 }">
               {{ index < 9 ? '0' + (index + 1) : index + 1 }} </div>
                 <img :src="item.picUrl"
                   style=" height: 145px; width:90.63px; border-radius: 5px; box-shadow: 6px 4px 6px rgb(110, 110, 110);" />
@@ -174,7 +173,7 @@ export default {
                 <el-icon>
                   <CaretBottom />
                 </el-icon>
-                Click me or scroll down to see more
+                MORE
                 <el-icon>
                   <CaretBottom />
                 </el-icon>
@@ -189,6 +188,13 @@ export default {
 
 
 <style>
+.update_book_rank {
+  font-size: 14pt;
+  font-weight: bold;
+  width: 90px;
+  text-align: center;
+}
+
 .infinite-list {
   width: 1152px;
   min-width: 1152px;
@@ -235,5 +241,30 @@ export default {
   align-items: center;
   border-left: 1px solid;
   border-color: rgb(223, 223, 223);
+}
+</style>
+<style>
+@media screen and (max-width:431px) {
+  .infinite-list {
+    width: 100vw;
+    min-width: 100vw;
+    padding: 0;
+  }
+
+  .update_book_item_container {
+    height: 100%;
+    width: 60%;
+    padding-left: 10px;
+    padding-right: 0px;
+  }
+
+  .update_book_reviews_container {
+    display: none;
+  }
+
+  .update_book_rank {
+    width: auto;
+    margin-right: 5px;
+  }
 }
 </style>

@@ -52,6 +52,7 @@ export default {
       chapterPageNum: 1,
       chapterNum: 0,
       prevChapterId: null,
+      preChapterName: null,
       requestBody: {
         pageNum: 1,
         pageSize: 5,
@@ -97,6 +98,7 @@ export default {
 
       penName: null,
       signature: null,
+
     }
   },
   watch: {
@@ -284,6 +286,7 @@ export default {
           this.isCollected = this.collectedBooksId.includes(this.$route.params.bookId) ? true : false;
           const thisBook = data.data.find(item => item.bookId === this.$route.params.bookId);
           this.prevChapterId = thisBook ? thisBook.preChapterId : null;
+          this.preChapterName = thisBook ? thisBook.preChapterName : null;
         })
         .catch(error => {
           console.error(error);
@@ -621,8 +624,7 @@ export default {
     <div class="bookInfoBody">
       <div class="bookDetail">
         <div class="bookmark-container">
-          <img :src="book.picUrl"
-            style="height: 400px; width: 250px; box-shadow: 6px 4px 6px rgb(155, 155, 155); border-radius: 8px; margin-left: 20px;" />
+          <img :src="book.picUrl" class="book-image" />
           <div v-if="isCollected" class="bookmark-icon">
             <el-icon size="60">
               <CaretBottom color="#f7ba2a" />
@@ -636,7 +638,7 @@ export default {
         </div>
         <div class="bookWordDetail">
           <div>
-            <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
               <h1 style="display: flex; align-items: center;"> {{ book.bookName }}
                 <el-tag effect="plain" style="margin-left: 20px;" :style="getItemColor(book.categoryName)">{{
                   book.categoryName
@@ -664,45 +666,53 @@ export default {
                   score-template="{value}" />&nbsp;({{ book.commentCount }})
               </div>
             </div>
-            <div style="display: flex; font-size: 16pt; align-items: center; margin-top: 10px;">
-              <el-icon>
-                <Document />
-              </el-icon>
-              {{ book.wordCount }}
-              &nbsp;&nbsp;&nbsp;
-              <el-icon>
-                <View />
-              </el-icon>
-              {{ book.visitCount }}
-              &nbsp;&nbsp;&nbsp;
-              <el-icon>
-                <CollectionTag />
-              </el-icon>
-              {{ book.collectCount }}
-              &nbsp;&nbsp;&nbsp;
-              <el-icon>
-                <Clock />
-              </el-icon>
-              {{ book.lastChapterUpdateTime }}
-              &nbsp;&nbsp;&nbsp;
+            <div class="book-reviews">
+              <div>
+                <el-icon>
+                  <Document />
+                </el-icon>
+                {{ book.wordCount }}
+                &nbsp;&nbsp;&nbsp;
+              </div>
+              <div><el-icon>
+                  <View />
+                </el-icon>
+                {{ book.visitCount }}
+                &nbsp;&nbsp;&nbsp;
+              </div>
+              <div>
+                <el-icon>
+                  <CollectionTag />
+                </el-icon>
+                {{ book.collectCount }}
+                &nbsp;&nbsp;&nbsp;
+              </div>
+              <div>
+                <el-icon>
+                  <Clock />
+                </el-icon>
+                {{ book.lastChapterUpdateTime }}
+                &nbsp;&nbsp;&nbsp;
+              </div>
+
             </div>
-            <div style="margin-top: 10px;">
-              <el-button v-if="prevChapterId === null" style="font-size: 14pt;" size="large" type="primary" round
+            <div class="book-buttons">
+              <el-button v-if="prevChapterId === null" class="book-buttons-button" size="large" type="primary" round
                 :icon="Reading"
                 @click="goToContent(chapters[0] ? chapters[0].id : null, chapters[0] ? chapters[0].chapterName : null)">
                 READ
               </el-button>
-              <el-button v-else style="font-size: 14pt;" size="large" type="primary" round :icon="Reading"
+              <el-button v-else class="book-buttons-button" size="large" type="primary" round :icon="Reading"
                 @click="goToContent(prevChapterId, chapterName)">
-                CONTINUE READING
+                {{ chapterName ? chapterName : preChapterName ? preChapterName : "READ" }}
               </el-button>
-              <el-button v-if="!isCollected" style="font-size: 14pt;" size="large" type="primary" round :icon="Plus"
+              <el-button v-if="!isCollected" class="book-buttons-button" size="large" type="primary" round :icon="Plus"
                 @click="collect">
-                ADD TO COLLECTIONS
+                COLLECT
               </el-button>
-              <el-button v-else style="font-size: 14pt;" size="large" type="primary" round :icon="Delete"
+              <el-button v-else class="book-buttons-button" size="large" type="primary" round :icon="Delete"
                 @click="cancel_collect">
-                REMOVE FROM COLLECTIONS
+                UNCOLLECT
               </el-button>
             </div>
           </div>
@@ -711,9 +721,9 @@ export default {
       <div class="chapterDetail">
         <div class="list">
           <h1 :class="isShowComments ? 'chooseOne' : 'noChoose'" @click="chooseComments"><span>Comments</span></h1>
-          &nbsp;&nbsp;<h1>|</h1>&nbsp;&nbsp;
+          &nbsp;&nbsp;<h1 class="choose-divider">|</h1>&nbsp;&nbsp;
           <h1 :class="isShowChapters ? 'chooseOne' : 'noChoose'" @click="chooseChapters"><span>Chapters</span></h1>
-          &nbsp;&nbsp;<h1>|</h1>&nbsp;&nbsp;
+          &nbsp;&nbsp;<h1 class="choose-divider">|</h1>&nbsp;&nbsp;
           <h1 :class="isShowFiction ? 'chooseOne' : 'noChoose'" @click="chooseFiction"><span>Fan Fiction</span></h1>
         </div>
         <el-divider />
@@ -740,9 +750,9 @@ export default {
               <div v-if="isEditComment" style="margin-top: 20px;">
                 <el-input v-model="userComment" :rows="4" type="textarea" :placeholder=userCommented.commentContent>
                 </el-input>
-                <div style="display: flex; justify-content: space-between;  margin-top: 10px;">
+                <div style="display: flex; justify-content: space-between;  margin-top: 10px; flex-wrap: wrap;">
                   <div class="userScoreInput">
-                    <span style="font-size: 12pt;">How would you rate this book?</span>&nbsp;<el-rate
+                    <span style="font-size: 12pt;" class="score-prompt">How would you rate this book?</span>&nbsp;<el-rate
                       v-model="requestBody.score" allow-half show-score />
                   </div>
                   <div>
@@ -764,9 +774,9 @@ export default {
             <el-input v-model="userComment" :rows="4" type="textarea"
               placeholder="Have something to say about this book? Write your comment!">
             </el-input>
-            <div style="display: flex; justify-content: space-between;  margin-top: 10px;">
+            <div style="display: flex; justify-content: space-between;  margin-top: 10px; flex-wrap: wrap;">
               <div class="userScoreInput">
-                <span style="font-size: 12pt;">How would you rate this book?</span>&nbsp;<el-rate
+                <span style="font-size: 12pt;" class="score-prompt">How would you rate this book?</span>&nbsp;<el-rate
                   v-model="requestBody.score" allow-half show-score />
               </div>
               <div>
@@ -826,7 +836,7 @@ export default {
         </div>
 
         <div v-else-if="isShowChapters">
-          <div v-if="chapters.length > 0">
+          <div v-if="chapters.length > 0" class="chaptersBody">
             <h1>{{ totalChapters }} Total</h1>
             <div style="display: flex; flex-wrap: wrap; justify-content: space-between;">
               <div v-for="(item, index) in chapters" :key="index" class="chapters"
@@ -848,21 +858,49 @@ export default {
                 style="width: 100%; display: flex; justify-content: center;" />
             </div>
           </div>
-          <div v-else>
+          <div v-else class="chaptersBody">
             There is no chapter in this book
           </div>
         </div>
 
-        <div v-else-if="isShowFiction">
+        <div v-else-if="isShowFiction" class="fictionBody">
           <div style="width: 100%; display: flex; justify-content: space-between;margin-bottom: 10px;">
-            <el-button :icon="Edit" type="primary" @click="viewUsersFiction">Edit your own fiction</el-button>
-            <el-button :icon="Plus" type="primary" @click="createFicCheck">Create your own fiction</el-button>
+            <el-button :icon="Edit" type="primary" @click="viewUsersFiction">Edit</el-button>
+            <el-button :icon="Plus" type="primary" @click="createFicCheck">Create</el-button>
           </div>
 
           <el-dialog v-model="isCreateFiction" title="Create Fiction">
             <el-input v-model="createFictionContent" :autosize="{ minRows: 20, maxRows: 20 }" type="textarea"
               placeholder="Please input" />
             <el-button type="primary" style="width: 100%; margin-top: 20px;" @click="createFiction">Create</el-button>
+          </el-dialog>
+
+          <el-dialog v-model="isUserFiction" title="My Fiction">
+            <h2 v-if="userFictionList.length < 1">You have no fiction</h2>
+            <div v-else v-for="item in userFictionList" :key="item.id"
+              style="display: flex; min-height: 100px; text-align: center; border-bottom: 1px solid #e7e7e7; padding-top: 10px; position: relative;">
+              <el-input v-model="item.fanficContent" :autosize="{ minRows: 3, maxRows: 3 }" type="textarea" style="" />
+              <div style="display: flex; flex-direction: column;">
+                <span style="margin: 0 10px 10px 10px; height: 20px; display: inline-block;">
+                  {{ item.fanficTime }}
+                </span>
+                <div style="display: flex; flex-direction: row; margin: 10px; justify-content: space-around;">
+                  <el-button type="primary" :icon="Upload" circle @click="updateUserFiction(item.fanficContent, item.id)"
+                    style="margin: 5px;" />
+                  <el-button type="danger" :icon="Delete" circle @click="deleteUserFiction(item.id)"
+                    style="margin: 5px;" />
+                </div>
+              </div>
+
+            </div>
+            <el-pagination :hide-on-single-page="userFictionTotal <= 5" v-model:current-page="userFictionPageNum"
+              :page-size="50" layout="prev, pager, next" :total="userFictionTotal * 10"
+              style="width: 100%; display: flex; justify-content: center;" />
+            <template #footer>
+              <span>
+                <el-button type="primary" @click="isUserFiction = false">Close</el-button>
+              </span>
+            </template>
           </el-dialog>
 
           <h1 v-if="fanficList.length < 1">
@@ -916,12 +954,12 @@ export default {
         </div>
 
         <div class="drawerContainer">
-          <el-drawer size="100%" :with-header="false" v-model="drawer" direction="ttb" :style="{
+          <el-drawer size="100%" :with-header="true" v-model="drawer" direction="ttb" :style="{
             background: themeColor,
             color: !settingTheme ? '#333333' : '#ffffff',
           }" @closed="fictionContentDialogVisible = false">
-            <div :style="{ fontSize: fontSizeStyle }">
-              <h1 style="display: flex; align-items: center; justify-content: space-between;">
+            <template #header>
+              <h1 style="display: flex; align-items: center; justify-content: space-between;" class="read-header">
                 <div v-if="fictionContentDialogVisible">
                   {{ fictionContent.fanficUserName }}
                 </div>
@@ -966,21 +1004,25 @@ export default {
                   </el-dropdown>
                 </div>
               </h1>
-              <div style="display: flex;">
-                <div v-if="!fictionContentDialogVisible" style="margin-left: -50px; position: relative"><el-button
-                    @click="prevChapter"
-                    style="height: 100%; width: 550px; top: 0; left: 0; position: absolute; border-color: rgba(0, 0, 0, 0); background-color: rgba(0, 0, 0, 0);">
-                  </el-button>
+            </template>
+            <div :style="{ fontSize: fontSizeStyle }">
+
+              <div style="display: flex; position: relative;">
+                <div v-if="!fictionContentDialogVisible" style="margin-left: -50px;">
+                  <div @click="prevChapter"
+                    style="height: 100%; width: 50%; top: 0; left: 0; position: absolute; margin-left: -50px; border-color: rgba(0, 0, 0, 0); background-color: rgba(0, 0, 0, 0);"
+                    class="chagenReadPage">
+                  </div>
                 </div>
-                <div v-if="!fictionContentDialogVisible" style="line-height: 2; margin-left: 40px; margin-right: 40px;"
-                  v-html="chapterContent"></div>
-                <div v-else style="line-height: 2; margin-left: 40px; margin-right: 40px;">
+                <div v-if="!fictionContentDialogVisible" class="read-body" v-html="chapterContent"></div>
+                <div v-else class="read-body">
                   {{ fictionContent.fanficContent }}
                 </div>
-                <div v-if="!fictionContentDialogVisible" style="margin-right: -50px; position: relative;"><el-button
-                    @click="nextChapter"
-                    style="height: 100%; width: 550px; top: 0; right: 0; position: absolute; border-color: rgba(0, 0, 0, 0); background-color: rgba(0, 0, 0, 0);">
-                  </el-button>
+                <div v-if="!fictionContentDialogVisible" style="margin-right: -50px;">
+                  <div @click="nextChapter"
+                    style="height: 100%; width: 50%; top: 0; right: 0; margin-right: -50px;position: absolute; border-color: rgba(0, 0, 0, 0); background-color: rgba(0, 0, 0, 0);"
+                    class="chagenReadPage">
+                  </div>
                 </div>
               </div>
               <div v-if="!fictionContentDialogVisible"
@@ -1004,32 +1046,6 @@ export default {
           </el-drawer>
         </div>
 
-        <el-dialog v-model="isUserFiction" title="My Fiction" width="50%">
-          <h2 v-if="userFictionList.length < 1">You have no fiction</h2>
-          <div v-else v-for="item in userFictionList" :key="item.id"
-            style="display: flex; min-height: 100px; text-align: center; border-bottom: 1px solid #e7e7e7; padding-top: 10px; position: relative;">
-            <el-input v-model="item.fanficContent" :autosize="{ minRows: 3, maxRows: 3 }" type="textarea" style="" />
-            <div style="display: flex; flex-direction: column;">
-              <span style="margin: 0 10px 10px 10px; height: 20px; display: inline-block;">
-                {{ item.fanficTime }}
-              </span>
-              <div style="display: flex; flex-direction: row; margin: 10px; justify-content: space-around;">
-                <el-button type="primary" :icon="Upload" circle @click="updateUserFiction(item.fanficContent, item.id)"
-                  style="margin: 5px;" />
-                <el-button type="danger" :icon="Delete" circle @click="deleteUserFiction(item.id)" style="margin: 5px;" />
-              </div>
-            </div>
-
-          </div>
-          <el-pagination :hide-on-single-page="userFictionTotal <= 5" v-model:current-page="userFictionPageNum"
-            :page-size="50" layout="prev, pager, next" :total="userFictionTotal * 10"
-            style="width: 100%; display: flex; justify-content: center;" />
-          <template #footer>
-            <span>
-              <el-button type="primary" @click="isUserFiction = false">Close</el-button>
-            </span>
-          </template>
-        </el-dialog>
       </div>
     </div>
   </div>
@@ -1037,6 +1053,41 @@ export default {
 
 
 <style>
+.book-buttons .el-button {
+  font-size: 14pt;
+}
+
+.chagenReadPage:hover {
+  cursor: pointer;
+}
+
+.read-body {
+  line-height: 2;
+  margin-left: 40px;
+  margin-right: 40px;
+}
+
+.book-buttons {
+  margin-top: 10px;
+  display: flex;
+  width: 100%;
+}
+
+.book-reviews {
+  display: flex;
+  font-size: 16pt;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.book-image {
+  height: 400px;
+  width: 250px;
+  box-shadow: 6px 4px 6px rgb(155, 155, 155);
+  border-radius: 8px;
+  margin-left: 20px;
+}
+
 .list {
   display: flex;
   color: #949494;
@@ -1147,7 +1198,6 @@ export default {
   color: black;
 }
 
-
 .bookInfoBody {
   width: 1152px;
   min-width: 1152px;
@@ -1210,5 +1260,164 @@ export default {
 .chapters:hover {
   transform: translateY(-4px);
   cursor: pointer;
+}
+</style>
+<style>
+@media screen and (max-width:431px) {
+  .book-buttons .el-button {
+    font-size: 10pt;
+  }
+
+  .fictionBody .el-dialog {
+    --el-dialog-width: 90%;
+  }
+
+  .fictionBody,
+  .chaptersBody {
+    margin-top: -10px;
+  }
+
+  .score-prompt {
+    display: none;
+  }
+
+  .choose-divider {
+    display: none;
+  }
+
+  .chapterDetail {
+    width: 95%;
+    margin: auto;
+  }
+
+  .bookInfoBody {
+    width: 100vw;
+    min-width: 100vw;
+  }
+
+  .bookDetail {
+    display: flex;
+    flex-direction: column;
+    padding-top: 40px;
+  }
+
+  .bookmark-container {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+  }
+
+  .book-image {
+    height: 300px;
+    width: 187.5px;
+    margin-left: 0px;
+  }
+
+  .bookmark-icon {
+    position: absolute;
+    top: -28px;
+    right: 36vw;
+    width: 20px;
+    height: 20px;
+  }
+
+  .bookmark-icon2 {
+    position: absolute;
+    top: -10px;
+    right: 36vw;
+    width: 20px;
+    height: 20px;
+  }
+
+  .bookWordDetail {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 90%;
+    margin-left: 0px;
+    margin: auto;
+    position: relative;
+  }
+
+  .book-reviews {
+    display: flex;
+    font-size: 10pt;
+    align-items: center;
+    margin-top: 10px;
+    flex-wrap: wrap;
+  }
+
+  .book-buttons {
+    margin-top: 10px;
+    display: flex;
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
+  .noChoose {
+    color: #b7b7b7;
+    font-size: 14pt;
+  }
+
+  .chooseOne {
+    color: black;
+    font-size: 16pt;
+  }
+
+  .list {
+    display: flex;
+    align-items: center;
+    color: #949494;
+    justify-content: center;
+    margin-bottom: -20px;
+  }
+
+  .userScoreInput {
+    display: flex;
+    align-items: baseline;
+    width: 100%;
+    margin-top: -10px;
+  }
+
+  .userScoreInput .el-rate {
+    --el-rate-icon-size: 18pt;
+    --el-rate-font-size: 18pt;
+  }
+
+  .chapters {
+    background-color: #f5f6fc;
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    font-size: 10pt;
+    width: 49%;
+    padding: 10px;
+    position: relative;
+    transition: transform 0.3s ease;
+  }
+
+  .drawerContainer .el-drawer.ttb {
+    width: 100vw;
+    min-width: 100vw;
+    margin: auto;
+  }
+
+  .drawerContainer .el-drawer__title {
+    font-size: 10pt;
+  }
+
+  .drawerContainer .el-drawer {
+    --el-drawer-padding-primary: 50px;
+  }
+
+  .read-header {
+    font-size: 15pt;
+  }
+
+  .read-body {
+    margin-left: 10px;
+    margin-right: 10px;
+  }
 }
 </style>

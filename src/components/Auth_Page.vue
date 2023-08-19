@@ -732,4 +732,11 @@ export default {
   }
 }
 </style>
+<style>
+@media screen and (max-width:431px) {
+  .passPopover .input_container {
+    font-size: 12pt;
+  }
+}
+</style>
 

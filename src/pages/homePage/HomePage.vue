@@ -1,12 +1,10 @@
 <script setup>
 import {
-  UserFilled,
   Warning,
-  ArrowRight,
   StarFilled,
 } from '@element-plus/icons-vue';
 import axios from 'axios';
-import { getItemColor } from  '@/utils.js';
+import { getItemColor } from '@/utils.js';
 </script>
 <script>
 export default {
@@ -98,10 +96,6 @@ export default {
       this.$router.push(`/bookInfo/${bookId}`);
     },
 
-    GoToMyCollection() {
-      this.$router.push('/userprofile');
-    },
-
     goClickRank() {
       this.$router.push("/clickrank");
     },
@@ -112,6 +106,9 @@ export default {
 
     goUpdateRank() {
       this.$router.push("/updaterank")
+    },
+    ShowUserProfile() {
+      this.$router.push('/userprofile');
     },
   },
   computed: {
@@ -130,19 +127,21 @@ export default {
       <div class="homeBody">
         <div class="weekly_collect_books_container">
           <div class="weekly_books">
-            <h2>
-              Weekly Books
-              <el-popover placement="right" :width="230" trigger="hover"
-                content="The Weekly Books features the highest-rated and most-viewed books of the week.">
-                <template #reference>
-                  <el-icon style="font-size: 10pt;">
-                    <Warning />
-                  </el-icon>
-                </template>
-              </el-popover>
+            <h2 class="weekly_collect_header_name">
+              <div>
+                Weekly Books
+                <el-popover placement="top-start" :width="230" trigger="hover"
+                  content="The Weekly Books features the highest-rated and most-viewed books of the week.">
+                  <template #reference>
+                    <el-icon style="font-size: 10pt;">
+                      <Warning />
+                    </el-icon>
+                  </template>
+                </el-popover>
+              </div>
             </h2>
-            <el-carousel :interval="4000" height="300px"
-              style="border-radius: 5px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
+            <el-carousel :interval="4000" style="border-radius: 5px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);"
+              class="carousel_weekly">
               <el-carousel-item v-for="item in weekly_books_info.slice(0, 3)" :key="item.title">
                 <div class="carousel_weekly_background" :style="getBackgroundStyle(item.picUrl)"></div>
                 <el-row>
@@ -165,16 +164,19 @@ export default {
             </el-carousel>
           </div>
           <div class="collected_novel_container">
-            <h2>
-              Collected Books
-              <el-popover placement="right" :width="250" trigger="hover"
-                content="The Collected Books determined by readers' personal collections, must signed in to view the section">
-                <template #reference>
-                  <el-icon style="font-size: 10pt;">
-                    <Warning />
-                  </el-icon>
-                </template>
-              </el-popover>
+            <h2 class="weekly_collect_header_name">
+              <div>
+                Collected Books
+                <el-popover placement="top-start" :width="250" trigger="hover"
+                  content="The Collected Books determined by readers' personal collections, must signed in to view the section">
+                  <template #reference>
+                    <el-icon style="font-size: 10pt;">
+                      <Warning />
+                    </el-icon>
+                  </template>
+                </el-popover>
+              </div>
+              <el-link type="primary" @click="ShowUserProfile">MORE</el-link>
             </h2>
             <div v-if="!$store.state.token" class="collected_novel_na_user">
               <el-empty :image-size="120" description="Please sign in to see more informations">
@@ -183,7 +185,7 @@ export default {
             <div v-else class="collected_novel_user">
               <div v-if="collectedBooks.length > 0" class="collected_novel_user_ya">
                 <div v-for="item in collectedBooks.slice(0, 3)" :key="item.bookId"
-                  style="margin-left: 15px; display: flex; flex-direction:column; align-items:center;">
+                  style="display: flex; flex-direction:column;">
                   <img :src="item.picUrl" class="collected_img" @click="goBookInfo(item.bookId)" />
                   <div class="collected_word" style="margin-top: 10px;" @click="goBookInfo(item.bookId)">
                     <b>{{ item.bookName }}</b>
@@ -192,14 +194,6 @@ export default {
                     {{ item.preChapterName }}
                   </div>
                 </div>
-                <el-button style="height:100%; background-color:rgb(0,0,0,0); right:0; position:absolute;
-                  border-color:rgb(0,0,0,0); border-left: 1px solid #b7b7b7; border-radius: 0;"
-                  @click="GoToMyCollection">
-                  A<br>L<br>L<br>
-                  <el-icon>
-                    <ArrowRight />
-                  </el-icon>
-                </el-button>
               </div>
               <div v-else>
                 <div class="collected_novel_user_na">
@@ -212,8 +206,8 @@ export default {
         <el-divider />
         <div class="recomm_books_container">
           <div class="hottest_books">
-            <h2 style="text-align: center;">Hottest Books
-              <el-popover placement="right" :width="275" trigger="hover"
+            <h2 class="recomm_header_name">Hottest Books
+              <el-popover placement="top-start" :width="275" trigger="hover"
                 content="The Hottest Books list features the most popular and sought-after literary gems based on the number of times they have been collected by readers">
                 <template #reference>
                   <el-icon style="font-size: 10pt;">
@@ -236,10 +230,8 @@ export default {
                     <el-tag class="tag" effect="plain" :style="getItemColor(item.categoryName)">{{
                       item.categoryName
                     }}</el-tag>
-                    <span style="bottom: 0px;position: absolute;">
-                      {{ item.collectCount }} <el-icon>
-                        <UserFilled />
-                      </el-icon> Collected
+                    <span style="bottom: 0px;position: absolute; width: 115px; height: 17px;">
+                      {{ item.collectCount }} Collected
                     </span>
                   </div>
                   <div class="carousel_image_container">
@@ -279,8 +271,8 @@ export default {
             </el-carousel>
           </div>
           <div class="best_books">
-            <h2 style="text-align: center;">Best Books
-              <el-popover placement="right" :width="265" trigger="hover"
+            <h2 class="recomm_header_name">Best Books
+              <el-popover placement="top-start" :width="265" trigger="hover"
                 content="The Best Books list showcases the most highly-rated and acclaimed literary works based on their scores">
                 <template #reference>
                   <el-icon style="font-size: 10pt;">
@@ -303,10 +295,8 @@ export default {
                     <el-tag class="tag" effect="plain" :style="getItemColor(item.categoryName)">{{
                       item.categoryName
                     }}</el-tag>
-                    <span style="bottom: 0px;position: absolute;">
-                      {{ item.collectCount }} <el-icon>
-                        <UserFilled />
-                      </el-icon> Collected
+                    <span style="bottom: 0px;position: absolute; width: 115px; height: 17px;">
+                      {{ item.collectCount }} Collected
                     </span>
                   </div>
                   <div class="carousel_image_container">
@@ -351,7 +341,7 @@ export default {
           <div class="rank_container">
             <div style="display: flex;">
               <div class="rank_name" @click="goClickRank">Click Rank</div>
-              <el-popover placement="right" :width="210" trigger="hover"
+              <el-popover placement="top-start" :width="210" trigger="hover"
                 content="The Click Rank is a list based on the total number of clicks a novel receives. It showcases the most popular and highly-clicked novels at the moment.">
                 <template #reference>
                   <el-icon style="margin-left: 10px;">
@@ -380,7 +370,7 @@ export default {
           <div class="rank_container">
             <div style="display: flex;">
               <div class="rank_name" @click="goNewestRank">Newest Rank</div>
-              <el-popover placement="right" :width="215" trigger="hover"
+              <el-popover placement="top-start" :width="215" trigger="hover"
                 content="The Newest Rank is a list that features the latest releases of novels. It highlights the freshest in the NovelHub.">
                 <template #reference>
                   <el-icon style="margin-left: 10px;">
@@ -409,7 +399,7 @@ export default {
           <div class="rank_container">
             <div style="display: flex;">
               <div class="rank_name" @click="goUpdateRank">Update Rank</div>
-              <el-popover placement="right" :width="240" trigger="hover"
+              <el-popover placement="top-start" :width="240" trigger="hover"
                 content="The Update Rank is a dynamic list that showcases novels with recent updates. It presents novels that have been recently added chapters or undergone significant updates">
                 <template #reference>
                   <el-icon style="margin-left: 10px;">
@@ -442,6 +432,15 @@ export default {
 </template>
 
 <style>
+.weekly_collect_header_name {
+  display: flex;
+  justify-content: space-between;
+}
+
+.recomm_header_name {
+  text-align: center;
+}
+
 .flex-center {
   display: flex;
   justify-content: center;
@@ -581,10 +580,11 @@ export default {
 
 .collected_novel_user_ya {
   display: flex;
-  flex-wrap: wrap;
-  margin-top: 9px;
   position: relative;
   border-radius: 5px;
+  padding-left: 15px;
+  padding-right: 15px;
+  padding-top: 10px;
 }
 
 .collected_word {
@@ -607,6 +607,7 @@ export default {
   box-shadow: 6px 4px 6px rgb(65, 65, 65);
   border-radius: 8px;
   transition: transform 0.3s ease;
+  margin-right: 38px;
 }
 
 .collected_img:hover {
@@ -772,7 +773,6 @@ export default {
   display: flex;
   justify-content: space-between;
   width: 100%;
-  height: 500px;
 }
 
 .rank_container {
@@ -861,7 +861,17 @@ export default {
 </style>
 
 <style>
-@media screen and (max-width:415px) {
+@media screen and (max-width:431px) {
+
+  .carousel_weekly .el-row {
+    justify-content: space-between;
+    padding-left: 5px;
+  }
+
+  .collected_novel_user_ya .el-button {
+    padding: 0px 0px;
+  }
+
   .homeBody {
     width: 100vw;
     min-width: 100vw;
@@ -876,19 +886,38 @@ export default {
     flex-direction: column;
   }
 
+  .recomm_header_name,
+  .weekly_collect_header_name {
+    font-size: 15pt;
+  }
+
+  .weekly_books .el-carousel__container {
+    height: 250px;
+  }
+
+  .carousel_weekly_background {
+    height: 250px;
+  }
+
   .weekly_books {
     width: 100%;
     margin: auto;
   }
 
+  .collected_img {
+    height: 144px;
+    width: 90px;
+    margin-right: 12px;
+  }
+
+  .collected_word {
+    width: 90px;
+    font-size: 10pt;
+  }
+
   .collected_novel_container {
-    margin-top: 20px;
     width: 100%;
-    min-height: 300px;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    margin: auto;
+    min-height: 240px;
   }
 
   .recomm_books_container {
@@ -915,23 +944,24 @@ export default {
     width: 100%;
   }
 
+  .carousel_weekly_image_container {
+    height: 240px;
+    width: 38%;
+  }
+
   .carousel_weekly_image {
     width: 125px;
     height: 200px;
-    object-fit: contain;
-    box-shadow: 6px 4px 6px white;
-    border-radius: 8px;
-    transition: transform 0.3s ease;
   }
 
   .carousel_weekly_text_container {
-    width: 60%;
+    width: 58%;
     border: 1px soild;
-    height: 300px;
+    height: 240px;
   }
 
   .carousel_weekly_text {
-    margin-top: 50px;
+    margin-top: 20px;
   }
 
   .carousel_weekly_text_title {
@@ -953,7 +983,7 @@ export default {
   }
 
   .carousel_left_container {
-    width: 35%;
+    width: 37%;
     margin-left: 0px;
   }
 
@@ -974,53 +1004,66 @@ export default {
   }
 
   .carousel_image_container {
-    margin-left: 25px;
+    margin-left: 0px;
   }
 
   .carousel_right_container {
     display: none;
   }
 
-
-  .rank_books_container {
-    display: flex;
+  .recomm_books_container .el-row {
+    flex-wrap: nowrap;
+    justify-content: space-between;
     width: 95%;
   }
 
+  .rank_books_container {
+    display: flex;
+    flex-direction: column;
+    width: 95%;
+    padding: 20px;
+    margin-top: -30px;
+  }
+
+  .rank_container {
+    /* background-color: aliceblue; */
+    width: 100%;
+    margin-top: 20px;
+  }
+
   .rank_name {
-    font-size: 10pt;
-    width: 90px;
+    font-size: 15pt;
     color: white;
+    width: 100%;
   }
 
   .rank_image img {
-    height: 65px;
-    width: 40.625px;
+    height: 80px;
+    width: 50px;
     margin-right: 5px;
+    margin-left: 10px;
   }
 
   .rank_rank {
     margin-right: 5px;
-    font-size: 5pt;
+    font-size: 12pt;
   }
 
   .rank_info {
-    font-size: 5pt;
-    width: 60px;
+    font-size: 15pt;
+    width: 80%;
   }
 
   .rank_info .rank_title {
-    font-size: 6pt;
-    width: 60px;
+    font-size: 12pt;
   }
 
   .rank_info .rank_author {
-    font-size: 3pt;
-    width: 60px;
+    font-size: 8pt;
   }
 
   .rank_info .rank_score {
-    font-size: 5pt;
+    font-size: 6pt;
   }
 }
 </style>

@@ -15,7 +15,6 @@ import 'element-plus/theme-chalk/index.css';
 // import axios from 'axios';
 // axios.defaults.baseURL = "http://192.168.1.18:8888"
 
-
 const app = createApp(App);
 app.use(ElementPlus);
 
