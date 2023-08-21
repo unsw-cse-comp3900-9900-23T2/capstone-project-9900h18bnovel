@@ -325,7 +325,7 @@ export default {
                 <div class="genresofnovels">
                   <h2>
                     Genres of Novels
-                    <el-popover placement="right" :width="220" trigger="hover"
+                    <el-popover placement="top-start" :width="220" trigger="hover"
                       content="Genres of Novels refers to the different types or categories of novels">
                       <template #reference>
                         <el-icon style="font-size: 10pt;">
@@ -362,7 +362,7 @@ export default {
                 </div>
                 <div class="bookdirection">
                   <h2>Book direction
-                    <el-popover placement="right" :width="220" trigger="hover"
+                    <el-popover placement="top-start" :width="220" trigger="hover"
                       content="Book Direction refers to the orientation of a book's content, particularly in relation to the reading direction">
                       <template #reference>
                         <el-icon style="font-size: 10pt;">
@@ -382,7 +382,7 @@ export default {
               <div class="picker_right">
                 <div class="filterby">
                   <h2>Filter By
-                    <el-popover placement="right" :width="220" trigger="hover"
+                    <el-popover placement="top-start" :width="220" trigger="hover"
                       content="Filter By refers to the selection of book status, update time and word count based on specific criteria">
                       <template #reference>
                         <el-icon style="font-size: 10pt;">
@@ -800,14 +800,15 @@ body .el-tag {
 
   .novels_container {
     display: flex;
-    flex-wrap: wrap;
+    flex-direction: column;
     width: 100%;
   }
 
   .each_novel_container {
-    width: 100%;
+    width: 95vw;
     height: 200px;
-    margin-right: 3.82px;
+    margin: auto;
+    margin-right: none;
     margin-bottom: 3.82px;
   }
 

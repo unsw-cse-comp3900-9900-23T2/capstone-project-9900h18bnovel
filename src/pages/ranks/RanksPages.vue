@@ -116,7 +116,7 @@ export default {
           <h1
             style="border-bottom: 1px solid; border-color: rgb(223, 223, 223); padding-bottom: 10px; margin-bottom: 22px; width: 100%; text-align: center;">
             {{ isUpdateRank ? "Update Rank" : isClickRank ? "Click Rank" : isNewestRank ? "Newest Rank" : null }}
-            <el-popover placement="right" :width="240" trigger="hover"
+            <el-popover placement="top-start" :width="240" trigger="hover"
               :content="isUpdateRank ? 'The Update Rank is a dynamic list that showcases novels with recent updates. It presents novels that have been recently added chapters or undergone significant updates' : isNewestRank ? 'The Newest Rank is a list that features the latest releases of novels. It highlights the freshest in the NovelHub.' : isClickRank ? 'The Click Rank is a list based on the total number of clicks a novel receives. It showcases the most popular and highly-clicked novels at the moment.' : null">
               <template #reference>
                 <el-icon style="font-size: 10pt;">
@@ -265,6 +265,24 @@ export default {
   .update_book_rank {
     width: auto;
     margin-right: 5px;
+  }
+
+  .infinite-list .infinite-list-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    margin: auto;
+    width: 95vw;
+    height: 157px;
+    border: 1px solid;
+    border-color: rgb(223, 223, 223);
+    margin-bottom: 10px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06);
+    transform: translateY(0);
+    transition: transform 0.3s ease;
   }
 }
 </style>

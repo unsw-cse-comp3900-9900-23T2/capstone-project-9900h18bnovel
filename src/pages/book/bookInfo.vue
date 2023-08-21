@@ -1010,17 +1010,15 @@ export default {
               <div style="display: flex; position: relative;">
                 <div v-if="!fictionContentDialogVisible" style="margin-left: -50px;">
                   <div @click="prevChapter"
-                    style="height: 100%; width: 50%; top: 0; left: 0; position: absolute; margin-left: -50px; border-color: rgba(0, 0, 0, 0); background-color: rgba(0, 0, 0, 0);"
+                    style="height: 100%; width: 50%; top: 0; left: 0; position: absolute; border-color: rgba(0, 0, 0, 0); background-color: rgba(0, 0, 0, 0);"
                     class="chagenReadPage">
                   </div>
                 </div>
                 <div v-if="!fictionContentDialogVisible" class="read-body" v-html="chapterContent"></div>
-                <div v-else class="read-body">
-                  {{ fictionContent.fanficContent }}
-                </div>
+                <div v-else class="read-body" v-html="fictionContent.fanficContent"></div>
                 <div v-if="!fictionContentDialogVisible" style="margin-right: -50px;">
                   <div @click="nextChapter"
-                    style="height: 100%; width: 50%; top: 0; right: 0; margin-right: -50px;position: absolute; border-color: rgba(0, 0, 0, 0); background-color: rgba(0, 0, 0, 0);"
+                    style="height: 100%; width: 50%; top: 0; right: 0; position: absolute; border-color: rgba(0, 0, 0, 0); background-color: rgba(0, 0, 0, 0);"
                     class="chagenReadPage">
                   </div>
                 </div>
@@ -1411,13 +1409,20 @@ export default {
     --el-drawer-padding-primary: 50px;
   }
 
+  .drawerContainer .el-drawer__body {
+    padding: 0px;
+    padding-bottom: 20px;
+  }
+
   .read-header {
     font-size: 15pt;
   }
 
   .read-body {
-    margin-left: 10px;
-    margin-right: 10px;
+    margin-left: 0px;
+    margin-right: 0px;
+    width: 90vw;
+    margin: auto;
   }
 }
 </style>

@@ -364,7 +364,7 @@ export default {
     display: flex;
     justify-content: right;
     align-items: center;
-    right: 40px;
+    right: 10vw;
     top: 60px;
     position: absolute;
   }

@@ -5,6 +5,8 @@ import {
   Female,
   Upload,
   Calendar,
+  Message,
+  Edit,
 } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus';
 
@@ -17,6 +19,8 @@ export default {
       userImg: null,
       userGender: null,
       userName: null,
+      userEmail: null,
+      userCreateTime: null,
       showEditProfile: false,
       showProfilePage: false,
 
@@ -27,7 +31,6 @@ export default {
       authorBooks: [],
 
       userCollectedBooks: [],
-
     }
   },
 
@@ -95,6 +98,8 @@ export default {
           this.userImg = data.userPhoto;
           this.userGender = data.userSex;
           this.userName = data.username;
+          this.userEmail = data.userEmail;
+          this.userCreateTime = data.createTime;
           localStorage.setItem('userPhoto', data.userPhoto);
           this.$store.dispatch('photo', data.userPhoto);
         })
@@ -120,8 +125,7 @@ export default {
               ElMessage.success("Update user profile success");
               this.getUserInfo();
             }
-            else
-              ElMessage.error("Oops, something wrong");
+            else ElMessage.error("Oops, something wrong");
           })
           .catch(error => {
             console.error(error);
@@ -139,12 +143,6 @@ export default {
 
     },
 
-    handleUploadClick() {
-      this.$nextTick(() => {
-        this.$refs.avatarInput.click();
-      });
-    },
-
     goBook(bookId) {
       this.$router.push(`/bookInfo/${bookId}`);
     },
@@ -157,8 +155,18 @@ export default {
       this.$router.push('/browse');
     },
 
+    handleUploadClick() {
+      this.$nextTick(() => {
+        this.$refs.avatarInput.click();
+      });
+    },
+
     handleFileChange(event) {
       const file = event.target.files[0];
+      if (file.size / 1024 / 1024 > 0.8) {
+        ElMessage.error('Image size must less than 800KB')
+        return;
+      }
       if (file) {
         this.previewImage(file);
       }
@@ -183,6 +191,7 @@ export default {
     goAuthorPage() {
       window.open('/author');
     },
+
   }
 }
 </script>
@@ -190,12 +199,48 @@ export default {
   <div v-loading.fullscreen="load" element-loading-spinner=" ">
   </div>
   <div v-show="showProfilePage" class="profile-body">
-    <div class="profile-background"></div>
+    <div class="profile-background">
+      <div class="profile-background-word">
+        <div style="width: fit-content; text-align: center;">
+          <div class="profile-background-number-size">
+            {{ authorBooks.length !== 0 ? authorBooks.length : "-" }}
+          </div>
+          <div class="profile-background-word-size">Wrote books</div>
+        </div>
+        <h3 style="color: #a7a7a7;">|</h3>
+        <div style="width: fit-content; text-align: center;">
+          <div class="profile-background-number-size">
+            {{ userCollectedBooks.length !== 0 ? userCollectedBooks.length : "-" }}
+          </div>
+          <div class="profile-background-word-size">Collected books</div>
+        </div>
+      </div>
+    </div>
     <div class="profile-basicinfo">
-      <div class="profile-basicinfo">
-        <el-avatar v-if="userImg !== null" class="profile-avatar" :size="200" :src="userImg" />
-        <el-avatar v-else class="profile-avatar" :size="200"> {{ $store.getters.GetUsername }} </el-avatar>
-        <el-button @click="goEditProfile" class="profile-button-edit" round color="#e5e7f5">EDIT PROFILE</el-button>
+      <div class="profile-basic">
+        <el-avatar v-if="userImg !== null" class="profile-avatar" :src="userImg" />
+        <el-avatar v-else class="profile-avatar"> {{ $store.getters.GetUsername }} </el-avatar>
+        <div>
+          <el-icon>
+            <Calendar />
+          </el-icon>
+          {{ userCreateTime ? userCreateTime.split('T')[0] : null }} Joined
+        </div>
+        <div>
+          <el-icon>
+            <Message />
+          </el-icon>
+          {{ userEmail }}
+        </div>
+        <div v-show="!showEditProfile" class="profile-button-edit-pc">
+          <el-button @click="goEditProfile" round color="#e5e7f5">EDIT
+            PROFILE</el-button>
+        </div>
+
+        <div v-show="!showEditProfile" class="profile-button-edit-mobile">
+          <el-button @click="goEditProfile" circle color="#e5e7f5" :icon="Edit"></el-button>
+        </div>
+
       </div>
 
       <div v-if="!showEditProfile">
@@ -214,29 +259,57 @@ export default {
           ID: {{ $store.getters.GetUID }}
         </div>
       </div>
+      <div v-else>
+        <el-form label-width="120px" label-position="left" class="profile-edit-pc">
+          <el-form-item label="Avatar">
+            <input type="file" ref="avatarInput" @change="handleFileChange" accept="image/*" style="display: none" />
+            <el-button type="primary" :icon="Upload" @click="handleUploadClick">
+              UPLOAD
+            </el-button>
+            &nbsp;jpg/png files with a size less than 800KB
+          </el-form-item>
+          <el-form-item label="Username">
+            <el-input v-model="userName" />
+          </el-form-item>
+          <el-form-item label="Gender">
+            <el-radio-group v-model="userGender">
+              <el-radio label="0">Male</el-radio>
+              <el-radio label="1">Female</el-radio>
+              <el-radio :label="null">Secrecy</el-radio>
+            </el-radio-group>
+          </el-form-item>
+          <div style="display: flex; justify-content: right;">
+            <el-button @click="returnEditProfile">CANCEL</el-button>
+            <el-button type="success" @click="updateUserInfo">UPDATE</el-button>
+          </div>
+        </el-form>
 
-      <el-form v-else label-width="120px" label-position="left" class="profile-edit">
-        <el-form-item label="Avatar">
-          <input type="file" ref="avatarInput" @change="handleFileChange" accept="image/*" style="display: none" />
-          <el-button type="primary" :icon="Upload" @click="handleUploadClick">
-            UPLOAD
-          </el-button>
-        </el-form-item>
-        <el-form-item label="Username">
-          <el-input v-model="userName" />
-        </el-form-item>
-        <el-form-item label="Gender">
-          <el-radio-group v-model="userGender">
-            <el-radio label="0">Male</el-radio>
-            <el-radio label="1">Female</el-radio>
-            <el-radio :label="null">Secrecy</el-radio>
-          </el-radio-group>
-        </el-form-item>
-        <div style="display: flex; justify-content: right;">
-          <el-button @click="returnEditProfile">CANCEL</el-button>
-          <el-button type="success" @click="updateUserInfo">UPDATE</el-button>
-        </div>
-      </el-form>
+        <el-form label-width="80px" label-position="left" class="profile-edit-mobile">
+          <el-form-item label="Avatar">
+            <input type="file" ref="avatarInput" @change="handleFileChange" accept="image/*" style="display: none" />
+            <el-button type="primary" :icon="Upload" @click="handleUploadClick">
+              UPLOAD
+            </el-button>
+            &nbsp;jpg/png files with a size less than 800KB
+          </el-form-item>
+          <el-form-item label="Username">
+            <el-input v-model="userName" />
+          </el-form-item>
+          <el-form-item label="Gender">
+            <el-radio-group v-model="userGender">
+              <el-radio label="0">Male</el-radio>
+              <el-radio label="1">Female</el-radio>
+              <el-radio :label="null">Secrecy</el-radio>
+            </el-radio-group>
+          </el-form-item>
+          <div style="display: flex; justify-content: right;">
+            <el-button @click="returnEditProfile">CANCEL</el-button>
+            <el-button type="success" @click="updateUserInfo">UPDATE</el-button>
+          </div>
+        </el-form>
+      </div>
+
+
     </div>
     <el-card class="box-card" shadow="hover">
       <template #header>
@@ -247,11 +320,13 @@ export default {
       </template>
       <div v-if="authorId" class="author-info-books">
         <div class="author-info">
-          <div class="author-penname">
-            {{ authorPenName }}
-          </div>
-          <div class="author-id">
-            ID: {{ authorId }}
+          <div class="author-info-nameid">
+            <div class="author-penname">
+              {{ authorPenName }}
+            </div>
+            <div class="author-id">
+              ID: {{ authorId }}
+            </div>
           </div>
           <div class="author-signature">
             {{ authorsignature }}
@@ -263,15 +338,22 @@ export default {
             {{ authorCreateTime ? authorCreateTime.split('T')[0] : null }} Joined
           </div>
         </div>
-        <div class="author-books">
-          <h2>
-            My Books <br><br><br>
-            {{ authorBooksTotal }} Total
-          </h2>
-          <div v-for="(item, index) in authorBooks.slice(0, 6)" :key="index" class="author-book">
-            <img :src="item.picUrl" class="author-books-img" @click="goBook(item.id)" />
+        <div class="author-books-container">
+          <div style="display: flex; justify-content: space-between; font-size: 16pt; font-weight: bold;">
+            <div>
+              My Books
+            </div>
+            <div>
+              {{ authorBooksTotal }} Total
+            </div>
+          </div>
+          <div class="author-books">
+            <div v-for="(item, index) in authorBooks" :key="index" class="author-book">
+              <img :src="item.picUrl" class="author-books-img" @click="goBook(item.id)" />
+            </div>
           </div>
         </div>
+
       </div>
       <div v-else style="display: flex; align-items: center;">
         You are not an author yet, wanna become an author?&nbsp;<el-link type="primary" @click="goAuthorPage">Register
@@ -306,9 +388,27 @@ export default {
 </template>
 
 <style>
+.author-info-nameid {
+  display: flex;
+  flex-direction: column;
+}
+
+.profile-background-number-size {
+  font-size: 20pt;
+  font-weight: bold;
+}
+
+.profile-background-word {
+  margin-left: 450px;
+  width: 30%;
+  display: flex;
+  justify-content: space-between;
+}
+
 .user-collection {
   background-color: #f6f7fc;
   padding: 20px;
+  margin-bottom: 20px;
 }
 
 .user-collection .collected_novel_user_ya {
@@ -341,12 +441,16 @@ export default {
 }
 
 .author-books {
-  width: 73%;
+  width: 100%;
   display: flex;
   border: 1px solid #dbdbdb;
   border-radius: 15px;
   padding: 10px;
-  margin-top: -10px;
+  overflow: auto;
+}
+
+.author-books-container {
+  width: 73%;
 }
 
 .author-book {
@@ -393,37 +497,56 @@ export default {
   margin: 20px 0 20px 0;
 }
 
-.profile-edit {
+.profile-edit-pc {
   width: 500px;
   margin: auto;
+}
+
+.profile-edit-mobile {
+  display: none;
 }
 
 .profile-background {
   background-image: url(@/assets/AuthBG.jpg);
   height: 400px;
   background-size: contain;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
 }
 
 .profile-basicinfo {
   position: relative;
 }
 
-.profile-button-edit {
+.profile-basic {
+  font-size: 14pt;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 700px;
+}
+
+.profile-button-edit-pc {
   right: 50px;
   position: absolute;
+}
+
+.profile-button-edit-mobile {
+  display: none;
 }
 
 .profile-userid {
   color: #8a8989;
   font-size: 14pt;
-  margin-left: 50px;
+  margin-left: 80px;
 }
 
 .profile-username {
   display: flex;
   align-items: center;
   font-size: 25pt;
-  margin-left: 50px;
+  margin-left: 80px;
   margin-top: 20px;
 }
 
@@ -442,5 +565,150 @@ export default {
   margin-top: -100px;
   margin-left: 20px;
   border: 5px solid white;
+}
+
+.profile-basic .el-avatar--circle {
+  --el-avatar-size: 200px;
+}
+</style>
+<style>
+@media screen and (max-width:431px) {
+  .author-books-container {
+    width: 100%;
+    margin-top: 10px;
+  }
+
+  .authorCreateTime {
+    display: flex;
+    align-items: center;
+    bottom: 0;
+    position: relative;
+  }
+
+  .author-info-nameid {
+    display: flex;
+    flex-direction: row;
+  }
+
+  .author-id {
+    color: #8a8989;
+    font-size: 14pt;
+    margin-left: 10px;
+  }
+
+  .author-info {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .author-info-books {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .author-books {
+    overflow: auto;
+    margin-top: 10px;
+    width: 100%;
+  }
+
+  .box-card {
+    width: 95vw;
+    margin: 20px auto 20px auto;
+  }
+
+  .profile-edit-mobile {
+    display: block;
+    padding-top: 20px;
+    width: 90vw;
+    margin: auto;
+  }
+
+  .profile-edit-pc {
+    display: none;
+  }
+
+  .profile-button-edit-mobile {
+    display: block;
+    right: 20px;
+    top: 10px;
+    position: absolute;
+  }
+
+  .profile-button-edit-pc {
+    display: none;
+  }
+
+  .profile-basic .el-avatar--circle {
+    --el-avatar-size: 180px;
+  }
+
+  .profile-background-word-size {
+    width: 80px;
+  }
+
+  .profile-body {
+    width: 100vw;
+    min-width: 100vw;
+  }
+
+  .profile-basicinfo {
+    position: relative;
+
+  }
+
+  .profile-basic {
+    font-size: 12pt;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    width: 100vw;
+
+  }
+
+  .profile-background {
+    background-image: url(@/assets/AuthBG.jpg);
+    height: 140px;
+    background-size: contain;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+  }
+
+  .profile-background-word {
+    margin-left: 0px;
+    width: 100vw;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .profile-userid {
+    color: #8a8989;
+    font-size: 14pt;
+    margin-left: 0px;
+    width: 100vw;
+    text-align: center;
+  }
+
+  .profile-username {
+    display: flex;
+    align-items: center;
+    font-size: 25pt;
+    margin-left: 0px;
+    margin-top: 20px;
+    width: 100vw;
+    justify-content: center;
+  }
+
+  .user-collection .collected_novel_user_ya {
+    flex-wrap: nowrap;
+    overflow: auto;
+  }
 }
 </style>

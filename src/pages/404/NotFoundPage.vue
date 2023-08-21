@@ -3,8 +3,7 @@ export default {
 }
 </script>
 <template>
-  <div
-    style="display: flex; justify-content: center; align-items: center; width: 1152px; min-width: 1152px; margin: auto;">
+  <div class="notFoundPageBody">
     <div class="section-center">
       <div class="section-up">
         <div class="sun">
@@ -362,7 +361,7 @@ export default {
       </div>
     </div>
 
-    <div style="margin-left: 30px; font-family: 'Nunito Sans';">
+    <div class="notFoundPageWord">
       <div style="font-size: 120pt; font-weight: bold;">404</div>
       <h2 style="font-size: 30pt;">UH OH! You're lost.</h2>
       <p>The page you are looking for does not exist. Maybe the page is under construction or maybe the way you got here
@@ -373,6 +372,20 @@ export default {
   </div>
 </template>
 <style>
+.notFoundPageWord {
+  margin-left: 30px;
+  font-family: 'Nunito Sans';
+}
+
+.notFoundPageBody {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 1152px;
+  min-width: 1152px;
+  margin: auto;
+}
+
 .section-center {
   position: relative;
   width: 1300px;
@@ -2257,5 +2270,97 @@ export default {
   opacity: 0.8;
   border-radius: 50%;
   box-shadow: 0 0 0 20px rgba(0, 0, 0, .1);
+}
+</style>
+<style>
+@media screen and (max-width:431px) {
+  .notFoundPageWord {
+    margin-left: 0px;
+    width: 90vw;
+    text-align: center;
+  }
+
+  .notFoundPageBody {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100vw;
+    min-width: 100vw;
+    margin: auto;
+  }
+
+  .section-center {
+    position: relative;
+    width: 100vw;
+    height: 450px;
+    display: block;
+    z-index: 6;
+    margin: 0 auto;
+    overflow: hidden;
+    margin-top: 40px;
+  }
+
+  .ship-wrapper {
+    position: absolute;
+    left: 170px;
+    bottom: 116px;
+    display: block;
+    z-index: 4;
+  }
+
+  .water-big-wrapper {
+    position: absolute;
+    left: 150px;
+    bottom: 0;
+    height: 140px;
+    width: 114px;
+    display: block;
+    z-index: 6;
+    overflow: hidden;
+  }
+
+  .fish-wrapper {
+    position: absolute;
+    left: 55px;
+    bottom: 85px;
+    height: 20px;
+    width: 54px;
+    display: block;
+    z-index: 4;
+  }
+
+  .water-wrapper {
+    position: absolute;
+    left: 40px;
+    bottom: 0;
+    height: 70px;
+    width: 77px;
+    display: block;
+    z-index: 6;
+    overflow: hidden;
+  }
+
+  .water-wrapper.top {
+    width: 68px;
+    left: 45px;
+    bottom: 10px;
+    z-index: 7;
+  }
+
+  .water-wrapper.top.right {
+    left: 71vw;
+    bottom: -10px;
+  }
+
+  .water-wrapper.right {
+    left: 70vw;
+    bottom: -20px;
+  }
+
+  .fish-wrapper.right {
+    left: 75vw;
+    bottom: 70px;
+  }
 }
 </style>
